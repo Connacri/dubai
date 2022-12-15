@@ -230,12 +230,16 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                       'Stock'.toUpperCase().trim(),
                                       style: TextStyle(color: Colors.green),
                                     ),
-                                    NumberSlideAnimation(
-                                      number: (data.length - count0).toString(),
-                                      duration: const Duration(seconds: 1),
-                                      curve: Curves.decelerate,
-                                      textStyle: TextStyle(
-                                          fontSize: 30.0, color: Colors.green),
+                                    IgnorePointer(
+                                      child: NumberSlideAnimation(
+                                        number:
+                                            (data.length - count0).toString(),
+                                        duration: const Duration(seconds: 1),
+                                        curve: Curves.decelerate,
+                                        textStyle: TextStyle(
+                                            fontSize: 30.0,
+                                            color: Colors.green),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -257,12 +261,15 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                       'Alert'.toUpperCase().trim(),
                                       style: TextStyle(color: Colors.orange),
                                     ),
-                                    NumberSlideAnimation(
-                                      number: count5.toString(),
-                                      duration: const Duration(seconds: 1),
-                                      curve: Curves.decelerate,
-                                      textStyle: TextStyle(
-                                          fontSize: 30.0, color: Colors.orange),
+                                    IgnorePointer(
+                                      child: NumberSlideAnimation(
+                                        number: count5.toString(),
+                                        duration: const Duration(seconds: 1),
+                                        curve: Curves.decelerate,
+                                        textStyle: TextStyle(
+                                            fontSize: 30.0,
+                                            color: Colors.orange),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -283,12 +290,14 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                       'Out'.toUpperCase().trim(),
                                       style: TextStyle(color: Colors.red),
                                     ),
-                                    NumberSlideAnimation(
-                                      number: count0.toString(),
-                                      duration: const Duration(seconds: 1),
-                                      curve: Curves.decelerate,
-                                      textStyle: TextStyle(
-                                          fontSize: 30.0, color: Colors.red),
+                                    IgnorePointer(
+                                      child: NumberSlideAnimation(
+                                        number: count0.toString(),
+                                        duration: const Duration(seconds: 1),
+                                        curve: Curves.decelerate,
+                                        textStyle: TextStyle(
+                                            fontSize: 30.0, color: Colors.red),
+                                      ),
                                     ),
                                   ],
                                 ),
