@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 
+import 'invoiceList.dart';
 import 'pdf/pdf_printing/pdf_page2.dart';
 
 class estimateik extends StatefulWidget {
@@ -42,12 +43,17 @@ class _estimateikState extends State<estimateik> {
                 try {
                   if (snapshot.data!.docs.length == 0) {
                     return Scaffold(
+                        backgroundColor: Colors.white,
                         body: Center(
-                            child: Text(
-                      'GG Adventure \nEstimate Is Empty',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 20),
-                    )));
+                          child: Lottie.asset(
+                              'assets/lotties/89832-empty-list.json',
+                              fit: BoxFit.contain),
+                          // child: Text(
+                          //   'GG Adventure \nEstimate Is Empty',
+                          //   textAlign: TextAlign.center,
+                          //   style: TextStyle(fontSize: 20),
+                          // ),
+                        ));
                   }
                 } catch (exception) {}
 
@@ -118,119 +124,125 @@ class _estimateikState extends State<estimateik> {
                           ));
                         },
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.picture_as_pdf),
-                        onPressed: () {
-                          // int itemcount = code.length;
-                          // uploadItems(itemcount);
-
-                          // Navigator.of(context).push(MaterialPageRoute(
-                          //   builder: (context) => PdfPageRamzy2(
-                          //     dataDevis: snapshot.data!.docs,
-                          //     customer: '',
-                          //     date: DateTime.now(),
-                          //     codeDevis: '',
-                          //   ),
-                          // ));
-
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => addCustomerToEstimate(
-                              dataDevis: snapshot.data!.docs,
-                            ),
-                          ));
-                        },
-                      ),
-                      buildTotal(),
+                      // IconButton(
+                      //   icon: const Icon(Icons.picture_as_pdf),
+                      //   onPressed: () {
+                      //     // int itemcount = code.length;
+                      //     // uploadItems(itemcount);
+                      //
+                      //     // Navigator.of(context).push(MaterialPageRoute(
+                      //     //   builder: (context) => PdfPageRamzy2(
+                      //     //     dataDevis: snapshot.data!.docs,
+                      //     //     customer: '',
+                      //     //     date: DateTime.now(),
+                      //     //     codeDevis: '',
+                      //     //   ),
+                      //     // ));
+                      //
+                      //     Navigator.of(context).push(MaterialPageRoute(
+                      //       builder: (context) => addCustomerToEstimate(
+                      //         dataDevis: snapshot.data!.docs,
+                      //       ),
+                      //     ));
+                      //   },
+                      // ),
+                      // buildTotal(),
                     ],
                   ),
-                  body: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: snapshot.data == null
-                          ? 0
-                          : snapshot.data!.docs.length,
-                      itemBuilder: (_, index) {
-                        DocumentSnapshot _documentSnapshot =
-                            snapshot.data!.docs[index];
-                        double sum = 0.0;
-                        var ds = snapshot.data!.docs;
+                  body: ListView(
+                    children: [
+                      buildTotal(),
+                      ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: snapshot.data == null
+                              ? 0
+                              : snapshot.data!.docs.length,
+                          itemBuilder: (_, index) {
+                            DocumentSnapshot _documentSnapshot =
+                                snapshot.data!.docs[index];
+                            double sum = 0.0;
+                            var ds = snapshot.data!.docs;
 
-                        return Slidable(
-                          key: const Key('keyslidable'),
-                          closeOnScroll: true,
-                          endActionPane: ActionPane(
-                            extentRatio: 0.25,
-                            motion: const StretchMotion(),
-                            children: [
-                              SlidableAction(
-                                // An action can be bigger than the others.
-                                //flex: 2,
-                                onPressed: (Context) async {
-                                  await showAlertDialog(
-                                      context, _documentSnapshot);
-                                  print(_documentSnapshot.id);
-                                },
-                                backgroundColor: Colors.red,
-                                foregroundColor: Colors.white,
-                                icon: Icons.delete,
-                                label: 'Delete',
+                            return Slidable(
+                              key: const Key('keyslidable'),
+                              closeOnScroll: true,
+                              endActionPane: ActionPane(
+                                extentRatio: 0.25,
+                                motion: const StretchMotion(),
+                                children: [
+                                  SlidableAction(
+                                    // An action can be bigger than the others.
+                                    //flex: 2,
+                                    onPressed: (Context) async {
+                                      await showAlertDialog(
+                                          context, _documentSnapshot);
+                                      print(_documentSnapshot.id);
+                                    },
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.delete,
+                                    label: 'Delete',
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          startActionPane: ActionPane(
-                            extentRatio: 0.25,
-                            motion: const StretchMotion(),
-                            children: [
-                              SlidableAction(
-                                // An action can be bigger than the others.
-                                //flex: 2,
-                                onPressed: (Context) async {
-                                  await _upDateDevis(
-                                      _documentSnapshot.id, _documentSnapshot);
-                                },
-                                backgroundColor: Colors.green,
-                                foregroundColor: Colors.white,
-                                icon: Icons.edit,
-                                label: 'Edit',
+                              startActionPane: ActionPane(
+                                extentRatio: 0.25,
+                                motion: const StretchMotion(),
+                                children: [
+                                  SlidableAction(
+                                    // An action can be bigger than the others.
+                                    //flex: 2,
+                                    onPressed: (Context) async {
+                                      await _upDateDevis(_documentSnapshot.id,
+                                          _documentSnapshot);
+                                    },
+                                    backgroundColor: Colors.green,
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.edit,
+                                    label: 'Edit',
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          child: ListTile(
-                            trailing: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  NumberFormat.currency(
-                                          //locale: 'aed',
-                                          symbol: '')
-                                      .format((_documentSnapshot['prixVente'] *
-                                          _documentSnapshot['qty'])),
-                                  // .toString() +  '0',
-                                  style: TextStyle(fontSize: 20),
+                              child: ListTile(
+                                trailing: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      NumberFormat.currency(
+                                              //locale: 'aed',
+                                              symbol: '')
+                                          .format(
+                                              (_documentSnapshot['prixVente'] *
+                                                  _documentSnapshot['qty'])),
+                                      // .toString() +  '0',
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                    Text(
+                                      NumberFormat.currency(symbol: '').format(
+                                          _documentSnapshot[
+                                              'prixVente']), //.toString() + '0'),
+                                    )
+                                  ],
                                 ),
-                                Text(
-                                  NumberFormat.currency(symbol: '').format(
-                                      _documentSnapshot[
-                                          'prixVente']), //.toString() + '0'),
-                                )
-                              ],
-                            ),
-                            leading: CircleAvatar(
-                              child: FittedBox(
-                                child:
-                                    Text(_documentSnapshot['qty'].toString()),
+                                leading: CircleAvatar(
+                                  child: FittedBox(
+                                    child: Text(
+                                        _documentSnapshot['qty'].toString()),
+                                  ),
+                                ),
+                                title: Text(
+                                  _documentSnapshot['model'],
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                subtitle: Text(
+                                  'Size : ' + _documentSnapshot['size'],
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            ),
-                            title: Text(
-                              _documentSnapshot['model'],
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            subtitle: Text(
-                              'Size : ' + _documentSnapshot['size'],
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        );
-                      }),
+                            );
+                          }),
+                    ],
+                  ),
                 );
               }),
         ),
@@ -369,11 +381,76 @@ buildTotal() {
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: FittedBox(
-                child: CircularProgressIndicator(
-              color: Colors.blueGrey,
-            )),
+            padding: const EdgeInsets.only(right: 10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Total: ',
+                      style: const TextStyle(
+                          color: Colors.blue,
+                          fontFamily: 'Oswald',
+                          fontSize: 17,
+                          fontWeight: FontWeight.normal),
+                    ),
+                    Text(
+                      '0.00',
+                      style: const TextStyle(
+                          color: Colors.blue,
+                          fontFamily: 'Oswald',
+                          fontSize: 17,
+                          fontWeight: FontWeight.normal),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Cout: ',
+                      style: const TextStyle(
+                          color: Colors.deepPurple,
+                          fontFamily: 'Oswald',
+                          fontSize: 17,
+                          fontWeight: FontWeight.normal),
+                    ),
+                    Text(
+                      '0.00',
+                      style: const TextStyle(
+                          color: Colors.deepPurple,
+                          fontFamily: 'Oswald',
+                          fontSize: 17,
+                          fontWeight: FontWeight.normal),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Benef: ',
+                      style: const TextStyle(
+                          color: Colors.green,
+                          fontFamily: 'Oswald',
+                          fontSize: 17,
+                          fontWeight: FontWeight.normal),
+                    ),
+                    Text(
+                      '0.00', //.toString() + '0',
+                      style: const TextStyle(
+                          color: Colors.green,
+                          fontFamily: 'Oswald',
+                          fontSize: 17,
+                          fontWeight: FontWeight.normal),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           );
         } else {
           double summ = 0;
@@ -395,7 +472,7 @@ buildTotal() {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
                       'Total: ',
@@ -417,7 +494,7 @@ buildTotal() {
                   ],
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
                       'Cout: ',
@@ -439,7 +516,7 @@ buildTotal() {
                   ],
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
                       'Benef: ',
@@ -821,7 +898,7 @@ class _addCustomerToEstimateState extends State<addCustomerToEstimate> {
                     }
                   },
                   child: Text(
-                    'Go to Estimate'.toUpperCase(),
+                    'Add To Invoice'.toUpperCase(),
                     style: const TextStyle(fontSize: 15, color: Colors.black54),
                   )),
             )
@@ -992,9 +1069,11 @@ class _addCustomerToEstimate2State extends State<addCustomerToEstimate2> {
                       );
                     }
                     ;
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => invoiceList()));
                   },
                   child: Text(
-                    'Go to Estimate'.toUpperCase(),
+                    'Add To Invoice'.toUpperCase(),
                     style: const TextStyle(fontSize: 15, color: Colors.black54),
                   )),
             )

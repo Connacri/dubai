@@ -1,4 +1,5 @@
 import 'package:barcode_widget/barcode_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dubai/ik/pdf/pdf_printing/pdfTa3List.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -187,9 +188,49 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
                 style: TextStyle(color: Colors.green),
               ),
             ),
+            TextButton(
+                onPressed: () async {
+                  await Recover(widget.doc['item CodeBar'], widget.doc.id);
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Delete Forever',
+                  style: TextStyle(color: Colors.redAccent),
+                )),
           ]),
         ),
       ),
     );
   }
+}
+
+Recover(itemDel, docid) async {
+  final numbers = List.generate(itemDel.length, (index) => index);
+
+  for (final number in numbers) {
+    final items = itemDel[number];
+    //print(itemDel[number]);
+    print(numbers);
+    //print('codebar : ' + items['codebar'] + '/ Qty : ' + items['qty']);
+
+    CollectionReference ItemDetail =
+        FirebaseFirestore.instance.collection('Adventure');
+
+    // return print(items['codebar']);
+
+    ItemDetail.doc(items['codebar'].toString())
+        .update(
+          {
+            'stock': FieldValue.increment(items['qty']),
+          },
+        )
+        .then((value) => print("Qty ${items['qty']} recovered N° ${number}"))
+        .catchError((error) => print("Failed to Add: $error"));
+  }
+
+  FirebaseFirestore.instance
+      .collection('Invoice')
+      .doc(docid)
+      .delete()
+      .then((value) => print("Invoice Deleted"));
 }

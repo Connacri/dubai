@@ -136,6 +136,7 @@ flutter:
 
   assets:
     - assets/
+    - assets/lotties/
     - assets/icon.png
     - assets/images/oran_01.png
     - assets/GG.json
@@ -154,6 +155,7 @@ flutter:
     - assets/icon/anonym.png
     - assets/adventure_logo.png
     - assets/lotties/54355-motorcycle-loading.json
+    - assets/lotties/112136-empty-red.json
 
 
 

@@ -9,11 +9,11 @@ import 'package:paginate_firestore/widgets/empty_display.dart';
 import 'package:paginate_firestore/widgets/empty_separator.dart';
 import 'package:paginate_firestore/widgets/initial_loader.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-
+import 'testjason2.dart';
 import 'Estimate.dart';
+import 'QrScanner.dart';
 import 'invoiceList.dart';
 import 'pdf/chargesList.dart';
-import 'testjason2.dart';
 
 class mainPageFirestoreGetik extends StatefulWidget {
   const mainPageFirestoreGetik({Key? key}) : super(key: key);
@@ -44,10 +44,11 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
   final TextEditingController _qtyController =
       TextEditingController(text: '01');
 
-  Color colorRed = Colors.deepPurple;
-  Color colorOrange = Colors.deepOrangeAccent;
-  Color colorGreen = Colors.greenAccent;
-  Color colorBlue = Colors.blueAccent;
+  Color colorRed = Color.fromARGB(255, 213, 2, 2); //Colors.deepPurple;
+  Color colorOrange =
+      Color.fromARGB(255, 255, 95, 0); //Colors.deepOrangeAccent;
+  Color colorGreen = Color.fromARGB(255, 139, 169, 2); //Colors.greenAccent;
+  Color colorBlue = Color.fromARGB(255, 66, 58, 41); //Colors.blueAccent;
 
   Color color1 = const Color.fromARGB(255, 243, 236, 216);
   Color color2 = const Color.fromARGB(255, 127, 136, 106);
@@ -69,8 +70,9 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
             // int itemcount = code.length;
             // uploadItems(itemcount);
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => MainPageik(),
-              //qrScannerik(),
+              builder: (context) =>
+                  MainPageik(),
+                  //qrScannerik(),
             ));
           },
         ),
@@ -195,7 +197,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                       ? data['stock'] != 0
                                           ? colorOrange
                                           : colorRed
-                                      : null,
+                                      : colorBlue,
                                   radius: 25,
                                   child: FittedBox(
                                     child: Padding(
