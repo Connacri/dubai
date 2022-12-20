@@ -310,7 +310,6 @@ class Addingitems extends StatelessWidget {
               //     return null;
               //   },
               // ), // user
-              Divider(),
 
               Padding(
                 padding: const EdgeInsets.all(30.0),

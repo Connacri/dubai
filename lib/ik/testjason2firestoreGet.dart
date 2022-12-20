@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
-import 'package:number_slide_animation/number_slide_animation.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:paginate_firestore/widgets/bottom_loader.dart';
 import 'package:paginate_firestore/widgets/empty_display.dart';
@@ -14,6 +13,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'Estimate.dart';
 import 'QrScanner.dart';
 import 'invoiceList.dart';
+import 'pdf/chargesList.dart';
 
 class mainPageFirestoreGetik extends StatefulWidget {
   const mainPageFirestoreGetik({Key? key}) : super(key: key);
@@ -30,7 +30,6 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
   final TextEditingController _categoryController = TextEditingController();
   final TextEditingController _sizeController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _saleController = TextEditingController();
   final TextEditingController _stockController = TextEditingController();
   final TextEditingController _prixAchatController = TextEditingController();
   final TextEditingController _prixVenteController = TextEditingController();
@@ -43,10 +42,21 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
   final TextEditingController _codebarController = TextEditingController();
 
   late TextTheme textTheme;
-
+  final navigatorKey = GlobalKey<NavigatorState>();
   final GlobalKey<FormState> _formKeyQty = GlobalKey<FormState>();
   final TextEditingController _qtyController =
       TextEditingController(text: '01');
+
+  Color colorRed = Colors.deepPurple;
+  Color colorOrange = Colors.deepOrangeAccent;
+  Color colorGreen = Colors.greenAccent;
+  Color colorBlue = Colors.blueAccent;
+
+  @override
+  void initState() {
+    // getdatata();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +84,14 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
           //   },
           // ),
           IconButton(
+            icon: const Icon(Icons.incomplete_circle),
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => chargeList(),
+              ));
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.face),
             onPressed: () {
               // int itemcount = code.length;
@@ -83,7 +101,6 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
               ));
             },
           ),
-
           Padding(
             padding: const EdgeInsets.only(right: 15),
             child: IconButton(
@@ -94,222 +111,48 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                 },
                 icon: const Icon(Icons.add_shopping_cart)),
           ),
+          StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('Adventure')
+                  .snapshots(),
+              builder: (BuildContext context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Text(
+                      '00'.toUpperCase().trim(),
+                    ),
+                  );
+                } else {
+                  var data = snapshot.data!.docs;
+
+                  final List<DocumentSnapshot> min5 = data
+                      .where((DocumentSnapshot documentSnapshot) =>
+                          documentSnapshot['stock'] <= 5 &&
+                          documentSnapshot['stock'] > 0)
+                      .toList();
+                  final int count5 = min5.length;
+                  //print(count5);
+                  final List<DocumentSnapshot> min0 = data
+                      .where((DocumentSnapshot documentSnapshot) =>
+                          documentSnapshot['stock'] == 0)
+                      .toList();
+                  final int count0 = min0.length;
+                  // print(count0);
+                  return Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: Text(
+                        data.length.toString(),
+                      ));
+                }
+              }),
         ],
       ),
       body: PaginateFirestore(
-          header: SliverToBoxAdapter(
-              child: Container(
-            height: MediaQuery.of(context).size.height / 10,
-            width: MediaQuery.of(context).size.width,
-            child: Center(
-              child: StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('Adventure')
-                      .snapshots(),
-                  builder: (BuildContext context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      // return Padding(
-                      //   padding: const EdgeInsets.all(18.0),
-                      //   child: LinearProgressIndicator(
-                      //     color: Colors.blueGrey,
-                      //   ),
-                      // );
-                      return ListView(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Column(
-                                children: [
-                                  Text(
-                                    'Total'.toUpperCase().trim(),
-                                  ),
-                                  Text(
-                                    '00',
-                                    style: TextStyle(fontSize: 30),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                    'Stock'.toUpperCase().trim(),
-                                    style: TextStyle(color: Colors.green),
-                                  ),
-                                  Text(
-                                    '00',
-                                    style: TextStyle(
-                                        fontSize: 30, color: Colors.green),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                    'Alert'.toUpperCase().trim(),
-                                    style: TextStyle(color: Colors.orange),
-                                  ),
-                                  Text(
-                                    '00',
-                                    style: TextStyle(
-                                        fontSize: 30, color: Colors.orange),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                    'Out'.toUpperCase().trim(),
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                  Text(
-                                    '00',
-                                    style: TextStyle(
-                                        fontSize: 30, color: Colors.red),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    } else {
-                      var data = snapshot.data!.docs;
-
-                      final List<DocumentSnapshot> min5 = data
-                          .where((DocumentSnapshot documentSnapshot) =>
-                              documentSnapshot['stock'] <= 5 &&
-                              documentSnapshot['stock'] > 0)
-                          .toList();
-                      final int count5 = min5.length;
-                      print(count5);
-                      final List<DocumentSnapshot> min0 = data
-                          .where((DocumentSnapshot documentSnapshot) =>
-                              documentSnapshot['stock'] == 0)
-                          .toList();
-                      final int count0 = min0.length;
-                      print(count0);
-                      return ListView(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Column(
-                                children: [
-                                  Text(
-                                    'Total'.toUpperCase().trim(),
-                                  ),
-                                  NumberSlideAnimation(
-                                    number: data.length.toString(),
-                                    duration: const Duration(seconds: 1),
-                                    curve: Curves.decelerate,
-                                    textStyle: TextStyle(
-                                      fontSize: 30.0,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => StockPage(
-                                        pageQuery: FirebaseFirestore.instance
-                                            .collection('Adventure')
-                                            .where('stock', isGreaterThan: 0)),
-                                  ));
-                                },
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      'Stock'.toUpperCase().trim(),
-                                      style: TextStyle(color: Colors.green),
-                                    ),
-                                    IgnorePointer(
-                                      child: NumberSlideAnimation(
-                                        number:
-                                            (data.length - count0).toString(),
-                                        duration: const Duration(seconds: 1),
-                                        curve: Curves.decelerate,
-                                        textStyle: TextStyle(
-                                            fontSize: 30.0,
-                                            color: Colors.green),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => StockPage(
-                                        pageQuery: FirebaseFirestore.instance
-                                            .collection('Adventure')
-                                            .where('stock', isGreaterThan: 0)
-                                            .where('stock',
-                                                isLessThanOrEqualTo: 5)),
-                                  ));
-                                },
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      'Alert'.toUpperCase().trim(),
-                                      style: TextStyle(color: Colors.orange),
-                                    ),
-                                    IgnorePointer(
-                                      child: NumberSlideAnimation(
-                                        number: count5.toString(),
-                                        duration: const Duration(seconds: 1),
-                                        curve: Curves.decelerate,
-                                        textStyle: TextStyle(
-                                            fontSize: 30.0,
-                                            color: Colors.orange),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => StockPage(
-                                        pageQuery: FirebaseFirestore.instance
-                                            .collection('Adventure')
-                                            .where('stock',
-                                                isLessThanOrEqualTo: 0)),
-                                  ));
-                                },
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      'Out'.toUpperCase().trim(),
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                    IgnorePointer(
-                                      child: NumberSlideAnimation(
-                                        number: count0.toString(),
-                                        duration: const Duration(seconds: 1),
-                                        curve: Curves.decelerate,
-                                        textStyle: TextStyle(
-                                            fontSize: 30.0, color: Colors.red),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    }
-                  }),
-            ),
-          )),
+          header: SLiverHeader(
+              colorGreen: colorGreen,
+              colorOrange: colorOrange,
+              colorRed: colorRed),
           itemsPerPage: 10000,
           onEmpty: const EmptyDisplay(),
           separator: const EmptySeparator(),
@@ -328,7 +171,6 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                 if (data['stock'] == 0) {
                   await AlertD();
                 } else {
-                  print(data);
                   await addToDevisDialog(dataid, data);
                 }
               },
@@ -363,7 +205,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                       onPressed: (Context) async {
                         await showAlertDialog(context, data, dataid);
                       },
-                      backgroundColor: const Color.fromARGB(255, 255, 0, 0),
+                      backgroundColor: colorRed,
                       foregroundColor: Colors.white,
                       icon: Icons.delete,
                       label: 'Delete',
@@ -384,8 +226,8 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                 CircleAvatar(
                                   backgroundColor: data!['stock'] <= 5
                                       ? data['stock'] != 0
-                                          ? color2
-                                          : Colors.red
+                                          ? colorOrange
+                                          : colorRed
                                       : null,
                                   radius: 25,
                                   child: FittedBox(
@@ -396,7 +238,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                         style: TextStyle(
                                             color: data['stock'] <= 5
                                                 ? data['stock'] != 0
-                                                    ? Colors.red
+                                                    ? Colors.black54
                                                     : Colors.white
                                                 : Colors.white,
                                             fontSize: 20),
@@ -405,13 +247,15 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                   ),
                                 ),
                                 CircularPercentIndicator(
+                                  circularStrokeCap: CircularStrokeCap.round,
+                                  backgroundWidth: 3.0,
                                   animation: true,
                                   animationDuration: 1000,
                                   percent: data['stock'] > data['oldStock']
                                       ? 1
                                       : data['stock'] / data['oldStock'],
-                                  progressColor: Colors.greenAccent,
-                                  backgroundColor: Colors.red,
+                                  progressColor: colorGreen,
+                                  backgroundColor: colorRed,
                                   radius: 26.0,
                                 ),
                               ],
@@ -438,8 +282,11 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                 FittedBox(
                                   child: LinearPercentIndicator(
                                     trailing: Text(
-                                      (data['stock'] * 100 / data['oldStock'])
-                                              .toString() +
+                                      NumberFormat.currency(
+                                                  symbol: '', decimalDigits: 0)
+                                              .format((data['stock'] *
+                                                  100 /
+                                                  data['oldStock'])) +
                                           '%',
                                       style: TextStyle(fontSize: 25),
                                     ),
@@ -450,15 +297,18 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                     percent: data['stock'] > data['oldStock']
                                         ? 1
                                         : data['stock'] / data['oldStock'],
-                                    center: Text(
-                                      (data['stock'] * 100 / data['oldStock'])
-                                              .toString() +
-                                          '%',
-                                      style: TextStyle(),
-                                    ),
+                                    // center: Text(
+                                    //   NumberFormat.currency(
+                                    //               symbol: '', decimalDigits: 0)
+                                    //           .format((data['stock'] *
+                                    //               100 /
+                                    //               data['oldStock'])) +
+                                    //       '%',
+                                    //   style: TextStyle(),
+                                    // ),
                                     barRadius: Radius.circular(20.0),
-                                    progressColor: Colors.greenAccent,
-                                    backgroundColor: Colors.red,
+                                    progressColor: colorGreen,
+                                    backgroundColor: colorRed,
                                     restartAnimation: false,
                                   ),
                                 )
@@ -489,7 +339,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                   style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
-                                      color: Colors.blueGrey),
+                                      color: colorBlue),
                                 ),
                                 Text(
                                   NumberFormat.currency(symbol: '')
@@ -498,7 +348,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                   style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
-                                      color: Colors.blueGrey),
+                                      color: colorBlue),
                                 ),
                               ],
                             ),
@@ -514,159 +364,17 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
     );
   }
 
-  // Future addToEstimateDialog(String dataid, Map data) => showDialog(
-  //       context: context,
-  //       builder: (context) => AlertDialog(
-  //         title: Center(
-  //           child: FittedBox(
-  //             child: Text(
-  //               'Item : ${data['model'].toString()}'.toUpperCase(),
-  //               style: TextStyle(
-  //                 color: Colors.blue, // Colors.orange,
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //         actions: [
-  //           Center(
-  //             child: ElevatedButton(
-  //                 onPressed: () {
-  //                   // Validate returns true if the form is valid, or false otherwise.
-  //                   if (!_formKeyQty.currentState!.validate()) {
-  //                     return;
-  //                   } else {
-  //                     setState(() {
-  //                       addItemsToDevis2(
-  //                         dataid,
-  //                         data,
-  //                         _qtyController.text,
-  //                       );
-  //                       //_qtyController.clear();
-  //                     });
-  //                   }
-  //
-  //                   Navigator.pop(context, false);
-  //                 },
-  //                 child: Text(
-  //                   'Add to Estimate'.toUpperCase(),
-  //                   style: const TextStyle(fontSize: 15, color: Colors.black54),
-  //                 )),
-  //           )
-  //         ],
-  //         content: Form(
-  //           key: _formKeyQty,
-  //           child: TextFormField(
-  //             autofocus: true,
-  //             textAlign: TextAlign.center,
-  //             style: const TextStyle(
-  //               fontSize: 25,
-  //             ),
-  //             keyboardType: TextInputType.number,
-  //             controller: _qtyController,
-  //             validator: (valueQty) => valueQty!.isEmpty ||
-  //                     valueQty == null ||
-  //                     int.tryParse(valueQty.toString()) == 0
-  //                 ? 'Cant be 0 or Empty'
-  //                 : null,
-  //             decoration: const InputDecoration(
-  //               border: InputBorder.none,
-  //               filled: true,
-  //               contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-  //
-  //               hintText: 'Quantity',
-  //               fillColor: Colors.white,
-  //               //filled: true,
-  //             ),
-  //           ),
-  //         ), // availibility,
-  //       ),
-  //     );
-  //
-  // Future<void> addItemsToDevis2(
-  //   dataid,
-  //   data,
-  //   qty,
-  // ) async {
-  //   CollectionReference devisitem =
-  //       FirebaseFirestore.instance.collection('Estimate');
-  //   // Call the user's CollectionReference to add a new user
-  //   CollectionReference incrementQty =
-  //       FirebaseFirestore.instance.collection('Market');
-  //
-  //   if (devisitem.doc(dataid) == null) {
-  //     print('wah null////////////////////////////////////////');
-  //     print(devisitem.doc(dataid).toString());
-  //     // return devisitem
-  //     //     .doc(dataid)
-  //     //     .set({
-  //     //       'createdAt': Timestamp.now().toDate(),
-  //     //       'category': data['category'],
-  //     //       'model': data['model'],
-  //     //       'description': data['description'],
-  //     //       'size': data['size'],
-  //     //       'prixAchat': data['prixAchat'],
-  //     //       'prixVente': data['prixVente'],
-  //     //       'prixDealer': data['prixDealer'],
-  //     //       'stock': data['stock'],
-  //     //       'codebar': data['codebar'],
-  //     //       'oldStock': data['oldStock'],
-  //     //       'origine': data['origine'],
-  //     //       'user': data['user'],
-  //     //       'qty': int.parse(qty),
-  //     //     }, SetOptions(merge: true))
-  //     //     .then((value) => print("Item set to Estimate"))
-  //     //     .catchError(
-  //     //         (error) => print("Failed to set Item to Estimate: $error"))
-  //     //     .whenComplete(() => incrementQty
-  //     //         .doc(dataid)
-  //     //         .update({'stock': FieldValue.increment(-int.parse(qty))}))
-  //     //     .then(
-  //     //         (value) => print('//////////////////////////////////set c bon'));
-  //   } else {
-  //     print('no null////////////////////////////////////////');
-  //     print(devisitem.doc(dataid).toString());
-  //
-  //     // return devisitem
-  //     //     .doc(dataid)
-  //     //     .update({'qty': FieldValue.increment(int.parse(qty))})
-  //     //     .then((value) => print("Item update to Estimate"))
-  //     //     .catchError(
-  //     //         (error) => print("Failed to update Item to Estimate: $error"))
-  //     //     .whenComplete(() => incrementQty
-  //     //         .doc(dataid)
-  //     //         .update({'stock': FieldValue.increment(-int.parse(qty))}))
-  //     //     .then((value) =>
-  //     //         print('**********************************update c bon'));
-  //   }
-  // }
-
-  Future addToDevisDialog(dataid, data) => showDialog(
+  Future addToEstimateDialog(String dataid, Map data) => showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Center(
             child: FittedBox(
-              child: data['stock'] <= 5
-                  ? data['stock'] != 0
-                      ? Text(
-                          'Item : ${data['model'].toString()}\n Left-Over : ${data['stock'].toString()}'
-                              .toUpperCase(),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.orange, // Colors.orange,
-                          ),
-                        )
-                      : Text(
-                          'Item : ${data['model'].toString()}'.toUpperCase(),
-                          style: TextStyle(
-                            color: Colors.red, // Colors.orange,
-                          ),
-                        )
-                  : Text(
-                      'Item : ${data['model'].toString()}'.toUpperCase(),
-                      style: TextStyle(
-                        color: Colors.blue, // Colors.orange,
-                      ),
-                    ),
+              child: Text(
+                'Item : ${data['model'].toString()}'.toUpperCase(),
+                style: TextStyle(
+                  color: Colors.blue, // Colors.orange,
+                ),
+              ),
             ),
           ),
           actions: [
@@ -676,22 +384,17 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                     // Validate returns true if the form is valid, or false otherwise.
                     if (!_formKeyQty.currentState!.validate()) {
                       return;
-                    } else if (data['stock'] >=
-                        int.parse(_qtyController.text)) {
-                      // FirebaseFirestore.instance
-                      //     .collection('Market')
-                      //     .doc(dataid)
-                      //     .update({
-                      //   'stock': FieldValue.increment(
-                      //       -int.parse(_qtyController.text))
-                      // });
-                      setState(() {
-                        addItemsToDevis2(dataid, data, _qtyController.text);
-                        _qtyController.clear();
-                      });
                     } else {
-                      return;
+                      //  setState(() {
+                      addItemsToDevis2(
+                        dataid,
+                        data,
+                        _qtyController.text,
+                      );
+                      //_qtyController.clear();
+                      // });
                     }
+
                     Navigator.pop(context, false);
                   },
                   child: Text(
@@ -729,6 +432,153 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
         ),
       );
 
+  Future<void> addItemsToDevis22(
+    dataid,
+    data,
+    qty,
+  ) async {
+    CollectionReference devisitem =
+        FirebaseFirestore.instance.collection('Estimate');
+    // Call the user's CollectionReference to add a new user
+    CollectionReference incrementQty =
+        FirebaseFirestore.instance.collection('Market');
+
+    if (devisitem.doc(dataid) == null) {
+      print('wah null////////////////////////////////////////');
+      print(devisitem.doc(dataid).toString());
+      // return devisitem
+      //     .doc(dataid)
+      //     .set({
+      //       'createdAt': Timestamp.now().toDate(),
+      //       'category': data['category'],
+      //       'model': data['model'],
+      //       'description': data['description'],
+      //       'size': data['size'],
+      //       'prixAchat': data['prixAchat'],
+      //       'prixVente': data['prixVente'],
+      //       'prixDealer': data['prixDealer'],
+      //       'stock': data['stock'],
+      //       'codebar': data['codebar'],
+      //       'oldStock': data['oldStock'],
+      //       'origine': data['origine'],
+      //       'user': data['user'],
+      //       'qty': int.parse(qty),
+      //     }, SetOptions(merge: true))
+      //     .then((value) => print("Item set to Estimate"))
+      //     .catchError(
+      //         (error) => print("Failed to set Item to Estimate: $error"))
+      //     .whenComplete(() => incrementQty
+      //         .doc(dataid)
+      //         .update({'stock': FieldValue.increment(-int.parse(qty))}))
+      //     .then(
+      //         (value) => print('//////////////////////////////////set c bon'));
+    } else {
+      print('no null////////////////////////////////////////');
+      print(devisitem.doc(dataid).toString());
+
+      // return devisitem
+      //     .doc(dataid)
+      //     .update({'qty': FieldValue.increment(int.parse(qty))})
+      //     .then((value) => print("Item update to Estimate"))
+      //     .catchError(
+      //         (error) => print("Failed to update Item to Estimate: $error"))
+      //     .whenComplete(() => incrementQty
+      //         .doc(dataid)
+      //         .update({'stock': FieldValue.increment(-int.parse(qty))}))
+      //     .then((value) =>
+      //         print('**********************************update c bon'));
+    }
+  }
+
+  Future addToDevisDialog(dataid, data) => showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Center(
+            child: FittedBox(
+              child: data['stock'] <= 5
+                  ? data['stock'] != 0
+                      ? Text(
+                          'Item : ${data['model'].toString()}\n Left-Over : ${data['stock'].toString()}'
+                              .toUpperCase(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: colorOrange, // Colors.orange,
+                          ),
+                        )
+                      : Text(
+                          'Item : ${data['model'].toString()}'.toUpperCase(),
+                          style: TextStyle(
+                            color: colorRed, // Colors.orange,
+                          ),
+                        )
+                  : Text(
+                      'Item : ${data['model'].toString()}'.toUpperCase(),
+                      style: TextStyle(
+                        color: colorBlue, // Colors.orange,
+                      ),
+                    ),
+            ),
+          ),
+          actions: [
+            Center(
+              child: ElevatedButton(
+                  onPressed: () {
+                    // Validate returns true if the form is valid, or false otherwise.
+                    if (!_formKeyQty.currentState!.validate()) {
+                      return;
+                    } else if (data['stock'] >=
+                        int.parse(_qtyController.text)) {
+                      // FirebaseFirestore.instance
+                      //     .collection('Market')
+                      //     .doc(dataid)
+                      //     .update({
+                      //   'stock': FieldValue.increment(
+                      //       -int.parse(_qtyController.text))
+                      // });
+                      // setState(() {
+                      addItemsToDevis2(dataid, data, _qtyController.text);
+                      _qtyController.clear();
+                      // });
+                    } else {
+                      return;
+                    }
+                    Navigator.pop(context, false);
+                  },
+                  child: Text(
+                    'Add to Estimate'.toUpperCase(),
+                    style: const TextStyle(fontSize: 15, color: Colors.black54),
+                  )),
+            )
+          ],
+          content: Form(
+            key: _formKeyQty,
+            child: TextFormField(
+              autofocus: true,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 25,
+              ),
+              keyboardType: TextInputType.number,
+              controller: _qtyController,
+              validator: (valueQty) => valueQty!.isEmpty ||
+                      valueQty == null ||
+                      int.tryParse(valueQty.toString()) == 0
+                  ? 'Cant be 0 or Empty'
+                  : null,
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                filled: true,
+                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+
+                hintText: 'Quantity',
+                fillColor: Colors.white,
+                //filled: true,
+              ),
+            ),
+          ),
+        ),
+      );
+
   Future AlertD() => showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -737,7 +587,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
               child: Text(
                 'alert!!!'.toUpperCase(),
                 style: TextStyle(
-                  color: Colors.red,
+                  color: colorRed,
                 ),
               ),
             ),
@@ -745,8 +595,8 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
               Center(
                 child: TextButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.red),
-                      foregroundColor: MaterialStateProperty.all(color3),
+                      backgroundColor: MaterialStateProperty.all(colorRed),
+                      foregroundColor: MaterialStateProperty.all(colorGreen),
                       minimumSize:
                           MaterialStateProperty.all(const Size(200, 50)),
                       shape: MaterialStateProperty.all(
@@ -760,14 +610,14 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                     },
                     child: Text(
                       'Cancel'.toUpperCase(),
-                      style: TextStyle(fontSize: 15, color: color1),
+                      style: TextStyle(fontSize: 15, color: colorRed),
                     )),
               )
             ],
             content: Text(
               'out of stock'.toUpperCase(),
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 30, color: Colors.red),
+              style: TextStyle(fontSize: 30, color: colorRed),
             ),
           ));
 
@@ -1001,6 +851,224 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
             ),
           );
         });
+  }
+}
+
+class SLiverHeader extends StatelessWidget {
+  const SLiverHeader({
+    Key? key,
+    required this.colorGreen,
+    required this.colorOrange,
+    required this.colorRed,
+  }) : super(key: key);
+
+  final Color colorGreen;
+  final Color colorOrange;
+  final Color colorRed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Column(
+        children: [
+          Container(
+            height: MediaQuery.of(context).size.height / 10,
+            width: MediaQuery.of(context).size.width,
+            child: Center(
+              child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('Adventure')
+                      .snapshots(),
+                  builder: (BuildContext context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      // return Padding(
+                      //   padding: const EdgeInsets.all(18.0),
+                      //   child: LinearProgressIndicator(
+                      //     color: Colors.blueGrey,
+                      //   ),
+                      // );
+                      return ListView(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Column(
+                                children: [
+                                  Text(
+                                    'Total'.toUpperCase().trim(),
+                                  ),
+                                  Text(
+                                    '00',
+                                    style: TextStyle(fontSize: 30),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    'Stock'.toUpperCase().trim(),
+                                    style: TextStyle(color: Colors.green),
+                                  ),
+                                  Text(
+                                    '00',
+                                    style: TextStyle(
+                                        fontSize: 30, color: Colors.green),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    'Alert'.toUpperCase().trim(),
+                                    style: TextStyle(color: Colors.orange),
+                                  ),
+                                  Text(
+                                    '00',
+                                    style: TextStyle(
+                                        fontSize: 30, color: Colors.orange),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    'Out'.toUpperCase().trim(),
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                  Text(
+                                    '00',
+                                    style: TextStyle(
+                                        fontSize: 30, color: Colors.red),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    } else {
+                      var data = snapshot.data!.docs;
+
+                      final List<DocumentSnapshot> min5 = data
+                          .where((DocumentSnapshot documentSnapshot) =>
+                              documentSnapshot['stock'] <= 5 &&
+                              documentSnapshot['stock'] > 0)
+                          .toList();
+                      final int count5 = min5.length;
+                      print(count5);
+                      final List<DocumentSnapshot> min0 = data
+                          .where((DocumentSnapshot documentSnapshot) =>
+                              documentSnapshot['stock'] == 0)
+                          .toList();
+                      final int count0 = min0.length;
+                      print(count0);
+                      return ListView(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Column(
+                                children: [
+                                  Text(
+                                    'Total'.toUpperCase().trim(),
+                                  ),
+                                  Text(
+                                    data.length.toString(),
+                                    style: TextStyle(
+                                      fontSize: 30.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => StockPage(
+                                        pageQuery: FirebaseFirestore.instance
+                                            .collection('Adventure')
+                                            .where('stock', isGreaterThan: 0)),
+                                  ));
+                                },
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'Stock'.toUpperCase().trim(),
+                                      style: TextStyle(color: colorGreen),
+                                    ),
+                                    Text(
+                                      (data.length - count0).toString(),
+                                      style: TextStyle(
+                                          color: colorGreen, fontSize: 30),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => StockPage(
+                                        pageQuery: FirebaseFirestore.instance
+                                            .collection('Adventure')
+                                            .where('stock', isGreaterThan: 0)
+                                            .where('stock',
+                                                isLessThanOrEqualTo: 5)),
+                                  ));
+                                },
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'Alert'.toUpperCase().trim(),
+                                      style: TextStyle(color: colorOrange),
+                                    ),
+                                    Text(
+                                      count5.toString(),
+                                      style: TextStyle(
+                                          color: colorOrange, fontSize: 30),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => StockPage(
+                                        pageQuery: FirebaseFirestore.instance
+                                            .collection('Adventure')
+                                            .where('stock',
+                                                isLessThanOrEqualTo: 0)),
+                                  ));
+                                },
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'Out'.toUpperCase().trim(),
+                                      style: TextStyle(color: colorRed),
+                                    ),
+                                    Text(
+                                      count0.toString(),
+                                      style: TextStyle(
+                                          color: colorRed, fontSize: 30),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    }
+                  }),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
