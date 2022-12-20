@@ -11,9 +11,9 @@ import 'package:paginate_firestore/widgets/initial_loader.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 import 'Estimate.dart';
-import 'QrScanner.dart';
 import 'invoiceList.dart';
 import 'pdf/chargesList.dart';
+import 'testjason2.dart';
 
 class mainPageFirestoreGetik extends StatefulWidget {
   const mainPageFirestoreGetik({Key? key}) : super(key: key);
@@ -23,9 +23,6 @@ class mainPageFirestoreGetik extends StatefulWidget {
 }
 
 class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
-  Color color1 = const Color.fromARGB(255, 243, 236, 216);
-  Color color2 = const Color.fromARGB(255, 127, 136, 106);
-  Color color3 = const Color.fromARGB(255, 62, 80, 60);
   final TextEditingController _modelController = TextEditingController();
   final TextEditingController _categoryController = TextEditingController();
   final TextEditingController _sizeController = TextEditingController();
@@ -52,6 +49,10 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
   Color colorGreen = Colors.greenAccent;
   Color colorBlue = Colors.blueAccent;
 
+  Color color1 = const Color.fromARGB(255, 243, 236, 216);
+  Color color2 = const Color.fromARGB(255, 127, 136, 106);
+  Color color3 = const Color.fromARGB(255, 62, 80, 60);
+
   @override
   void initState() {
     // getdatata();
@@ -68,7 +69,8 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
             // int itemcount = code.length;
             // uploadItems(itemcount);
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => qrScannerik(),
+              builder: (context) => MainPageik(),
+              //qrScannerik(),
             ));
           },
         ),
@@ -111,41 +113,6 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                 },
                 icon: const Icon(Icons.add_shopping_cart)),
           ),
-          StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection('Adventure')
-                  .snapshots(),
-              builder: (BuildContext context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child: Text(
-                      '00'.toUpperCase().trim(),
-                    ),
-                  );
-                } else {
-                  var data = snapshot.data!.docs;
-
-                  final List<DocumentSnapshot> min5 = data
-                      .where((DocumentSnapshot documentSnapshot) =>
-                          documentSnapshot['stock'] <= 5 &&
-                          documentSnapshot['stock'] > 0)
-                      .toList();
-                  final int count5 = min5.length;
-                  //print(count5);
-                  final List<DocumentSnapshot> min0 = data
-                      .where((DocumentSnapshot documentSnapshot) =>
-                          documentSnapshot['stock'] == 0)
-                      .toList();
-                  final int count0 = min0.length;
-                  // print(count0);
-                  return Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Text(
-                        data.length.toString(),
-                      ));
-                }
-              }),
         ],
       ),
       body: PaginateFirestore(
@@ -339,7 +306,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                   style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
-                                      color: colorBlue),
+                                      color: colorGreen),
                                 ),
                                 Text(
                                   NumberFormat.currency(symbol: '')
@@ -348,7 +315,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                   style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
-                                      color: colorBlue),
+                                      color: colorRed),
                                 ),
                               ],
                             ),
@@ -431,64 +398,6 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
           ), // availibility,
         ),
       );
-
-  Future<void> addItemsToDevis22(
-    dataid,
-    data,
-    qty,
-  ) async {
-    CollectionReference devisitem =
-        FirebaseFirestore.instance.collection('Estimate');
-    // Call the user's CollectionReference to add a new user
-    CollectionReference incrementQty =
-        FirebaseFirestore.instance.collection('Market');
-
-    if (devisitem.doc(dataid) == null) {
-      print('wah null////////////////////////////////////////');
-      print(devisitem.doc(dataid).toString());
-      // return devisitem
-      //     .doc(dataid)
-      //     .set({
-      //       'createdAt': Timestamp.now().toDate(),
-      //       'category': data['category'],
-      //       'model': data['model'],
-      //       'description': data['description'],
-      //       'size': data['size'],
-      //       'prixAchat': data['prixAchat'],
-      //       'prixVente': data['prixVente'],
-      //       'prixDealer': data['prixDealer'],
-      //       'stock': data['stock'],
-      //       'codebar': data['codebar'],
-      //       'oldStock': data['oldStock'],
-      //       'origine': data['origine'],
-      //       'user': data['user'],
-      //       'qty': int.parse(qty),
-      //     }, SetOptions(merge: true))
-      //     .then((value) => print("Item set to Estimate"))
-      //     .catchError(
-      //         (error) => print("Failed to set Item to Estimate: $error"))
-      //     .whenComplete(() => incrementQty
-      //         .doc(dataid)
-      //         .update({'stock': FieldValue.increment(-int.parse(qty))}))
-      //     .then(
-      //         (value) => print('//////////////////////////////////set c bon'));
-    } else {
-      print('no null////////////////////////////////////////');
-      print(devisitem.doc(dataid).toString());
-
-      // return devisitem
-      //     .doc(dataid)
-      //     .update({'qty': FieldValue.increment(int.parse(qty))})
-      //     .then((value) => print("Item update to Estimate"))
-      //     .catchError(
-      //         (error) => print("Failed to update Item to Estimate: $error"))
-      //     .whenComplete(() => incrementQty
-      //         .doc(dataid)
-      //         .update({'stock': FieldValue.increment(-int.parse(qty))}))
-      //     .then((value) =>
-      //         print('**********************************update c bon'));
-    }
-  }
 
   Future addToDevisDialog(dataid, data) => showDialog(
         context: context,
@@ -877,192 +786,141 @@ class SLiverHeader extends StatelessWidget {
             child: Center(
               child: StreamBuilder(
                   stream: FirebaseFirestore.instance
-                      .collection('Adventure')
+                      .collection('Adventure') //.get(),
                       .snapshots(),
                   builder: (BuildContext context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      // return Padding(
-                      //   padding: const EdgeInsets.all(18.0),
-                      //   child: LinearProgressIndicator(
-                      //     color: Colors.blueGrey,
-                      //   ),
-                      // );
-                      return ListView(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Column(
-                                children: [
-                                  Text(
-                                    'Total'.toUpperCase().trim(),
-                                  ),
-                                  Text(
-                                    '00',
-                                    style: TextStyle(fontSize: 30),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                    'Stock'.toUpperCase().trim(),
-                                    style: TextStyle(color: Colors.green),
-                                  ),
-                                  Text(
-                                    '00',
-                                    style: TextStyle(
-                                        fontSize: 30, color: Colors.green),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                    'Alert'.toUpperCase().trim(),
-                                    style: TextStyle(color: Colors.orange),
-                                  ),
-                                  Text(
-                                    '00',
-                                    style: TextStyle(
-                                        fontSize: 30, color: Colors.orange),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                    'Out'.toUpperCase().trim(),
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                  Text(
-                                    '00',
-                                    style: TextStyle(
-                                        fontSize: 30, color: Colors.red),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    } else {
-                      var data = snapshot.data!.docs;
+                    // if (snapshot.connectionState == ConnectionState.waiting) {
+                    //   return Container(); //CircularProgressIndicator();
+                    // } else
+                    // if (snapshot.connectionState == ConnectionState.active ||
+                    //     snapshot.connectionState == ConnectionState.done)
+                    {
+                      if (snapshot.hasError) {
+                        return const Text('Error');
+                      } else if (snapshot.hasData) {
+                        var data = snapshot.data!.docs;
 
-                      final List<DocumentSnapshot> min5 = data
-                          .where((DocumentSnapshot documentSnapshot) =>
-                              documentSnapshot['stock'] <= 5 &&
-                              documentSnapshot['stock'] > 0)
-                          .toList();
-                      final int count5 = min5.length;
-                      print(count5);
-                      final List<DocumentSnapshot> min0 = data
-                          .where((DocumentSnapshot documentSnapshot) =>
-                              documentSnapshot['stock'] == 0)
-                          .toList();
-                      final int count0 = min0.length;
-                      print(count0);
-                      return ListView(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Column(
-                                children: [
-                                  Text(
-                                    'Total'.toUpperCase().trim(),
+                        final List<DocumentSnapshot> min5 = data
+                            .where((DocumentSnapshot documentSnapshot) =>
+                                documentSnapshot['stock'] <= 5 &&
+                                documentSnapshot['stock'] > 0)
+                            .toList();
+                        final int count5 = min5.length;
+                        print(count5);
+                        final List<DocumentSnapshot> min0 = data
+                            .where((DocumentSnapshot documentSnapshot) =>
+                                documentSnapshot['stock'] == 0)
+                            .toList();
+                        final int count0 = min0.length;
+                        print(count0);
+                        return ListView(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Column(
+                                  children: [
+                                    Text(
+                                      'Total'.toUpperCase().trim(),
+                                    ),
+                                    Text(
+                                      data.length.toString(),
+                                      style: TextStyle(
+                                        fontSize: 30.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) => StockPage(
+                                          pageQuery: FirebaseFirestore.instance
+                                              .collection('Adventure')
+                                              .where('stock',
+                                                  isGreaterThan: 0)),
+                                    ));
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        'Stock'.toUpperCase().trim(),
+                                        style: TextStyle(color: colorGreen),
+                                      ),
+                                      Text(
+                                        (data.length - count0).toString(),
+                                        style: TextStyle(
+                                            color: colorGreen, fontSize: 30),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    data.length.toString(),
-                                    style: TextStyle(
-                                      fontSize: 30.0,
-                                    ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) => StockPage(
+                                          pageQuery: FirebaseFirestore.instance
+                                              .collection('Adventure')
+                                              .where('stock', isGreaterThan: 0)
+                                              .where('stock',
+                                                  isLessThanOrEqualTo: 5)),
+                                    ));
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        'Alert'.toUpperCase().trim(),
+                                        style: TextStyle(color: colorOrange),
+                                      ),
+                                      Text(
+                                        count5.toString(),
+                                        style: TextStyle(
+                                            color: colorOrange, fontSize: 30),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => StockPage(
-                                        pageQuery: FirebaseFirestore.instance
-                                            .collection('Adventure')
-                                            .where('stock', isGreaterThan: 0)),
-                                  ));
-                                },
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      'Stock'.toUpperCase().trim(),
-                                      style: TextStyle(color: colorGreen),
-                                    ),
-                                    Text(
-                                      (data.length - count0).toString(),
-                                      style: TextStyle(
-                                          color: colorGreen, fontSize: 30),
-                                    ),
-                                  ],
                                 ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => StockPage(
-                                        pageQuery: FirebaseFirestore.instance
-                                            .collection('Adventure')
-                                            .where('stock', isGreaterThan: 0)
-                                            .where('stock',
-                                                isLessThanOrEqualTo: 5)),
-                                  ));
-                                },
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      'Alert'.toUpperCase().trim(),
-                                      style: TextStyle(color: colorOrange),
-                                    ),
-                                    Text(
-                                      count5.toString(),
-                                      style: TextStyle(
-                                          color: colorOrange, fontSize: 30),
-                                    ),
-                                  ],
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) => StockPage(
+                                          pageQuery: FirebaseFirestore.instance
+                                              .collection('Adventure')
+                                              .where('stock',
+                                                  isLessThanOrEqualTo: 0)),
+                                    ));
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        'Out'.toUpperCase().trim(),
+                                        style: TextStyle(color: colorRed),
+                                      ),
+                                      Text(
+                                        count0.toString(),
+                                        style: TextStyle(
+                                            color: colorRed, fontSize: 30),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => StockPage(
-                                        pageQuery: FirebaseFirestore.instance
-                                            .collection('Adventure')
-                                            .where('stock',
-                                                isLessThanOrEqualTo: 0)),
-                                  ));
-                                },
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      'Out'.toUpperCase().trim(),
-                                      style: TextStyle(color: colorRed),
-                                    ),
-                                    Text(
-                                      count0.toString(),
-                                      style: TextStyle(
-                                          color: colorRed, fontSize: 30),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
+                              ],
+                            ),
+                          ],
+                        );
+                      } else {
+                        return const Text('Empty data');
+                      }
                     }
+                    // else {
+                    //   return Text('State: ${snapshot.connectionState}');
+                    // }
                   }),
             ),
           ),
