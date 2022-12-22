@@ -1069,8 +1069,13 @@ class _addCustomerToEstimate2State extends State<addCustomerToEstimate2> {
                       );
                     }
                     ;
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => invoiceList()));
+                    _deleteAllEstimate();
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => invoiceList(),
+                      ),
+                      (route) => route.isFirst,
+                    );
                   },
                   child: Text(
                     'Add To Invoice'.toUpperCase(),
@@ -1081,5 +1086,15 @@ class _addCustomerToEstimate2State extends State<addCustomerToEstimate2> {
         ),
       ),
     );
+  }
+}
+
+Future<void> _deleteAllEstimate() async {
+  var collection = FirebaseFirestore.instance.collection('Estimate');
+  var snapshot = await collection.get();
+  for (var doc in snapshot.docs) {
+    await doc.reference.delete();
+    print(doc.reference);
+    print('deleted');
   }
 }

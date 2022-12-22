@@ -15,14 +15,14 @@ class AddingCharges extends StatefulWidget {
 
 class _AddingChargesState extends State<AddingCharges> {
   // final String code;
-  final TextEditingController _typeController = TextEditingController();
-
+  final TextEditingController _periodicController = TextEditingController();
+  final TextEditingController _creditController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _deadlineController =
-      TextEditingController(text: 'null');
+      TextEditingController(text: '00');
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _modelController = TextEditingController();
-  final TextEditingController dateinput = TextEditingController();
+
   final _formKeyPneux = GlobalKey<FormState>();
   late String dropdownValue;
 
@@ -34,12 +34,15 @@ class _AddingChargesState extends State<AddingCharges> {
     super.initState();
   }
 
+  bool isSwitched1 = false;
+  bool isSwitched2 = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         //leading: Icon(Icons.add_box_outlined),
-        title: Text('Adding Product'),
+        title: Text('Adding Costs'),
       ),
       body: Form(
         key: _formKeyPneux,
@@ -48,6 +51,112 @@ class _AddingChargesState extends State<AddingCharges> {
           child: ListView(
             children: [
               Lottie.asset('assets/lotties/54355-motorcycle-loading.json'),
+              Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'OneTime',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: !isSwitched1
+                            ? Color.fromRGBO(126, 13, 13, 1.0)
+                            : Colors.black54),
+                  ),
+                  Switch(
+                    activeColor: Colors.cyan,
+                    activeTrackColor: Colors.cyan.shade100,
+                    inactiveThumbColor: Color.fromRGBO(126, 13, 13, 1.0),
+                    inactiveTrackColor:
+                        Color.fromRGBO(126, 13, 13, 0.4235294117647059),
+                    splashRadius: 50.0,
+                    value: isSwitched1,
+                    onChanged: (value) => setState(() => isSwitched1 = value),
+                  ),
+                  Text(
+                    'Periodic',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: isSwitched1
+                            ? Colors.cyan //Color.fromRGBO(139, 169, 2, 1.0)
+                            : Colors.black54),
+                  ),
+                  // Expanded(
+                  //   child: SizedBox(),
+                  // ),
+                  // Text('Debit'),
+                  // Switch(
+                  //   activeColor: Colors.green,
+                  //   activeTrackColor: Colors.green.shade100,
+                  //   inactiveThumbColor: Colors.blueGrey.shade600,
+                  //   inactiveTrackColor: Colors.grey.shade400,
+                  //   splashRadius: 50.0,
+                  //   value: isSwitched2,
+                  //   onChanged: (value) => setState(() => isSwitched2 = value),
+                  // ),
+                  // Text('Credit'),
+                ],
+              ),
+              Divider(),
+              Visibility(
+                visible: isSwitched1,
+                child: DropdownButtonFormField(
+                  isDense: false,
+                  // itemHeight: 60,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    filled: true,
+                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                    hintText: 'Amount',
+                    fillColor: Colors.white,
+                  ),
+                  isExpanded: true,
+                  validator: (value) => value!.isEmpty ||
+                          value == null ||
+                          int.tryParse(value.toString()) == 0
+                      ? 'Cant be Empty'
+                      : null,
+                  style: TextStyle(
+                      fontSize: 25,
+                      color: Colors.black54,
+                      fontFamily: 'oswald',
+                      fontWeight: FontWeight.w500),
+
+                  hint: Text(
+                    'Periode',
+                    style: TextStyle(
+                      fontSize: 25,
+                      color: Colors.black54,
+                      fontFamily: 'oswald',
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      isSwitched1 == false
+                          ? dropdownValue = 'one Time'
+                          : dropdownValue = newValue!;
+                    });
+                  },
+                  items: <String>[
+                    'Daily',
+                    'Monthly',
+                    'Annual',
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      alignment: Alignment.center,
+                      value: value,
+                      child: Text(
+                        value,
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              Divider(),
               TextFormField(
                 autofocus: true,
                 textAlign: TextAlign.center,
@@ -139,87 +248,32 @@ class _AddingChargesState extends State<AddingCharges> {
                   fillColor: Colors.white,
                 ),
               ),
-              Divider(),
-              DropdownButtonFormField(
-                isDense: false,
-                // itemHeight: 60,
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  filled: true,
-                  contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                  hintText: 'Amount',
-                  fillColor: Colors.white,
-                ),
-                isExpanded: true,
-                validator: (value) => value!.isEmpty ||
-                        value == null ||
-                        int.tryParse(value.toString()) == 0
-                    ? 'Cant be Empty'
-                    : null,
-                style: TextStyle(
-                    fontSize: 25,
-                    color: Colors.black54,
-                    fontFamily: 'oswald',
-                    fontWeight: FontWeight.w500),
 
-                hint: Text(
-                  'Charge Type',
-                  style: TextStyle(
-                    fontSize: 25,
-                    color: Colors.black54,
-                    fontFamily: 'oswald',
-                  ),
-                ),
-                alignment: Alignment.center,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    dropdownValue = newValue!;
-                  });
-                  dropdownValue == 'One Time'
-                      ? isVisible = true
-                      : isVisible = false;
-                },
-                items: <String>[
-                  'One Time',
-                  'Daily',
-                  'Monthly',
-                  'Annual',
-                ].map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    alignment: Alignment.center,
-                    value: value,
-                    child: Text(
-                      value,
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  );
-                }).toList(),
-              ),
-              Divider(),
-              Visibility(
-                visible: isVisible,
-                child: TextFormField(
-                  autofocus: true,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 25,
-                  ),
-                  keyboardType: TextInputType.number,
-                  controller: _deadlineController,
-                  validator: (value) => value!.isEmpty ||
-                          value == null ||
-                          int.tryParse(value.toString()) == 0
-                      ? 'Cant be Empty'
-                      : null,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    filled: true,
-                    contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                    hintText: 'Deadline (Days)',
-                    fillColor: Colors.white,
-                  ),
-                ),
-              ),
+              // Divider(),
+              // Visibility(
+              //   visible: isSwitched1,
+              //   child: TextFormField(
+              //     autofocus: true,
+              //     textAlign: TextAlign.center,
+              //     style: const TextStyle(
+              //       fontSize: 25,
+              //     ),
+              //     keyboardType: TextInputType.number,
+              //     controller: _deadlineController,
+              //     validator: (value) => value!.isEmpty ||
+              //             value == null ||
+              //             int.tryParse(value.toString()) == 0
+              //         ? 'Cant be Empty'
+              //         : null,
+              //     decoration: const InputDecoration(
+              //       border: InputBorder.none,
+              //       filled: true,
+              //       contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              //       hintText: 'Deadline (Days)',
+              //       fillColor: Colors.white,
+              //     ),
+              //   ),
+              // ),
               Padding(
                 padding: const EdgeInsets.all(30.0),
                 child: ElevatedButton(
@@ -249,6 +303,10 @@ class _AddingChargesState extends State<AddingCharges> {
   Future<void> AddCharges() async {
     CollectionReference ItemDetail =
         FirebaseFirestore.instance.collection('Charges');
+    // isSwitched1 == true
+    //     ? _deadlineSSController = _deadlineController
+    //     : _deadlineSSController = '0' ;
+    //_deadlineSSController = _deadlineController;
     return ItemDetail.doc()
         .set({
           'createdAt': Timestamp.now().toDate(),
@@ -257,7 +315,10 @@ class _AddingChargesState extends State<AddingCharges> {
           'amount': double.parse(_amountController.text),
           'deadline': int.parse(_deadlineController.text),
           'type': //_typeController.text,
-              dropdownValue,
+              // dropdownValue,
+              isSwitched1 == false ? dropdownValue = 'one Time' : dropdownValue,
+          'periodic': isSwitched1,
+          'credit': isSwitched2,
         }, SetOptions(merge: true))
         .then((value) => print("Item Added"))
         .catchError((error) => print("Failed to Add: $error"));

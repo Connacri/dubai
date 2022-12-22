@@ -9,7 +9,7 @@ import 'package:paginate_firestore/widgets/empty_display.dart';
 import 'package:paginate_firestore/widgets/empty_separator.dart';
 import 'package:paginate_firestore/widgets/initial_loader.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'testjason2.dart';
+
 import 'Estimate.dart';
 import 'QrScanner.dart';
 import 'invoiceList.dart';
@@ -71,8 +71,8 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
             // uploadItems(itemcount);
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) =>
-                  MainPageik(),
-                  //qrScannerik(),
+                  // MainPageik(),
+                  qrScannerik(),
             ));
           },
         ),
@@ -217,6 +217,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                 ),
                                 CircularPercentIndicator(
                                   circularStrokeCap: CircularStrokeCap.round,
+                                  lineWidth: 6.0,
                                   backgroundWidth: 3.0,
                                   animation: true,
                                   animationDuration: 1000,
@@ -241,7 +242,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  data['model'].toString(),
+                                  data['model'].toString().toUpperCase(),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
@@ -493,7 +494,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
   Future AlertD() => showDialog(
       context: context,
       builder: (context) => AlertDialog(
-            backgroundColor: color1,
+            backgroundColor: Colors.red.shade200,
             title: Center(
               child: Text(
                 'alert!!!'.toUpperCase(),
@@ -521,7 +522,10 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                     },
                     child: Text(
                       'Cancel'.toUpperCase(),
-                      style: TextStyle(fontSize: 15, color: colorRed),
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.red.shade100,
+                      ),
                     )),
               )
             ],

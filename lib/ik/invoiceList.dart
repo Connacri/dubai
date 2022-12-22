@@ -26,7 +26,10 @@ class invoiceList extends StatelessWidget {
 
             return documents.isEmpty
                 ? Center(
-                    child: Lottie.asset('assets/lotties/112136-empty-red.json',fit: BoxFit.contain,),
+                    child: Lottie.asset(
+                      'assets/lotties/112136-empty-red.json',
+                      fit: BoxFit.contain,
+                    ),
                   )
                 //   child: Text(
                 //   'Empty Invoice List',

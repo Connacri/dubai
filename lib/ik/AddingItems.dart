@@ -168,7 +168,7 @@ class Addingitems extends StatelessWidget {
                   labelStyle: TextStyle(
                     fontSize: 12,
                   ),
-                  hintText: 'Factory Price in USD',
+                  hintText: 'Factory Price in AED',
                   fillColor: Colors.white,
                   filled: true,
                   contentPadding: EdgeInsets.all(15),
@@ -384,19 +384,19 @@ class Addingitems extends StatelessWidget {
         FirebaseFirestore.instance.collection('Adventure');
     return ItemDetail.doc(_codeController.text)
         .set({
-          'createdAt': Timestamp.now().toDate(),
-          'category': _categoryController.text,
-          'code': code.toString(),
-          'model': _modelController.text,
-          'description': _descriptionController.text,
-          'size': _sizeController.text,
-          'prixAchat': double.parse(_prixAchatController.text),
-          'prixVente': double.parse(_prixVenteController.text),
-          'stock': int.parse(_stockController.text),
-          'codebar': code.toString(),
-          'oldStock': int.parse(_stockController.text),
-          'origine': _origineController.text,
-          'user': 'unknow',
+          'createdAt': Timestamp.now().toDate(), //*****
+          'category': _categoryController.text, //*****
+          'code': code.toString(), //*****
+          'model': _modelController.text, //*****
+          'description': _descriptionController.text, //*****
+          'size': _sizeController.text, //*****
+          'prixAchat': double.parse(_prixAchatController.text), //*****
+          'prixVente': double.parse(_prixVenteController.text), //*****
+          'stock': int.parse(_stockController.text), //*****
+          'codebar': code.toString(), //*****
+          'oldStock': int.parse(_stockController.text), //*****
+          'origine': _origineController.text, //*****
+          'user': 'unknow', //*****
         }, SetOptions(merge: true))
         .then((value) => print("Item Added"))
         .catchError((error) => print("Failed to Add: $error"));
