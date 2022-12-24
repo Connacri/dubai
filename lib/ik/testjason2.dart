@@ -209,36 +209,33 @@ class MainPageikState extends State<MainPageik> {
 }
 
 class Item2 {
-  final DateTime createdAt;
-  final String code;
   final String category;
-  final String model;
+  final String code;
+  final String codebar;
+  final DateTime createdAt;
   final String description;
-  final String size;
+  final String model;
+  final int oldStock;
+  final String origine;
   final double prixAchat;
   final double prixVente;
-
-  //final double prixDealer;
+  final String size;
   final int stock;
-  final int oldStock;
-  final String codebar;
-  final String origine;
   final String user;
 
   const Item2(
-      {required this.createdAt,
+      {required this.category,
       required this.code,
-      required this.category,
-      required this.model,
+      required this.codebar,
+      required this.createdAt,
       required this.description,
-      required this.size,
+      required this.model,
+      required this.oldStock,
+      required this.origine,
       required this.prixAchat,
       required this.prixVente,
-      //required this.prixDealer,
+      required this.size,
       required this.stock,
-      required this.oldStock,
-      required this.codebar,
-      required this.origine,
       required this.user});
 
   static Item2 fromJson(json) => Item2(
@@ -250,7 +247,6 @@ class Item2 {
         size: json['size']! as String,
         prixAchat: double.parse(json['prixAchat']!.toString()),
         prixVente: double.parse(json['prixVente']!.toString()),
-        // prixDealer: double.parse(json['prixDealer']!.toString()),
         stock: json['stock']! as int,
         oldStock: json['oldStock']! as int,
         codebar: json['codebar']!.toString() as String,
@@ -259,8 +255,9 @@ class Item2 {
       );
 
   Map<String, Object?> toJson() => {
-        'createdAt':
-            createdAt, ////***************** verifier sa !!!!!!!!!!!!!!!!!!!!!!
+        'createdAt': createdAt, //*****
+
+        ///***************** verifier sa !!!!!!!!!!!!!!!!!!!!!!
         'code': code,
         'category': category,
         'model': model,
@@ -268,7 +265,6 @@ class Item2 {
         'size': size,
         'prixAchat': prixAchat,
         'prixVente': prixVente,
-        // 'prixDealer': prixDealer,
         'stock': stock,
         'oldStock': oldStock,
         'codebar': codebar,

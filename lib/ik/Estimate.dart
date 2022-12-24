@@ -1070,6 +1070,7 @@ class _addCustomerToEstimate2State extends State<addCustomerToEstimate2> {
                     }
                     ;
                     _deleteAllEstimate();
+
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
                         builder: (context) => invoiceList(),

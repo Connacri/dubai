@@ -37,178 +37,174 @@ class chargeList extends StatelessWidget {
             summ += (documents[i]['amount']).toInt();
           }
 
-          return documents.isEmpty
-              ? Center(
-                  child: Lottie.asset('assets/lotties/130689-send-data-2.json'),
-                )
-              : Scaffold(
-                  appBar: AppBar(
-                    title: Text('Charges List'),
-                    actions: [
-                      Center(
-                        child: Text(
-                            NumberFormat.currency(symbol: '').format(summ)),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AddingCharges(),
-                          ));
-                        },
-                      ),
-                    ],
-                  ),
-                  body: ListView(
-                      shrinkWrap: true,
-                      children: documents
-                          .map(
-                            (doc) => Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              child: Card(
-                                child: Slidable(
-                                  key: const Key('keyslidable2'),
-                                  startActionPane: ActionPane(
-                                    key: Key('updatingCost'),
-                                    dragDismissible: true,
-                                    motion: const StretchMotion(),
-                                    extentRatio: 0.25,
-                                    children: [
-                                      SlidableAction(
-                                        onPressed: (Context) =>
-                                            //print(doc['amount']),
-                                            _upDate(Context, doc.id, doc),
-                                        borderRadius: BorderRadius.circular(10),
-                                        backgroundColor: Colors.green,
-                                        foregroundColor: Colors.white,
-                                        icon: Icons.edit,
-                                        label: 'Edit',
-                                      ),
-                                    ],
-                                  ),
-                                  endActionPane: ActionPane(
-                                    key: Key('deletingCost'),
-                                    motion: const StretchMotion(),
-                                    extentRatio: 0.25,
-                                    children: [
-                                      SlidableAction(
-                                        onPressed: (BuildContext) async {
-                                          print(doc.id);
-                                          await _deleteDialog(
-                                              context, doc, doc.id);
-                                        },
-                                        borderRadius: BorderRadius.circular(10),
-                                        backgroundColor: Colors.red,
-                                        foregroundColor: Colors.white,
-                                        icon: Icons.delete,
-                                        label: 'Delete',
-                                      ),
-                                    ],
-                                  ),
-                                  child: ListTile(
-                                    leading: doc['type'] == 'one time'
-                                        ? CircleAvatar(
-                                            backgroundColor: Colors.blueAccent,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(4.0),
-                                              child: FittedBox(
-                                                child: Text(
-                                                  doc['type'].toString(),
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        : CircleAvatar(
-                                            backgroundColor: Colors.cyan,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(4.0),
-                                              child: FittedBox(
-                                                child: Text(
-                                                  doc['type'].toString(),
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                ),
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Charges List'),
+              actions: [
+                Center(
+                  child: Text(NumberFormat.currency(symbol: '').format(summ)),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => AddingCharges(),
+                    ));
+                  },
+                ),
+              ],
+            ),
+            body: documents.isEmpty
+                ? Center(
+                    child:
+                        Lottie.asset('assets/lotties/130689-send-data-2.json'),
+                  )
+                : ListView(
+                    shrinkWrap: true,
+                    children: documents
+                        .map(
+                          (doc) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Card(
+                              child: Slidable(
+                                key: const Key('keyslidable2'),
+                                startActionPane: ActionPane(
+                                  key: Key('updatingCost'),
+                                  dragDismissible: true,
+                                  motion: const StretchMotion(),
+                                  extentRatio: 0.25,
+                                  children: [
+                                    SlidableAction(
+                                      onPressed: (Context) =>
+                                          //print(doc['amount']),
+                                          _upDate(Context, doc.id, doc),
+                                      borderRadius: BorderRadius.circular(10),
+                                      backgroundColor: Colors.green,
+                                      foregroundColor: Colors.white,
+                                      icon: Icons.edit,
+                                      label: 'Edit',
+                                    ),
+                                  ],
+                                ),
+                                endActionPane: ActionPane(
+                                  key: Key('deletingCost'),
+                                  motion: const StretchMotion(),
+                                  extentRatio: 0.25,
+                                  children: [
+                                    SlidableAction(
+                                      onPressed: (BuildContext) async {
+                                        print(doc.id);
+                                        await _deleteDialog(
+                                            context, doc, doc.id);
+                                      },
+                                      borderRadius: BorderRadius.circular(10),
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white,
+                                      icon: Icons.delete,
+                                      label: 'Delete',
+                                    ),
+                                  ],
+                                ),
+                                child: ListTile(
+                                  leading: doc['type'] == 'one time'
+                                      ? CircleAvatar(
+                                          backgroundColor: Colors.blueAccent,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: FittedBox(
+                                              child: Text(
+                                                doc['type'].toString(),
+                                                style: TextStyle(
+                                                    color: Colors.white),
                                               ),
                                             ),
                                           ),
-                                    trailing: Text(
-                                      NumberFormat.currency(symbol: '')
-                                          .format(doc['amount']),
-                                      style: TextStyle(
-                                        color: Colors.cyan,
-                                      ),
-                                    ),
-                                    title: Text(
-                                      'Model : ' +
-                                          doc['model'].toString().toUpperCase(),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    subtitle: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // Text(
-                                        //     'Deadline: ' +
-                                        //         (doc['deadline'].toString()) +
-                                        //         ' Days',
-                                        //     style: TextStyle(
-                                        //       color: Colors.cyan,
-                                        //     )),
-                                        Text(
-                                            'Daily : ' +
-                                                (doc['type'] == 'Annual'
-                                                    ? NumberFormat.currency(
-                                                            symbol: '')
-                                                        .format(
-                                                            doc['amount'] / 360)
-                                                    : doc['type'] == 'Monthly'
-                                                        ? NumberFormat.currency(
-                                                                symbol: '')
-                                                            .format(
-                                                                doc['amount'] /
-                                                                    30)
-                                                        : NumberFormat.currency(
-                                                                symbol: '')
-                                                            .format(
-                                                                doc['amount'])
-                                                            .toString()),
-                                            style: TextStyle(
-                                              color: Colors.cyan,
-                                            )),
-                                        Text(
-                                          'Date : ' +
-                                              doc['date']
-                                                  .toDate()
-                                                  .day
-                                                  .toString() +
-                                              '/' +
-                                              doc['date']
-                                                  .toDate()
-                                                  .month
-                                                  .toString() +
-                                              '/' +
-                                              doc['date']
-                                                  .toDate()
-                                                  .year
-                                                  .toString(),
-                                          style: TextStyle(fontSize: 12),
+                                        )
+                                      : CircleAvatar(
+                                          backgroundColor: Colors.cyan,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: FittedBox(
+                                              child: Text(
+                                                doc['type'].toString(),
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ],
+                                  trailing: Text(
+                                    NumberFormat.currency(symbol: '')
+                                        .format(doc['amount']),
+                                    style: TextStyle(
+                                      color: Colors.cyan,
                                     ),
+                                  ),
+                                  title: Text(
+                                    'Model : ' +
+                                        doc['model'].toString().toUpperCase(),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  subtitle: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // Text(
+                                      //     'Deadline: ' +
+                                      //         (doc['deadline'].toString()) +
+                                      //         ' Days',
+                                      //     style: TextStyle(
+                                      //       color: Colors.cyan,
+                                      //     )),
+                                      Text(
+                                          'Daily : ' +
+                                              (doc['type'] == 'Annual'
+                                                  ? NumberFormat.currency(
+                                                          symbol: '')
+                                                      .format(
+                                                          doc['amount'] / 360)
+                                                  : doc['type'] == 'Monthly'
+                                                      ? NumberFormat.currency(
+                                                              symbol: '')
+                                                          .format(
+                                                              doc['amount'] /
+                                                                  30)
+                                                      : NumberFormat.currency(
+                                                              symbol: '')
+                                                          .format(doc['amount'])
+                                                          .toString()),
+                                          style: TextStyle(
+                                            color: Colors.cyan,
+                                          )),
+                                      Text(
+                                        'Date : ' +
+                                            doc['date']
+                                                .toDate()
+                                                .day
+                                                .toString() +
+                                            '/' +
+                                            doc['date']
+                                                .toDate()
+                                                .month
+                                                .toString() +
+                                            '/' +
+                                            doc['date']
+                                                .toDate()
+                                                .year
+                                                .toString(),
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
                             ),
-                          )
-                          .toList()),
-                );
+                          ),
+                        )
+                        .toList()),
+          );
         } else if (snapshot.hasError) {
           return Text('Its Error!');
         }

@@ -1,5 +1,8 @@
+import 'dart:core';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
@@ -9,11 +12,14 @@ import 'package:paginate_firestore/widgets/empty_display.dart';
 import 'package:paginate_firestore/widgets/empty_separator.dart';
 import 'package:paginate_firestore/widgets/initial_loader.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
 
+import '../main.dart';
 import 'Estimate.dart';
 import 'QrScanner.dart';
 import 'invoiceList.dart';
 import 'pdf/chargesList.dart';
+import 'testjason2.dart';
 
 class mainPageFirestoreGetik extends StatefulWidget {
   const mainPageFirestoreGetik({Key? key}) : super(key: key);
@@ -62,63 +68,25 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
 
   @override
   Widget build(BuildContext context) {
+    double summCosts = 0;
+    List costsList = Provider.of<List<Charges>>(context);
+
+    for (int i = 0; i < costsList.length; i++) {
+      summCosts += (costsList[i].amount).toDouble();
+    }
+
+    double summItems = 0;
+    List itemsList = Provider.of<List<ItemsA>>(context);
+
+    for (int i = 0; i < itemsList.length; i++) {
+      summItems += (itemsList[i].prixAchat * itemsList[i].oldStock).toDouble();
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.qr_code),
-          onPressed: () {
-            // int itemcount = code.length;
-            // uploadItems(itemcount);
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) =>
-                  // MainPageik(),
-                  qrScannerik(),
-            ));
-          },
-        ),
-        actions: [
-          // IconButton(
-          //   icon: const Icon(Icons.home),
-          //   onPressed: () {
-          //     // int itemcount = code.length;
-          //     // uploadItems(itemcount);
-          //     Navigator.of(context).push(MaterialPageRoute(
-          //       builder: (context) => MainPageik(),
-          //     ));
-          //   },
-          // ),
-          IconButton(
-            icon: const Icon(Icons.incomplete_circle),
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => chargeList(),
-              ));
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.face),
-            onPressed: () {
-              // int itemcount = code.length;
-              // uploadItems(itemcount);
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => invoiceList(),
-              ));
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 15),
-            child: IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const estimateik(),
-                  ));
-                },
-                icon: const Icon(Icons.add_shopping_cart)),
-          ),
-        ],
-      ),
+      appBar: buildAppBar(context),
       body: PaginateFirestore(
           header: SLiverHeader(
+              sum: summCosts,
               colorGreen: colorGreen,
               colorOrange: colorOrange,
               colorRed: colorRed),
@@ -135,6 +103,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
           itemBuilder: (BuildContext, DocumentSnapshot, int) {
             var data = DocumentSnapshot[int].data() as Map?;
             String dataid = DocumentSnapshot[int].id;
+
             return GestureDetector(
               onTap: () async {
                 if (data['stock'] == 0) {
@@ -245,9 +214,14 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                   data['model'].toString().toUpperCase(),
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                Text(
-                                  data['size'].toString(),
-                                  overflow: TextOverflow.ellipsis,
+                                Column(
+                                  children: [
+                                    Text(
+                                      data['size'].toString(),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    // Text(sum.toString())
+                                  ],
                                 ),
                                 FittedBox(
                                   child: LinearPercentIndicator(
@@ -320,6 +294,13 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                       fontWeight: FontWeight.w500,
                                       color: colorRed),
                                 ),
+                                Text(
+                                  NumberFormat.currency(symbol: '').format(
+                                      summItems *
+                                          (data['prixAchat'] / summCosts)),
+                                ),
+                                // Text(NumberFormat.currency(symbol: '')
+                                //     .format(summItems)),
                               ],
                             ),
                           ),
@@ -331,6 +312,74 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
               ),
             );
           }),
+    );
+  }
+
+  AppBar buildAppBar(BuildContext context) {
+    return AppBar(
+      leading: IconButton(
+        icon: const Icon(Icons.qr_code),
+        onPressed: () {
+          // int itemcount = code.length;
+          // uploadItems(itemcount);
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                // MainPageik(),
+                qrScannerik(),
+          ));
+        },
+      ),
+      actions: [
+        // IconButton(
+        //   icon: const Icon(Icons.home),
+        //   onPressed: () {
+        //     // int itemcount = code.length;
+        //     // uploadItems(itemcount);
+        //     Navigator.of(context).push(MaterialPageRoute(
+        //       builder: (context) => MainPageik(),
+        //     ));
+        //   },
+        // ),
+        //IconButton(onPressed: () => getCost(), icon: Icon(Icons.print)),
+        // Padding(
+        //   padding: const EdgeInsets.only(right: 15),
+        //   child: IconButton(
+        //       onPressed: () {
+        //         Navigator.of(context).push(MaterialPageRoute(
+        //           builder: (context) => StateLess(),
+        //         ));
+        //       },
+        //       icon: const Icon(Icons.vaccines)),
+        // ),
+        IconButton(
+          icon: const Icon(Icons.incomplete_circle),
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => chargeList(),
+            ));
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.face),
+          onPressed: () {
+            // int itemcount = code.length;
+            // uploadItems(itemcount);
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => invoiceList(),
+            ));
+          },
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 15),
+          child: IconButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const estimateik(),
+                ));
+              },
+              icon: const Icon(Icons.add_shopping_cart)),
+        ),
+      ],
     );
   }
 
@@ -560,7 +609,6 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
             'size': data['size'],
             'prixAchat': data['prixAchat'],
             'prixVente': data['prixVente'],
-            'prixDealer': data['prixDealer'],
             'stock': data['stock'],
             'codebar': data['codebar'],
             'oldStock': data['oldStock'],
@@ -772,6 +820,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
 class SLiverHeader extends StatelessWidget {
   const SLiverHeader({
     Key? key,
+    required this.sum,
     required this.colorGreen,
     required this.colorOrange,
     required this.colorRed,
@@ -780,6 +829,7 @@ class SLiverHeader extends StatelessWidget {
   final Color colorGreen;
   final Color colorOrange;
   final Color colorRed;
+  final double sum;
 
   @override
   Widget build(BuildContext context) {
@@ -812,13 +862,13 @@ class SLiverHeader extends StatelessWidget {
                                 documentSnapshot['stock'] > 0)
                             .toList();
                         final int count5 = min5.length;
-                        print(count5);
+                        //print(count5);
                         final List<DocumentSnapshot> min0 = data
                             .where((DocumentSnapshot documentSnapshot) =>
                                 documentSnapshot['stock'] == 0)
                             .toList();
                         final int count0 = min0.length;
-                        print(count0);
+                        //print(count0);
                         return ListView(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
@@ -930,6 +980,15 @@ class SLiverHeader extends StatelessWidget {
                   }),
             ),
           ),
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => MainPageik(),
+              ));
+            },
+            icon: Icon(Icons.connecting_airports_sharp),
+          ),
+          ViewUserPage(),
         ],
       ),
     );
@@ -1178,6 +1237,127 @@ class StockPage extends StatelessWidget {
           );
         },
         //footer: Text('finish'),
+      ),
+    );
+  }
+}
+
+class ViewUserPage extends StatelessWidget {
+  double summProvider = 0;
+  double summItems = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    List userList = Provider.of<List<Charges>>(context);
+
+    for (int i = 0; i < userList.length; i++) {
+      summProvider += (userList[i].amount).toInt();
+    }
+
+    double summItems = 0;
+    List itemsList = Provider.of<List<ItemsA>>(context);
+
+    for (int i = 0; i < itemsList.length; i++) {
+      summItems += (itemsList[i].prixAchat * itemsList[i].oldStock).toDouble();
+    }
+
+    List invoiceList = Provider.of<List<Invoice>>(context);
+    double sumInvoice = 0;
+    double sumTotalInvoice = 0;
+
+    for (int i = 0; i < invoiceList.length; i++) {
+      sumInvoice += (invoiceList[i].benef).toDouble();
+      List ListItemsInvoice = invoiceList[i].itemCodeBar;
+      for (int ii = 0; ii < ListItemsInvoice.length; ii++) {
+        sumTotalInvoice +=
+            (ListItemsInvoice[ii]['prixVente'] * ListItemsInvoice[ii]['qty'])
+                .toDouble();
+      }
+    }
+
+    print(sumTotalInvoice);
+
+    return Padding(
+      padding: const EdgeInsets.all(18.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                'Factory Order = '.toUpperCase(),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+              Text(
+                NumberFormat.currency(symbol: '').format(summItems),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                'Taxes Import = '.toUpperCase(),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+              Text(
+                NumberFormat.currency(symbol: '').format(summProvider),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                'Global Invest = '.toUpperCase(),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+              Text(
+                NumberFormat.currency(symbol: '')
+                    .format(summProvider + summItems),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                'Sum All Invoices = '.toUpperCase(),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+              Text(
+                NumberFormat.currency(symbol: '').format(sumTotalInvoice),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                'Benef All Invoices = '.toUpperCase(),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+              Text(
+                NumberFormat.currency(symbol: '').format(sumInvoice),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

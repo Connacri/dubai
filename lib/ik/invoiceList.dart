@@ -6,8 +6,12 @@ import 'package:lottie/lottie.dart';
 import 'invoiceDetail.dart';
 
 class invoiceList extends StatelessWidget {
-  const invoiceList({Key? key}) : super(key: key);
+  invoiceList({
+    Key? key,
+    //  required this.sumInvoices,
+  }) : super(key: key);
 
+  //final double sumInvoices;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,10 +35,6 @@ class invoiceList extends StatelessWidget {
                       fit: BoxFit.contain,
                     ),
                   )
-                //   child: Text(
-                //   'Empty Invoice List',
-                //   style: TextStyle(fontSize: 25),
-                // ))
                 : ListView(
                     shrinkWrap: true,
                     children: documents
