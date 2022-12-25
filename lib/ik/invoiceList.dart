@@ -8,7 +8,7 @@ import 'invoiceDetail.dart';
 class invoiceList extends StatelessWidget {
   invoiceList({
     Key? key,
-    //  required this.sumInvoices,
+    //required this.sumInvoices,
   }) : super(key: key);
 
   //final double sumInvoices;

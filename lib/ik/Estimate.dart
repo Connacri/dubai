@@ -111,15 +111,16 @@ class _estimateikState extends State<estimateik> {
                           for (int i = 0; i < ds.length; i++) {
                             cout += ds[i]['prixAchat'] * (ds[i]['qty']);
                           }
-                          print(summ.toString());
-                          print(cout.toString());
-                          print(summ - cout);
+                          double countEarn = 0;
+                          for (int i = 0; i < ds.length; i++) {
+                            countEarn += ds[i]['earn'] * (ds[i]['qty']);
+                          }
 
                           Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => addCustomerToEstimate2(
                               dataDevis: LLIst,
                               sum: summ,
-                              benef: summ - cout,
+                              benef: countEarn,
                             ),
                           ));
                         },
@@ -465,6 +466,10 @@ buildTotal() {
             cout += ds[i]['prixAchat'] * (ds[i]['qty']);
           }
 
+          double countEarn = 0;
+          for (int i = 0; i < ds.length; i++) {
+            countEarn += ds[i]['earn'] * (ds[i]['qty']);
+          }
           return Padding(
             padding: const EdgeInsets.only(right: 10),
             child: Column(
@@ -497,28 +502,6 @@ buildTotal() {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      'Cout: ',
-                      style: const TextStyle(
-                          color: Colors.deepPurple,
-                          fontFamily: 'Oswald',
-                          fontSize: 17,
-                          fontWeight: FontWeight.normal),
-                    ),
-                    Text(
-                      NumberFormat.currency(symbol: '')
-                          .format(cout), //.toString() + '0',
-                      style: const TextStyle(
-                          color: Colors.deepPurple,
-                          fontFamily: 'Oswald',
-                          fontSize: 15,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
                       'Benef: ',
                       style: const TextStyle(
                           color: Colors.green,
@@ -528,7 +511,7 @@ buildTotal() {
                     ),
                     Text(
                       NumberFormat.currency(symbol: '')
-                          .format(summ - cout), //.toString() + '0',
+                          .format(countEarn), //.toString() + '0',
                       style: const TextStyle(
                           color: Colors.green,
                           fontFamily: 'Oswald',

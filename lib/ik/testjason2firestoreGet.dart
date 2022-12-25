@@ -19,7 +19,6 @@ import 'Estimate.dart';
 import 'QrScanner.dart';
 import 'invoiceList.dart';
 import 'pdf/chargesList.dart';
-import 'testjason2.dart';
 
 class mainPageFirestoreGetik extends StatefulWidget {
   const mainPageFirestoreGetik({Key? key}) : super(key: key);
@@ -110,9 +109,17 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
           itemBuilder: (BuildContext, DocumentSnapshot, int) {
             var data = DocumentSnapshot[int].data() as Map?;
             String dataid = DocumentSnapshot[int].id;
-            final double earn =
+            // final double earn =
+            //     (sumTaxeImport * data!['prixAchat'] / summItems) +
+            //         data['prixAchat'];
+            final double PUA =
                 (sumTaxeImport * data!['prixAchat'] / summItems) +
                     data['prixAchat'];
+
+            final double earn = data['prixVente'] -
+                ((sumTaxeImport * data['prixAchat'] / summItems) +
+                    data['prixAchat']);
+
             return Column(
               children: [
                 GestureDetector(
@@ -136,7 +143,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                       children: [
                         // A SlidableAction can have an icon and/or a label.
                         SlidableAction(
-                          onPressed: (Context) => _upDate(dataid, data!),
+                          onPressed: (Context) => _upDate(dataid, data),
                           backgroundColor: color3,
                           // Colors.orange,
                           foregroundColor: Colors.white,
@@ -168,46 +175,58 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                             flex: 2,
                             child: Padding(
                               padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                              child: Stack(
-                                alignment: AlignmentDirectional.center,
+                              child: Column(
                                 children: [
-                                  CircleAvatar(
-                                    backgroundColor: data!['stock'] <= 5
-                                        ? data['stock'] != 0
-                                            ? colorOrange
-                                            : colorRed
-                                        : colorBlue,
-                                    radius: 25,
-                                    child: FittedBox(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          data['stock']
-                                              .toString()
-                                              .toUpperCase(),
-                                          style: TextStyle(
-                                              color: data['stock'] <= 5
-                                                  ? data['stock'] != 0
-                                                      ? Colors.black54
-                                                      : Colors.white
-                                                  : Colors.white,
-                                              fontSize: 20),
+                                  Stack(
+                                    alignment: AlignmentDirectional.center,
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor: data['stock'] <= 5
+                                            ? data['stock'] != 0
+                                                ? colorOrange
+                                                : colorRed
+                                            : colorBlue,
+                                        radius: 25,
+                                        child: FittedBox(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              data['stock']
+                                                  .toString()
+                                                  .toUpperCase(),
+                                              style: TextStyle(
+                                                  color: data['stock'] <= 5
+                                                      ? data['stock'] != 0
+                                                          ? Colors.black54
+                                                          : Colors.white
+                                                      : Colors.white,
+                                                  fontSize: 20),
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    ),
+                                      CircularPercentIndicator(
+                                        circularStrokeCap:
+                                            CircularStrokeCap.round,
+                                        lineWidth: 6.0,
+                                        backgroundWidth: 3.0,
+                                        animation: true,
+                                        animationDuration: 1000,
+                                        percent: data['stock'] >
+                                                data['oldStock']
+                                            ? 1
+                                            : data['stock'] / data['oldStock'],
+                                        progressColor: colorGreen,
+                                        backgroundColor: colorRed,
+                                        radius: 26.0,
+                                      ),
+                                    ],
                                   ),
-                                  CircularPercentIndicator(
-                                    circularStrokeCap: CircularStrokeCap.round,
-                                    lineWidth: 6.0,
-                                    backgroundWidth: 3.0,
-                                    animation: true,
-                                    animationDuration: 1000,
-                                    percent: data['stock'] > data['oldStock']
-                                        ? 1
-                                        : data['stock'] / data['oldStock'],
-                                    progressColor: colorGreen,
-                                    backgroundColor: colorRed,
-                                    radius: 26.0,
+                                  Text(
+                                    data['code'],
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500),
                                   ),
                                 ],
                               ),
@@ -226,46 +245,37 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                     data['model'].toString().toUpperCase(),
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  Text(
+                                    data['size'].toString(),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Text(
-                                        data['size'].toString(),
+                                        NumberFormat.currency(symbol: 'PUA ')
+                                            .format(data['prixAchat']),
                                         overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            color: colorGreen),
                                       ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            NumberFormat.currency(
-                                                    symbol: 'PUA ')
-                                                .format(data['prixAchat']),
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                color: colorGreen),
-                                          ),
-                                          Spacer(),
-                                          Text(
-                                            NumberFormat.currency(
-                                                    symbol: 'Tax ')
-                                                .format(sumTaxeImport *
-                                                    data['prixAchat'] /
-                                                    summItems),
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                color: colorRed),
-                                          ),
-                                          Spacer(),
-                                          Spacer(),
-                                          Spacer()
-                                        ],
+                                      Spacer(),
+                                      Text(
+                                        NumberFormat.currency(symbol: 'Tax ')
+                                            .format(sumTaxeImport *
+                                                data['prixAchat'] /
+                                                summItems),
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            color: colorRed),
                                       ),
+                                      Spacer(),
+                                      Spacer(),
+                                      Spacer()
                                     ],
                                   ),
                                   FittedBox(
@@ -324,26 +334,18 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                   ),
                                   Text(
                                     NumberFormat.currency(symbol: 'PUA ')
-                                        .format((sumTaxeImport *
-                                                data['prixAchat'] /
-                                                summItems) +
-                                            data['prixAchat']),
+                                        .format(PUA),
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
                                         color: colorRed),
                                   ),
-                                  (data['prixVente'] -
-                                              ((sumTaxeImport *
-                                                      data['prixAchat'] /
-                                                      summItems) +
-                                                  data['prixAchat'])) >
-                                          0
+                                  earn > 0
                                       ? Text(
                                           NumberFormat.currency(symbol: 'Earn ')
                                               .format(data['prixVente'] -
-                                                  (earn
+                                                  (PUA
                                                   // (sumTaxeImport *
                                                   //     data['prixAchat'] /
                                                   //     summItems) +
@@ -391,35 +393,13 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
       ),
       actions: [
         // IconButton(
-        //   icon: const Icon(Icons.home),
         //   onPressed: () {
-        //     // int itemcount = code.length;
-        //     // uploadItems(itemcount);
         //     Navigator.of(context).push(MaterialPageRoute(
         //       builder: (context) => MainPageik(),
         //     ));
         //   },
+        //   icon: Icon(Icons.connecting_airports_sharp),
         // ),
-        //IconButton(onPressed: () => getCost(), icon: Icon(Icons.print)),
-        // Padding(
-        //   padding: const EdgeInsets.only(right: 15),
-        //   child: IconButton(
-        //       onPressed: () {
-        //         Navigator.of(context).push(MaterialPageRoute(
-        //           builder: (context) => StateLess(),
-        //         ));
-        //       },
-        //       icon: const Icon(Icons.vaccines)),
-        // ),
-        IconButton(
-          onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => MainPageik(),
-            ));
-          },
-          icon: Icon(Icons.connecting_airports_sharp),
-        ),
-
         IconButton(
           icon: const Icon(Icons.incomplete_circle),
           onPressed: () {
@@ -743,13 +723,13 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                     dataid.toUpperCase().toString(),
                   ),
                 ),
-                TextField(
-                  scribbleEnabled: true,
-                  controller: _codeController,
-                  decoration: const InputDecoration(
-                    label: Text('code'),
-                  ),
-                ),
+                // TextField(
+                //   scribbleEnabled: true,
+                //   controller: _codeController,
+                //   decoration: const InputDecoration(
+                //     label: Text('code'),
+                //   ),
+                // ),
                 TextField(
                   controller: _codebarController,
                   decoration: const InputDecoration(
@@ -810,17 +790,17 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                 TextField(
                   controller: _oldStockController,
                   decoration: const InputDecoration(
-                    label: Text('oldStock'),
+                    label: Text('Initial Stock'),
                   ),
                   keyboardType: TextInputType.number,
                 ),
-                TextField(
-                  controller: _userController,
-                  decoration: const InputDecoration(
-                    label: Text('User'),
-                  ),
-                  keyboardType: TextInputType.text,
-                ),
+                // TextField(
+                //   controller: _userController,
+                //   decoration: const InputDecoration(
+                //     label: Text('User'),
+                //   ),
+                //   keyboardType: TextInputType.text,
+                // ),
                 ElevatedButton(
                     onPressed: () async {
                       final String _code = _codeController.text;
