@@ -68,6 +68,13 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
 
   @override
   Widget build(BuildContext context) {
+    double sumTaxeImport = 0;
+    List userList = Provider.of<List<Charges>>(context);
+
+    for (int i = 0; i < userList.length; i++) {
+      sumTaxeImport += (userList[i].amount).toInt();
+    }
+
     double summCosts = 0;
     List costsList = Provider.of<List<Charges>>(context);
 
@@ -103,213 +110,266 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
           itemBuilder: (BuildContext, DocumentSnapshot, int) {
             var data = DocumentSnapshot[int].data() as Map?;
             String dataid = DocumentSnapshot[int].id;
+            final double earn =
+                (sumTaxeImport * data!['prixAchat'] / summItems) +
+                    data['prixAchat'];
+            return Column(
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    if (data['stock'] == 0) {
+                      await AlertD();
+                    } else {
+                      await addToDevisDialog(dataid, data, earn);
+                    }
+                  },
+                  child: Slidable(
+                    key: const Key('keyslidable'),
+                    startActionPane: ActionPane(
+                      // A motion is a widget used to control how the pane animates.
+                      motion: const StretchMotion(),
 
-            return GestureDetector(
-              onTap: () async {
-                if (data['stock'] == 0) {
-                  await AlertD();
-                } else {
-                  await addToDevisDialog(dataid, data);
-                }
-              },
-              child: Slidable(
-                key: const Key('keyslidable'),
-                startActionPane: ActionPane(
-                  // A motion is a widget used to control how the pane animates.
-                  motion: const StretchMotion(),
+                      // A pane can dismiss the Slidable.
+                      //dismissible: DismissiblePane(onDismissed: () {}),//******************* */
 
-                  // A pane can dismiss the Slidable.
-                  //dismissible: DismissiblePane(onDismissed: () {}),//******************* */
-
-                  // All actions are defined in the children parameter.
-                  children: [
-                    // A SlidableAction can have an icon and/or a label.
-                    SlidableAction(
-                      onPressed: (Context) => _upDate(dataid, data!),
-                      backgroundColor: color3,
-                      // Colors.orange,
-                      foregroundColor: Colors.white,
-                      icon: Icons.edit,
-                      label: 'Edit',
-                    ),
-                  ],
-                ),
-                endActionPane: ActionPane(
-                  motion: const StretchMotion(),
-                  children: [
-                    SlidableAction(
-                      // An action can be bigger than the others.
-                      flex: 2,
-                      onPressed: (Context) async {
-                        await showAlertDialog(context, data, dataid);
-                      },
-                      backgroundColor: colorRed,
-                      foregroundColor: Colors.white,
-                      icon: Icons.delete,
-                      label: 'Delete',
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Card(
-                    child: Row(
+                      // All actions are defined in the children parameter.
                       children: [
-                        Expanded(
+                        // A SlidableAction can have an icon and/or a label.
+                        SlidableAction(
+                          onPressed: (Context) => _upDate(dataid, data!),
+                          backgroundColor: color3,
+                          // Colors.orange,
+                          foregroundColor: Colors.white,
+                          icon: Icons.edit,
+                          label: 'Edit',
+                        ),
+                      ],
+                    ),
+                    endActionPane: ActionPane(
+                      motion: const StretchMotion(),
+                      children: [
+                        SlidableAction(
+                          // An action can be bigger than the others.
                           flex: 2,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                            child: Stack(
-                              alignment: AlignmentDirectional.center,
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: data!['stock'] <= 5
-                                      ? data['stock'] != 0
-                                          ? colorOrange
-                                          : colorRed
-                                      : colorBlue,
-                                  radius: 25,
-                                  child: FittedBox(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        data['stock'].toString().toUpperCase(),
-                                        style: TextStyle(
-                                            color: data['stock'] <= 5
-                                                ? data['stock'] != 0
-                                                    ? Colors.black54
-                                                    : Colors.white
-                                                : Colors.white,
-                                            fontSize: 20),
+                          onPressed: (Context) async {
+                            await showAlertDialog(context, data, dataid);
+                          },
+                          backgroundColor: colorRed,
+                          foregroundColor: Colors.white,
+                          icon: Icons.delete,
+                          label: 'Delete',
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+                              child: Stack(
+                                alignment: AlignmentDirectional.center,
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: data!['stock'] <= 5
+                                        ? data['stock'] != 0
+                                            ? colorOrange
+                                            : colorRed
+                                        : colorBlue,
+                                    radius: 25,
+                                    child: FittedBox(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          data['stock']
+                                              .toString()
+                                              .toUpperCase(),
+                                          style: TextStyle(
+                                              color: data['stock'] <= 5
+                                                  ? data['stock'] != 0
+                                                      ? Colors.black54
+                                                      : Colors.white
+                                                  : Colors.white,
+                                              fontSize: 20),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                CircularPercentIndicator(
-                                  circularStrokeCap: CircularStrokeCap.round,
-                                  lineWidth: 6.0,
-                                  backgroundWidth: 3.0,
-                                  animation: true,
-                                  animationDuration: 1000,
-                                  percent: data['stock'] > data['oldStock']
-                                      ? 1
-                                      : data['stock'] / data['oldStock'],
-                                  progressColor: colorGreen,
-                                  backgroundColor: colorRed,
-                                  radius: 26.0,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 8,
-                          child: Padding(
-                            padding: EdgeInsets.all(10),
-                            //.fromLTRB(15, 10, 0, 10),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  data['model'].toString().toUpperCase(),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                Column(
-                                  children: [
-                                    Text(
-                                      data['size'].toString(),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    // Text(sum.toString())
-                                  ],
-                                ),
-                                FittedBox(
-                                  child: LinearPercentIndicator(
-                                    trailing: Text(
-                                      NumberFormat.currency(
-                                                  symbol: '', decimalDigits: 0)
-                                              .format((data['stock'] *
-                                                  100 /
-                                                  data['oldStock'])) +
-                                          '%',
-                                      style: TextStyle(fontSize: 25),
-                                    ),
-                                    width: MediaQuery.of(context).size.width,
+                                  CircularPercentIndicator(
+                                    circularStrokeCap: CircularStrokeCap.round,
+                                    lineWidth: 6.0,
+                                    backgroundWidth: 3.0,
                                     animation: true,
-                                    lineHeight: 25.0,
                                     animationDuration: 1000,
                                     percent: data['stock'] > data['oldStock']
                                         ? 1
                                         : data['stock'] / data['oldStock'],
-                                    // center: Text(
-                                    //   NumberFormat.currency(
-                                    //               symbol: '', decimalDigits: 0)
-                                    //           .format((data['stock'] *
-                                    //               100 /
-                                    //               data['oldStock'])) +
-                                    //       '%',
-                                    //   style: TextStyle(),
-                                    // ),
-                                    barRadius: Radius.circular(20.0),
                                     progressColor: colorGreen,
                                     backgroundColor: colorRed,
-                                    restartAnimation: false,
+                                    radius: 26.0,
                                   ),
-                                )
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  NumberFormat.currency(symbol: '')
-                                      .format(data['prixVente']),
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                Text(
-                                  NumberFormat.currency(symbol: '')
-                                      .format(data['prixVente'] * 0.8),
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: colorGreen),
-                                ),
-                                Text(
-                                  NumberFormat.currency(symbol: '')
-                                      .format(data['prixAchat']),
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: colorRed),
-                                ),
-                                Text(
-                                  NumberFormat.currency(symbol: '').format(
-                                      summItems *
-                                          (data['prixAchat'] / summCosts)),
-                                ),
-                                // Text(NumberFormat.currency(symbol: '')
-                                //     .format(summItems)),
-                              ],
+                          Expanded(
+                            flex: 8,
+                            child: Padding(
+                              padding: EdgeInsets.all(10),
+                              //.fromLTRB(15, 10, 0, 10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    data['model'].toString().toUpperCase(),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        data['size'].toString(),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            NumberFormat.currency(
+                                                    symbol: 'PUA ')
+                                                .format(data['prixAchat']),
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                                color: colorGreen),
+                                          ),
+                                          Spacer(),
+                                          Text(
+                                            NumberFormat.currency(
+                                                    symbol: 'Tax ')
+                                                .format(sumTaxeImport *
+                                                    data['prixAchat'] /
+                                                    summItems),
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                                color: colorRed),
+                                          ),
+                                          Spacer(),
+                                          Spacer(),
+                                          Spacer()
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  FittedBox(
+                                    child: LinearPercentIndicator(
+                                      trailing: Text(
+                                        NumberFormat.currency(
+                                                    symbol: '',
+                                                    decimalDigits: 0)
+                                                .format((data['stock'] *
+                                                    100 /
+                                                    data['oldStock'])) +
+                                            '%',
+                                        style: TextStyle(fontSize: 25),
+                                      ),
+                                      width: MediaQuery.of(context).size.width,
+                                      animation: true,
+                                      lineHeight: 25.0,
+                                      animationDuration: 1000,
+                                      percent: data['stock'] > data['oldStock']
+                                          ? 1
+                                          : data['stock'] / data['oldStock'],
+                                      // center: Text(
+                                      //   NumberFormat.currency(
+                                      //               symbol: '', decimalDigits: 0)
+                                      //           .format((data['stock'] *
+                                      //               100 /
+                                      //               data['oldStock'])) +
+                                      //       '%',
+                                      //   style: TextStyle(),
+                                      // ),
+                                      barRadius: Radius.circular(20.0),
+                                      progressColor: colorGreen,
+                                      backgroundColor: colorRed,
+                                      restartAnimation: false,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                          Expanded(
+                            flex: 3,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    NumberFormat.currency(symbol: 'R ')
+                                        .format(data['prixVente']),
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  Text(
+                                    NumberFormat.currency(symbol: 'PUA ')
+                                        .format((sumTaxeImport *
+                                                data['prixAchat'] /
+                                                summItems) +
+                                            data['prixAchat']),
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: colorRed),
+                                  ),
+                                  (data['prixVente'] -
+                                              ((sumTaxeImport *
+                                                      data['prixAchat'] /
+                                                      summItems) +
+                                                  data['prixAchat'])) >
+                                          0
+                                      ? Text(
+                                          NumberFormat.currency(symbol: 'Earn ')
+                                              .format(data['prixVente'] -
+                                                  (earn
+                                                  // (sumTaxeImport *
+                                                  //     data['prixAchat'] /
+                                                  //     summItems) +
+                                                  // data['prixAchat']
+                                                  )),
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: colorGreen),
+                                        )
+                                      : Icon(
+                                          Icons.cancel,
+                                          color: colorRed,
+                                        )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
+                Divider(),
+              ],
             );
           }),
     );
@@ -352,6 +412,15 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
         //       icon: const Icon(Icons.vaccines)),
         // ),
         IconButton(
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => MainPageik(),
+            ));
+          },
+          icon: Icon(Icons.connecting_airports_sharp),
+        ),
+
+        IconButton(
           icon: const Icon(Icons.incomplete_circle),
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
@@ -383,7 +452,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
     );
   }
 
-  Future addToEstimateDialog(String dataid, Map data) => showDialog(
+  Future addToEstimateDialog(String dataid, earn, Map data) => showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Center(
@@ -408,6 +477,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                       addItemsToDevis2(
                         dataid,
                         data,
+                        earn,
                         _qtyController.text,
                       );
                       //_qtyController.clear();
@@ -451,7 +521,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
         ),
       );
 
-  Future addToDevisDialog(dataid, data) => showDialog(
+  Future addToDevisDialog(dataid, data, earn) => showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Center(
@@ -497,7 +567,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                       //       -int.parse(_qtyController.text))
                       // });
                       // setState(() {
-                      addItemsToDevis2(dataid, data, _qtyController.text);
+                      addItemsToDevis2(dataid, data, earn, _qtyController.text);
                       _qtyController.clear();
                       // });
                     } else {
@@ -585,7 +655,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
             ),
           ));
 
-  Future<void> addItemsToDevis2(dataid, data, qty) async {
+  Future<void> addItemsToDevis2(dataid, data, earn, qty) async {
     CollectionReference devisitem =
         FirebaseFirestore.instance.collection('Estimate');
 
@@ -615,6 +685,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
             'origine': data['origine'],
             'user': data['user'],
             'qty': int.parse(qty),
+            'earn': earn,
           }, SetOptions(merge: true))
           .then((value) => print("Item Added to Devis"))
           .catchError((error) => print("Failed to add Item to Devis: $error"))
@@ -837,7 +908,7 @@ class SLiverHeader extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: MediaQuery.of(context).size.height / 10,
+            height: MediaQuery.of(context).size.height / 8,
             width: MediaQuery.of(context).size.width,
             child: Center(
               child: StreamBuilder(
@@ -873,100 +944,230 @@ class SLiverHeader extends StatelessWidget {
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Column(
-                                  children: [
-                                    Text(
-                                      'Total'.toUpperCase().trim(),
-                                    ),
-                                    Text(
-                                      data.length.toString(),
-                                      style: TextStyle(
-                                        fontSize: 30.0,
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 18.0, right: 18),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 4.0, right: 4),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            gradient: RadialGradient(
+                                                radius: 1,
+                                                tileMode: TileMode.clamp,
+                                                colors: [
+                                                  Color.fromARGB(255, 243, 236,
+                                                      216), //Colors.greenAccent;
+                                                  Color.fromARGB(
+                                                      255, 66, 58, 41),
+                                                ])),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                'Total'.toUpperCase().trim(),
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                              Text(
+                                                data.length.toString(),
+                                                style: TextStyle(
+                                                    fontSize: 30.0,
+                                                    color: Colors.white),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ],
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (context) => StockPage(
-                                          pageQuery: FirebaseFirestore.instance
-                                              .collection('Adventure')
-                                              .where('stock',
-                                                  isGreaterThan: 0)),
-                                    ));
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Stock'.toUpperCase().trim(),
-                                        style: TextStyle(color: colorGreen),
-                                      ),
-                                      Text(
-                                        (data.length - count0).toString(),
-                                        style: TextStyle(
-                                            color: colorGreen, fontSize: 30),
-                                      ),
-                                    ],
                                   ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (context) => StockPage(
-                                          pageQuery: FirebaseFirestore.instance
-                                              .collection('Adventure')
-                                              .where('stock', isGreaterThan: 0)
-                                              .where('stock',
-                                                  isLessThanOrEqualTo: 5)),
-                                    ));
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Alert'.toUpperCase().trim(),
-                                        style: TextStyle(color: colorOrange),
-                                      ),
-                                      Text(
-                                        count5.toString(),
-                                        style: TextStyle(
-                                            color: colorOrange, fontSize: 30),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (context) => StockPage(
-                                          pageQuery: FirebaseFirestore.instance
-                                              .collection('Adventure')
-                                              .where('stock',
-                                                  isLessThanOrEqualTo: 0)),
-                                    ));
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Out'.toUpperCase().trim(),
-                                        style: TextStyle(color: colorRed),
-                                      ),
-                                      Text(
-                                        count0.toString(),
-                                        style: TextStyle(
-                                            color: colorRed, fontSize: 30),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                                  Expanded(
+                                      child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 4.0, right: 4),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                gradient: RadialGradient(
+                                                    radius: 1,
+                                                    tileMode: TileMode.clamp,
+                                                    colors: [
+                                                      Color.fromARGB(
+                                                          255,
+                                                          139,
+                                                          169,
+                                                          2), //Colors.greenAccent;
+                                                      Color.fromARGB(
+                                                          255, 66, 58, 41),
+                                                    ])),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) => StockPage(
+                                                      pageQuery:
+                                                          FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  'Adventure')
+                                                              .where('stock',
+                                                                  isGreaterThan:
+                                                                      0)),
+                                                ));
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                      'Stock'
+                                                          .toUpperCase()
+                                                          .trim(),
+                                                      style: TextStyle(
+                                                          color: Colors.yellow),
+                                                    ),
+                                                    Text(
+                                                      (data.length - count0)
+                                                          .toString(),
+                                                      style: TextStyle(
+                                                          color: Colors.yellow,
+                                                          fontSize: 30),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ))),
+                                  Expanded(
+                                      child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 4.0, right: 4),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                gradient: RadialGradient(
+                                                    radius: 1,
+                                                    tileMode: TileMode.clamp,
+                                                    colors: [
+                                                      Color.fromARGB(
+                                                          255,
+                                                          255,
+                                                          196,
+                                                          0), //Colors.greenAccent;
+                                                      Color.fromARGB(
+                                                          255, 143, 4, 4),
+                                                    ])),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) => StockPage(
+                                                      pageQuery: FirebaseFirestore
+                                                          .instance
+                                                          .collection(
+                                                              'Adventure')
+                                                          .where('stock',
+                                                              isGreaterThan: 0)
+                                                          .where('stock',
+                                                              isLessThanOrEqualTo:
+                                                                  5)),
+                                                ));
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                      'Alert'
+                                                          .toUpperCase()
+                                                          .trim(),
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.black54),
+                                                    ),
+                                                    Text(
+                                                      count5.toString(),
+                                                      style: TextStyle(
+                                                          color: Colors.black54,
+                                                          fontSize: 30),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ))),
+                                  Expanded(
+                                      child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 4.0, right: 4),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                gradient: RadialGradient(
+                                                    radius: 1,
+                                                    tileMode: TileMode.clamp,
+                                                    colors: [
+                                                      Color.fromARGB(
+                                                          255,
+                                                          255,
+                                                          95,
+                                                          0), //Colors.greenAccent;
+                                                      Color.fromARGB(
+                                                          255, 38, 32, 20),
+                                                    ])),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Navigator.of(context)
+                                                    .push(MaterialPageRoute(
+                                                  builder: (context) => StockPage(
+                                                      pageQuery: FirebaseFirestore
+                                                          .instance
+                                                          .collection(
+                                                              'Adventure')
+                                                          .where('stock',
+                                                              isLessThanOrEqualTo:
+                                                                  0)),
+                                                ));
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                      'Out'
+                                                          .toUpperCase()
+                                                          .trim(),
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                    Text(
+                                                      count0.toString(),
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 30),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ))),
+                                ],
+                              ),
                             ),
                           ],
                         );
@@ -980,15 +1181,7 @@ class SLiverHeader extends StatelessWidget {
                   }),
             ),
           ),
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => MainPageik(),
-              ));
-            },
-            icon: Icon(Icons.connecting_airports_sharp),
-          ),
-          ViewUserPage(),
+          ViewGlobalCompte(),
         ],
       ),
     );
@@ -1242,16 +1435,23 @@ class StockPage extends StatelessWidget {
   }
 }
 
-class ViewUserPage extends StatelessWidget {
-  double summProvider = 0;
-  double summItems = 0;
+class ViewGlobalCompte extends StatelessWidget {
+  Color colorWhite = Colors.white;
+
+  Color colorRed = Color.fromARGB(255, 213, 2, 2); //Colors.deepPurple;
+  Color colorOrange =
+      Color.fromARGB(255, 255, 95, 0); //Colors.deepOrangeAccent;
+  Color colorGreen = Color.fromARGB(255, 139, 169, 2); //Colors.greenAccent;
+  Color colorBrown = Color.fromARGB(255, 66, 58, 41); //Colors.blueAccent;
 
   @override
   Widget build(BuildContext context) {
+    double sumTaxeImport = 0;
+
     List userList = Provider.of<List<Charges>>(context);
 
     for (int i = 0; i < userList.length; i++) {
-      summProvider += (userList[i].amount).toInt();
+      sumTaxeImport += (userList[i].amount).toInt();
     }
 
     double summItems = 0;
@@ -1279,85 +1479,127 @@ class ViewUserPage extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.all(18.0),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            gradient: LinearGradient(colors: [
+              Color.fromARGB(255, 139, 169, 2), //Colors.greenAccent;
+              Color.fromARGB(255, 66, 58, 41),
+            ])),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+          child: Column(
             children: [
-              Text(
-                'Factory Order = '.toUpperCase(),
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Whole Invest'.toUpperCase(),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    NumberFormat.currency(symbol: '')
+                        .format(sumTaxeImport + summItems),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ],
               ),
-              Text(
-                NumberFormat.currency(symbol: '').format(summItems),
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Factory Order'.toUpperCase(),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: colorWhite,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    NumberFormat.currency(symbol: '').format(summItems),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: colorWhite,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Fix Taxes'.toUpperCase(),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.yellow),
+                  ),
+                  Text(
+                    NumberFormat.currency(symbol: '').format(sumTaxeImport),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.yellow,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Sales Total'.toUpperCase(),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: colorWhite,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    NumberFormat.currency(symbol: '').format(sumTotalInvoice),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: colorWhite,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Earnings '.toUpperCase(),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.greenAccent),
+                  ),
+                  Text(
+                    NumberFormat.currency(symbol: '').format(sumInvoice),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.greenAccent),
+                  ),
+                ],
               ),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                'Taxes Import = '.toUpperCase(),
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-              Text(
-                NumberFormat.currency(symbol: '').format(summProvider),
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                'Global Invest = '.toUpperCase(),
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-              Text(
-                NumberFormat.currency(symbol: '')
-                    .format(summProvider + summItems),
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                'Sum All Invoices = '.toUpperCase(),
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-              Text(
-                NumberFormat.currency(symbol: '').format(sumTotalInvoice),
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                'Benef All Invoices = '.toUpperCase(),
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-              Text(
-                NumberFormat.currency(symbol: '').format(sumInvoice),
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }

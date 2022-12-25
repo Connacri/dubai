@@ -3,9 +3,8 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-
-import 'testjason2firestoreGet.dart';
 
 class MainPageik extends StatefulWidget {
   const MainPageik({Key? key}) : super(key: key);
@@ -51,7 +50,7 @@ class MainPageikState extends State<MainPageik> {
                       onPressed: () async {
                         await uploadItems(users);
                       },
-                      icon: Icon(Icons.add));
+                      icon: Icon(Icons.noise_control_off));
                 } else {
                   return const Center(
                     child: Text('no'),
@@ -59,12 +58,6 @@ class MainPageikState extends State<MainPageik> {
                 }
               },
             ),
-            IconButton(
-                onPressed: () async {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => mainPageFirestoreGetik()));
-                },
-                icon: Icon(Icons.add_shopping_cart_rounded)),
           ],
         ),
         body: Center(
@@ -78,10 +71,11 @@ class MainPageikState extends State<MainPageik> {
             }
             if (snapshot.hasData) {
               final users = snapshot.data!;
-              return
-                  // Text(users.length.toString(),
-                  //   style: TextStyle(fontSize: 40));
-                  buildUsers(users);
+              return Lottie.asset(
+                  'assets/lotties/130621-mobile-social-share-links.json');
+              // Text(users.length.toString(),
+              //   style: TextStyle(fontSize: 40));
+              //buildUsers(users);
             } else {
               return const Center(
                 child: Text('no data fetchekkkd'),
@@ -147,12 +141,12 @@ class MainPageikState extends State<MainPageik> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  user.prixVente.toString() + '0 DZD',
+                  user.prixVente.toString() + '0 ',
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  'D : ' + user.code.toString() + '0 DZD',
+                  'D : ' + user.code.toString() + '0 ',
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                       fontSize: 12,
