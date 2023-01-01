@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 
 import 'invoiceList.dart';
-import 'pdf/pdf_printing/pdf_page2.dart';
 
 class estimateik extends StatefulWidget {
   const estimateik({Key? key}) : super(key: key);
@@ -15,9 +14,11 @@ class estimateik extends StatefulWidget {
 }
 
 class _estimateikState extends State<estimateik> {
-  Color color3 = const Color.fromARGB(255, 228, 122, 170);
-  Color color2 = const Color.fromARGB(255, 253, 177, 149);
-  Color color1 = const Color.fromARGB(255, 33, 4, 64);
+  Color colorRed = Color.fromARGB(255, 213, 2, 2); //Colors.deepPurple;
+  Color colorOrange =
+      Color.fromARGB(255, 255, 95, 0); //Colors.deepOrangeAccent;
+  Color colorGreen = Color.fromARGB(255, 139, 169, 2); //Colors.greenAccent;
+  Color colorBlue = Color.fromARGB(255, 66, 58, 41);
   final TextEditingController _priceController = TextEditingController();
   final _formKeyDevis = GlobalKey<FormState>();
   final TextEditingController _qtyController =
@@ -152,7 +153,7 @@ class _estimateikState extends State<estimateik> {
                   ),
                   body: ListView(
                     children: [
-                      buildTotal(),
+                      buildTotal(colorRed, colorOrange, colorGreen, colorBlue),
                       ListView.builder(
                           shrinkWrap: true,
                           itemCount: snapshot.data == null
@@ -197,7 +198,7 @@ class _estimateikState extends State<estimateik> {
                                       await _upDateDevis(_documentSnapshot.id,
                                           _documentSnapshot);
                                     },
-                                    backgroundColor: Colors.green,
+                                    backgroundColor: colorGreen,
                                     foregroundColor: Colors.white,
                                     icon: Icons.edit,
                                     label: 'Edit',
@@ -207,6 +208,7 @@ class _estimateikState extends State<estimateik> {
                               child: ListTile(
                                 trailing: Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
                                       NumberFormat.currency(
@@ -216,13 +218,18 @@ class _estimateikState extends State<estimateik> {
                                               (_documentSnapshot['prixVente'] *
                                                   _documentSnapshot['qty'])),
                                       // .toString() +  '0',
-                                      style: TextStyle(fontSize: 20),
+                                      style: TextStyle(fontSize: 15),
                                     ),
                                     Text(
-                                      NumberFormat.currency(symbol: '').format(
-                                          _documentSnapshot[
-                                              'prixVente']), //.toString() + '0'),
-                                    )
+                                      NumberFormat.currency(
+                                              //locale: 'aed',
+                                              symbol: '')
+                                          .format((_documentSnapshot['earn'] *
+                                              _documentSnapshot['qty'])),
+                                      // .toString() +  '0',
+                                      style: TextStyle(
+                                          fontSize: 15, color: colorGreen),
+                                    ),
                                   ],
                                 ),
                                 leading: CircleAvatar(
@@ -235,9 +242,32 @@ class _estimateikState extends State<estimateik> {
                                   _documentSnapshot['model'],
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                subtitle: Text(
-                                  'Size : ' + _documentSnapshot['size'],
-                                  overflow: TextOverflow.ellipsis,
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Size : ' + _documentSnapshot['size'],
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          NumberFormat.currency(symbol: 'PU ')
+                                              .format(_documentSnapshot[
+                                                  'prixVente']), //.toString() + '0'),
+                                        ),
+                                        SizedBox(
+                                          width: 30,
+                                        ),
+                                        Text(
+                                          NumberFormat.currency(symbol: 'Earn ')
+                                              .format(_documentSnapshot[
+                                                  'earn']), //.toString() + '0'),
+                                          style: TextStyle(color: colorGreen),
+                                        )
+                                      ],
+                                    )
+                                  ],
                                 ),
                               ),
                             );
@@ -374,157 +404,157 @@ class _estimateikState extends State<estimateik> {
           );
         });
   }
-}
 
-buildTotal() {
-  return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('Estimate').snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Total: ',
-                      style: const TextStyle(
-                          color: Colors.blue,
-                          fontFamily: 'Oswald',
-                          fontSize: 17,
-                          fontWeight: FontWeight.normal),
-                    ),
-                    Text(
-                      '0.00',
-                      style: const TextStyle(
-                          color: Colors.blue,
-                          fontFamily: 'Oswald',
-                          fontSize: 17,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Cout: ',
-                      style: const TextStyle(
-                          color: Colors.deepPurple,
-                          fontFamily: 'Oswald',
-                          fontSize: 17,
-                          fontWeight: FontWeight.normal),
-                    ),
-                    Text(
-                      '0.00',
-                      style: const TextStyle(
-                          color: Colors.deepPurple,
-                          fontFamily: 'Oswald',
-                          fontSize: 17,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Benef: ',
-                      style: const TextStyle(
-                          color: Colors.green,
-                          fontFamily: 'Oswald',
-                          fontSize: 17,
-                          fontWeight: FontWeight.normal),
-                    ),
-                    Text(
-                      '0.00', //.toString() + '0',
-                      style: const TextStyle(
-                          color: Colors.green,
-                          fontFamily: 'Oswald',
-                          fontSize: 17,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        } else {
-          double summ = 0;
-          var ds = snapshot.data!.docs;
+  buildTotal(colorRed, colorOrange, colorGreen, colorBlue) {
+    return StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('Estimate').snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Total: ',
+                        style: const TextStyle(
+                            color: Colors.blue,
+                            fontFamily: 'Oswald',
+                            fontSize: 17,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      Text(
+                        '0.00',
+                        style: TextStyle(
+                            color: colorBlue,
+                            fontFamily: 'Oswald',
+                            fontSize: 17,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Cout: ',
+                        style: TextStyle(
+                            color: colorOrange,
+                            fontFamily: 'Oswald',
+                            fontSize: 17,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      Text(
+                        '0.00',
+                        style: TextStyle(
+                            color: colorOrange,
+                            fontFamily: 'Oswald',
+                            fontSize: 17,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Benef: ',
+                        style: TextStyle(
+                            color: colorGreen,
+                            fontFamily: 'Oswald',
+                            fontSize: 17,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      Text(
+                        '0.00', //.toString() + '0',
+                        style: TextStyle(
+                            color: colorGreen,
+                            fontFamily: 'Oswald',
+                            fontSize: 17,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          } else {
+            double summ = 0;
+            var ds = snapshot.data!.docs;
 
-          for (int i = 0; i < ds.length; i++) {
-            summ += (ds[i]['prixVente']).toInt() * (ds[i]['qty']);
+            for (int i = 0; i < ds.length; i++) {
+              summ += (ds[i]['prixVente']).toInt() * (ds[i]['qty']);
+            }
+
+            double cout = 0;
+            for (int i = 0; i < ds.length; i++) {
+              cout += ds[i]['prixAchat'] * (ds[i]['qty']);
+            }
+
+            double countEarn = 0;
+            for (int i = 0; i < ds.length; i++) {
+              countEarn += ds[i]['earn'] * (ds[i]['qty']);
+            }
+            return Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Total: ',
+                        style: TextStyle(
+                            color: colorBlue,
+                            fontFamily: 'Oswald',
+                            fontSize: 17,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      Text(
+                        NumberFormat.currency(symbol: '')
+                            .format(summ), //.toString() + '0',
+                        style: TextStyle(
+                            color: colorBlue,
+                            fontFamily: 'Oswald',
+                            fontSize: 17,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Benef: ',
+                        style: TextStyle(
+                            color: colorGreen,
+                            fontFamily: 'Oswald',
+                            fontSize: 17,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      Text(
+                        NumberFormat.currency(symbol: '')
+                            .format(countEarn), //.toString() + '0',
+                        style: TextStyle(
+                            color: colorGreen,
+                            fontFamily: 'Oswald',
+                            fontSize: 15,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
           }
-
-          double cout = 0;
-          for (int i = 0; i < ds.length; i++) {
-            cout += ds[i]['prixAchat'] * (ds[i]['qty']);
-          }
-
-          double countEarn = 0;
-          for (int i = 0; i < ds.length; i++) {
-            countEarn += ds[i]['earn'] * (ds[i]['qty']);
-          }
-          return Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Total: ',
-                      style: const TextStyle(
-                          color: Colors.blue,
-                          fontFamily: 'Oswald',
-                          fontSize: 17,
-                          fontWeight: FontWeight.normal),
-                    ),
-                    Text(
-                      NumberFormat.currency(symbol: '')
-                          .format(summ), //.toString() + '0',
-                      style: const TextStyle(
-                          color: Colors.blue,
-                          fontFamily: 'Oswald',
-                          fontSize: 17,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Benef: ',
-                      style: const TextStyle(
-                          color: Colors.green,
-                          fontFamily: 'Oswald',
-                          fontSize: 17,
-                          fontWeight: FontWeight.normal),
-                    ),
-                    Text(
-                      NumberFormat.currency(symbol: '')
-                          .format(countEarn), //.toString() + '0',
-                      style: const TextStyle(
-                          color: Colors.green,
-                          fontFamily: 'Oswald',
-                          fontSize: 15,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        }
-      });
+        });
+  }
 }
 
 showAlertDialog(BuildContext context, data) {
@@ -708,189 +738,189 @@ Future<void> addItemsToDevis2(dataid, data, qty) async {
   }
 }
 
-class addCustomerToEstimate extends StatefulWidget {
-  addCustomerToEstimate({
-    Key? key,
-    required this.dataDevis,
-  }) : super(key: key);
-
-  final List dataDevis;
-
-  @override
-  State<addCustomerToEstimate> createState() => _addCustomerToEstimateState();
-}
-
-class _addCustomerToEstimateState extends State<addCustomerToEstimate> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  final TextEditingController _customerController = TextEditingController();
-
-  final TextEditingController _codeDevisController = TextEditingController();
-
-  final TextEditingController dateinput = TextEditingController();
-  var datepass;
-
-  @override
-  void initState() {
-    dateinput.text = DateFormat('yyyy-MM-dd')
-        .format(DateTime.now()); //set the initial value of text field
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Center(
-          child: FittedBox(
-            child: Text(
-              'Finalisation'.toUpperCase(),
-              style: TextStyle(
-                color: Colors.blue, // Colors.orange,
-              ),
-            ),
-          ),
-        ),
-        actions: [],
-      ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            TextFormField(
-              autofocus: true,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 25,
-              ),
-              keyboardType: TextInputType.text,
-              controller: _customerController,
-              validator: (value) => value!.isEmpty ||
-                      value == null ||
-                      int.tryParse(value.toString()) == 0
-                  ? 'Cant be Empty'
-                  : null,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                filled: true,
-                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-
-                hintText: 'Customer Name',
-                fillColor: Colors.white,
-                //filled: true,
-              ),
-            ),
-            TextField(
-              controller: dateinput,
-              //editing controller of this TextField
-              style: const TextStyle(
-                fontSize: 25,
-              ),
-              autofocus: true,
-              textAlign: TextAlign.center,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                filled: true,
-                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-
-                hintText: 'Estimate Number',
-                fillColor: Colors.white,
-                //filled: true,
-              ),
-              readOnly: true,
-              //set it true, so that user will not able to edit text
-              onTap: () async {
-                DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2000),
-                    //DateTime.now() - not to allow to choose before today.
-                    lastDate: DateTime(2101));
-
-                if (pickedDate != null) {
-                  print(
-                      pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-                  String formattedDate =
-                      DateFormat('yyyy-MM-dd').format(pickedDate);
-                  print(
-                      formattedDate); //formatted date output using intl package =>  2021-03-16
-                  //you can implement different kind of Date Format here according to your requirement
-
-                  setState(() {
-                    datepass = pickedDate;
-                    dateinput.text =
-                        formattedDate; //set output date to TextField value.
-                  });
-                } else {
-                  print("Date is not selected");
-                }
-              },
-            ),
-            TextFormField(
-              autofocus: true,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 25,
-              ),
-              keyboardType: TextInputType.text,
-              controller: _codeDevisController,
-              validator: (value) => value!.isEmpty ||
-                      value == null ||
-                      int.tryParse(value.toString()) == 0
-                  ? 'Cant be Empty'
-                  : null,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                filled: true,
-                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-
-                hintText: 'Estimate Number',
-                fillColor: Colors.white,
-                //filled: true,
-              ),
-            ),
-            SizedBox(
-              height: 100,
-            ),
-            Center(
-              child: ElevatedButton(
-                  onPressed: () {
-                    // Validate returns true if the form is valid, or false otherwise.
-                    if (_formKey.currentState!.validate()) {
-                      // If the form is valid, display a snackbar. In the real world,
-                      // you'd often call a server or save the information in a database.
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Processing Data')),
-                      );
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(
-                            builder: (context) => PdfPageRamzy2(
-                              dataDevis: widget.dataDevis,
-                              customer: _customerController.text,
-                              date: datepass ?? DateTime.now(),
-                              codeDevis: _codeDevisController.text,
-                            ),
-                          ))
-                          .whenComplete(() => debugPrint(
-                              'is fiiiiiiiiiiiiiiiiiiiiiiiinishhhhhhhhhh'));
-                      print(widget.dataDevis.length);
-                      print(_customerController.text);
-                      print(dateinput.text);
-                      print(_codeDevisController.text);
-                      print(widget.dataDevis.map((e) => e['model']).toList());
-                    }
-                  },
-                  child: Text(
-                    'Add To Invoice'.toUpperCase(),
-                    style: const TextStyle(fontSize: 15, color: Colors.black54),
-                  )),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
+// class addCustomerToEstimate extends StatefulWidget {
+//   addCustomerToEstimate({
+//     Key? key,
+//     required this.dataDevis,
+//   }) : super(key: key);
+//
+//   final List dataDevis;
+//
+//   @override
+//   State<addCustomerToEstimate> createState() => _addCustomerToEstimateState();
+// }
+//
+// class _addCustomerToEstimateState extends State<addCustomerToEstimate> {
+//   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+//
+//   final TextEditingController _customerController = TextEditingController();
+//
+//   final TextEditingController _codeDevisController = TextEditingController();
+//
+//   final TextEditingController dateinput = TextEditingController();
+//   var datepass;
+//
+//   @override
+//   void initState() {
+//     dateinput.text = DateFormat('yyyy-MM-dd')
+//         .format(DateTime.now()); //set the initial value of text field
+//     super.initState();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Center(
+//           child: FittedBox(
+//             child: Text(
+//               'Finalisation'.toUpperCase(),
+//               style: TextStyle(
+//                 color: Colors.blue, // Colors.orange,
+//               ),
+//             ),
+//           ),
+//         ),
+//         actions: [],
+//       ),
+//       body: Form(
+//         key: _formKey,
+//         child: Column(
+//           children: [
+//             TextFormField(
+//               autofocus: true,
+//               textAlign: TextAlign.center,
+//               style: const TextStyle(
+//                 fontSize: 25,
+//               ),
+//               keyboardType: TextInputType.text,
+//               controller: _customerController,
+//               validator: (value) => value!.isEmpty ||
+//                       value == null ||
+//                       int.tryParse(value.toString()) == 0
+//                   ? 'Cant be Empty'
+//                   : null,
+//               decoration: const InputDecoration(
+//                 border: InputBorder.none,
+//                 filled: true,
+//                 contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+//
+//                 hintText: 'Customer Name',
+//                 fillColor: Colors.white,
+//                 //filled: true,
+//               ),
+//             ),
+//             TextField(
+//               controller: dateinput,
+//               //editing controller of this TextField
+//               style: const TextStyle(
+//                 fontSize: 25,
+//               ),
+//               autofocus: true,
+//               textAlign: TextAlign.center,
+//               decoration: const InputDecoration(
+//                 border: InputBorder.none,
+//                 filled: true,
+//                 contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+//
+//                 hintText: 'Estimate Number',
+//                 fillColor: Colors.white,
+//                 //filled: true,
+//               ),
+//               readOnly: true,
+//               //set it true, so that user will not able to edit text
+//               onTap: () async {
+//                 DateTime? pickedDate = await showDatePicker(
+//                     context: context,
+//                     initialDate: DateTime.now(),
+//                     firstDate: DateTime(2000),
+//                     //DateTime.now() - not to allow to choose before today.
+//                     lastDate: DateTime(2101));
+//
+//                 if (pickedDate != null) {
+//                   print(
+//                       pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+//                   String formattedDate =
+//                       DateFormat('yyyy-MM-dd').format(pickedDate);
+//                   print(
+//                       formattedDate); //formatted date output using intl package =>  2021-03-16
+//                   //you can implement different kind of Date Format here according to your requirement
+//
+//                   setState(() {
+//                     datepass = pickedDate;
+//                     dateinput.text =
+//                         formattedDate; //set output date to TextField value.
+//                   });
+//                 } else {
+//                   print("Date is not selected");
+//                 }
+//               },
+//             ),
+//             TextFormField(
+//               autofocus: true,
+//               textAlign: TextAlign.center,
+//               style: const TextStyle(
+//                 fontSize: 25,
+//               ),
+//               keyboardType: TextInputType.text,
+//               controller: _codeDevisController,
+//               validator: (value) => value!.isEmpty ||
+//                       value == null ||
+//                       int.tryParse(value.toString()) == 0
+//                   ? 'Cant be Empty'
+//                   : null,
+//               decoration: const InputDecoration(
+//                 border: InputBorder.none,
+//                 filled: true,
+//                 contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+//
+//                 hintText: 'Estimate Number',
+//                 fillColor: Colors.white,
+//                 //filled: true,
+//               ),
+//             ),
+//             SizedBox(
+//               height: 100,
+//             ),
+//             Center(
+//               child: ElevatedButton(
+//                   onPressed: () {
+//                     // Validate returns true if the form is valid, or false otherwise.
+//                     if (_formKey.currentState!.validate()) {
+//                       // If the form is valid, display a snackbar. In the real world,
+//                       // you'd often call a server or save the information in a database.
+//                       ScaffoldMessenger.of(context).showSnackBar(
+//                         const SnackBar(content: Text('Processing Data')),
+//                       );
+//                       Navigator.of(context)
+//                           .push(MaterialPageRoute(
+//                             builder: (context) => PdfPageRamzy2(
+//                               dataDevis: widget.dataDevis,
+//                               customer: _customerController.text,
+//                               date: datepass ?? DateTime.now(),
+//                               codeDevis: _codeDevisController.text,
+//                             ),
+//                           ))
+//                           .whenComplete(() => debugPrint(
+//                               'is fiiiiiiiiiiiiiiiiiiiiiiiinishhhhhhhhhh'));
+//                       print(widget.dataDevis.length);
+//                       print(_customerController.text);
+//                       print(dateinput.text);
+//                       print(_codeDevisController.text);
+//                       print(widget.dataDevis.map((e) => e['model']).toList());
+//                     }
+//                   },
+//                   child: Text(
+//                     'Add To Invoice'.toUpperCase(),
+//                     style: const TextStyle(fontSize: 15, color: Colors.black54),
+//                   )),
+//             )
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class addCustomerToEstimate2 extends StatefulWidget {
   addCustomerToEstimate2({
@@ -909,6 +939,11 @@ class addCustomerToEstimate2 extends StatefulWidget {
 }
 
 class _addCustomerToEstimate2State extends State<addCustomerToEstimate2> {
+  Color colorRed = Color.fromARGB(255, 213, 2, 2); //Colors.deepPurple;
+  Color colorOrange =
+      Color.fromARGB(255, 255, 95, 0); //Colors.deepOrangeAccent;
+  Color colorGreen = Color.fromARGB(255, 139, 169, 2); //Colors.greenAccent;
+  Color colorBlue = Color.fromARGB(255, 66, 58, 41);
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _customerController = TextEditingController();
@@ -923,6 +958,7 @@ class _addCustomerToEstimate2State extends State<addCustomerToEstimate2> {
     super.initState();
   }
 
+  bool isSwitched = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -952,9 +988,42 @@ class _addCustomerToEstimate2State extends State<addCustomerToEstimate2> {
             Center(
               child: Text(
                 'AED ' + NumberFormat.currency(symbol: '').format(widget.benef),
-                style: const TextStyle(fontSize: 25, color: Colors.green),
+                style: TextStyle(fontSize: 25, color: colorGreen),
               ),
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Retail',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: !isSwitched
+                          ? Color.fromRGBO(126, 13, 13, 1.0)
+                          : Colors.black54),
+                ),
+                Switch(
+                  activeColor: Colors.cyan,
+                  activeTrackColor: Colors.cyan.shade100,
+                  inactiveThumbColor: Color.fromRGBO(126, 13, 13, 1.0),
+                  inactiveTrackColor:
+                      Color.fromRGBO(126, 13, 13, 0.4235294117647059),
+                  splashRadius: 50.0,
+                  value: isSwitched,
+                  onChanged: (value) => setState(() => isSwitched = value),
+                ),
+                Text(
+                  'Dealer',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: isSwitched
+                          ? Colors.cyan //Color.fromRGBO(139, 169, 2, 1.0)
+                          : Colors.black54),
+                ),
+              ],
+            ), // Switch
             SizedBox(
               height: 50,
             ),
@@ -1043,13 +1112,21 @@ class _addCustomerToEstimate2State extends State<addCustomerToEstimate2> {
 
                       print(
                           '******************************************************'); //
-                      addDevisToInvoiceList(
-                        widget.dataDevis,
-                        widget.sum.toString(),
-                        widget.benef,
-                        _customerController.text,
-                        DateTime.now(),
-                      );
+                      isSwitched
+                          ? addDealer(
+                              widget.dataDevis,
+                              widget.sum.toString(),
+                              widget.benef,
+                              _customerController.text,
+                              DateTime.now(),
+                            )
+                          : addDevisToInvoiceList(
+                              widget.dataDevis,
+                              widget.sum.toString(),
+                              widget.benef,
+                              _customerController.text,
+                              DateTime.now(),
+                            );
                     }
                     ;
                     _deleteAllEstimate();
@@ -1074,11 +1151,55 @@ class _addCustomerToEstimate2State extends State<addCustomerToEstimate2> {
 }
 
 Future<void> _deleteAllEstimate() async {
-  var collection = FirebaseFirestore.instance.collection('Estimate');
-  var snapshot = await collection.get();
+  CollectionReference collection =
+      FirebaseFirestore.instance.collection('Estimate'); //var
+  QuerySnapshot snapshot = await collection.get(); //var
   for (var doc in snapshot.docs) {
     await doc.reference.delete();
     print(doc.reference);
     print('deleted');
+  }
+}
+
+Future<void> addDealer(List data, sum, benef, customer, date) async {
+  final numero = await data.length;
+  print('data');
+  print(data);
+
+  print('length :${data.length}');
+
+  final numbers = List.generate(numero, (index) => index);
+  final postCollectionItemsSuperette =
+      FirebaseFirestore.instance.collection(customer); //.doc();
+  CollectionReference incrementQty =
+      FirebaseFirestore.instance.collection('Adventure');
+  for (final number in numbers) {
+    final item = data[number];
+    print('**************users[number]*****user.category*************');
+
+    postCollectionItemsSuperette
+            .doc(item['codebar'])
+            .set({
+              'createdAt': Timestamp.now().toDate(),
+              'category': item['category'],
+              'model': item['model'],
+              'description': item['description'],
+              'size': item['size'],
+              'prixAchat': item['prixAchat'],
+              'prixVente': item['prixVente'],
+              'stock': item['stock'],
+              'codebar': item['codebar'],
+              'oldStock': item['oldStock'],
+              'origine': item['origine'],
+              'user': item['user'],
+              'qty': item['qty'],
+            }, SetOptions(merge: true))
+            .then((value) => print("Item Added to Dealer"))
+            .catchError(
+                (error) => print("Failed to add Item to Dealer: $error"))
+        // .whenComplete(() => incrementQty
+        //     .doc(item['codebar'])
+        //     .update({'stock': FieldValue.increment(-item['qty'])}));
+        ;
   }
 }

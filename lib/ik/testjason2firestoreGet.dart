@@ -116,10 +116,10 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                 (sumTaxeImport * data!['prixAchat'] / summItems) +
                     data['prixAchat'];
 
-            final double earn = data['prixVente'] -
-                ((sumTaxeImport * data['prixAchat'] / summItems) +
-                    data['prixAchat']);
-
+            // final double earn = data['prixVente'] -
+            //     ((sumTaxeImport * data['prixAchat'] / summItems) +
+            //         data['prixAchat']);
+            final double earn = data['prixVente'] - PUA;
             return Column(
               children: [
                 GestureDetector(
@@ -213,7 +213,8 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                         animation: true,
                                         animationDuration: 1000,
                                         percent: data['stock'] >
-                                                data['oldStock']
+                                                    data['oldStock'] ||
+                                                data['stock'] < 0
                                             ? 1
                                             : data['stock'] / data['oldStock'],
                                         progressColor: colorGreen,
@@ -253,7 +254,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Text(
-                                        NumberFormat.currency(symbol: 'PUA ')
+                                        NumberFormat.currency(symbol: 'FAC ')
                                             .format(data['prixAchat']),
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
@@ -263,7 +264,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                       ),
                                       Spacer(),
                                       Text(
-                                        NumberFormat.currency(symbol: 'Tax ')
+                                        NumberFormat.currency(symbol: 'TAX ')
                                             .format(sumTaxeImport *
                                                 data['prixAchat'] /
                                                 summItems),
@@ -294,7 +295,9 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                       animation: true,
                                       lineHeight: 25.0,
                                       animationDuration: 1000,
-                                      percent: data['stock'] > data['oldStock']
+                                      percent: data['stock'] >
+                                                  data['oldStock'] ||
+                                              data['stock'] < 0
                                           ? 1
                                           : data['stock'] / data['oldStock'],
                                       // center: Text(
@@ -325,7 +328,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Text(
-                                    NumberFormat.currency(symbol: 'R ')
+                                    NumberFormat.currency(symbol: ' ')
                                         .format(data['prixVente']),
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
@@ -333,7 +336,16 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                         fontWeight: FontWeight.w500),
                                   ),
                                   Text(
-                                    NumberFormat.currency(symbol: 'PUA ')
+                                    NumberFormat.currency(symbol: 'WASLA ')
+                                        .format(PUA),
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: colorRed),
+                                  ),
+                                  Text(
+                                    NumberFormat.currency(symbol: 'WASLA ')
                                         .format(PUA),
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
@@ -358,7 +370,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                               color: colorGreen),
                                         )
                                       : Icon(
-                                          Icons.cancel,
+                                          Icons.error,
                                           color: colorRed,
                                         )
                                 ],
@@ -912,6 +924,7 @@ class SLiverHeader extends StatelessWidget {
                                 documentSnapshot['stock'] <= 5 &&
                                 documentSnapshot['stock'] > 0)
                             .toList();
+
                         final int count5 = min5.length;
                         //print(count5);
                         final List<DocumentSnapshot> min0 = data
@@ -919,6 +932,21 @@ class SLiverHeader extends StatelessWidget {
                                 documentSnapshot['stock'] == 0)
                             .toList();
                         final int count0 = min0.length;
+
+                        int totalPneux = 0;
+                        final List<DocumentSnapshot> totalPneuxList = data
+                            // .where((DocumentSnapshot documentSnapshot) =>
+                            //     documentSnapshot['stock'])
+                            .toList();
+                        print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+                        print(totalPneuxList[0]['stock']);
+                        int tota = 0;
+                        for (int i = 0; i < totalPneuxList.length; i++) {
+                          tota += totalPneuxList[i]['stock'] as int;
+                        }
+                        print('88888888888888888888888');
+                        print(tota);
+
                         //print(count0);
                         return ListView(
                           shrinkWrap: true,
@@ -959,7 +987,9 @@ class SLiverHeader extends StatelessWidget {
                                                     color: Colors.white),
                                               ),
                                               Text(
-                                                data.length.toString(),
+                                                // data.length.toString() +
+                                                //     '/' +
+                                                tota.toString(),
                                                 style: TextStyle(
                                                     fontSize: 30.0,
                                                     color: Colors.white),
@@ -1017,12 +1047,17 @@ class SLiverHeader extends StatelessWidget {
                                                       style: TextStyle(
                                                           color: Colors.yellow),
                                                     ),
-                                                    Text(
-                                                      (data.length - count0)
-                                                          .toString(),
-                                                      style: TextStyle(
-                                                          color: Colors.yellow,
-                                                          fontSize: 30),
+                                                    Column(
+                                                      children: [
+                                                        Text(
+                                                          (data.length - count0)
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.yellow,
+                                                              fontSize: 30),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ],
                                                 ),

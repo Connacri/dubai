@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 
+import 'ik/Dealer.dart';
 import 'ik/testjason2firestoreGet.dart';
 
 Future<void> main() async {
@@ -50,7 +51,237 @@ class MyApp extends StatelessWidget {
             initialData: [],
           ),
         ],
-        child: mainPageFirestoreGetik(),
+        child: NavigationExample(),
+        //child: mainPageFirestoreGetik(),
+      ),
+    );
+  }
+}
+
+class NavigationExample extends StatefulWidget {
+  const NavigationExample({super.key});
+
+  @override
+  State<NavigationExample> createState() => _NavigationExampleState();
+}
+
+class _NavigationExampleState extends State<NavigationExample> {
+  int currentPageIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      bottomNavigationBar: NavigationBar(
+        height: 60,
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+        selectedIndex: currentPageIndex,
+        destinations: const <Widget>[
+          NavigationDestination(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.accessibility),
+            label: 'Customers',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.account_balance_outlined),
+            icon: Icon(Icons.account_circle_rounded),
+            label: 'Profie',
+          ),
+        ],
+      ),
+      body: <Widget>[
+        mainPageFirestoreGetik(),
+        dealer(),
+        //NavRailExample(),
+        dealer(),
+      ][currentPageIndex],
+    );
+  }
+}
+
+class NavRailExample extends StatefulWidget {
+  const NavRailExample({super.key});
+
+  @override
+  State<NavRailExample> createState() => _NavRailExampleState();
+}
+
+class _NavRailExampleState extends State<NavRailExample> {
+  int _selectedIndex = 0;
+  NavigationRailLabelType labelType = NavigationRailLabelType.all;
+  bool showLeading = false;
+  bool showTrailing = false;
+  double groupAligment = -1.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Row(
+        children: <Widget>[
+          NavigationRail(
+            selectedIndex: _selectedIndex,
+            groupAlignment: groupAligment,
+            onDestinationSelected: (int index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+            labelType: labelType,
+            leading: showLeading
+                ? FloatingActionButton(
+                    elevation: 0,
+                    onPressed: () {
+                      // Add your onPressed code here!
+                    },
+                    child: const Icon(Icons.add),
+                  )
+                : const SizedBox(),
+            trailing: showTrailing
+                ? IconButton(
+                    onPressed: () {
+                      // Add your onPressed code here!
+                    },
+                    icon: const Icon(Icons.more_horiz_rounded),
+                  )
+                : const SizedBox(),
+            destinations: const <NavigationRailDestination>[
+              NavigationRailDestination(
+                icon: Icon(Icons.favorite_border),
+                selectedIcon: Icon(Icons.favorite),
+                label: Text('First'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.bookmark_border),
+                selectedIcon: Icon(Icons.book),
+                label: Text('Second'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.star_border),
+                selectedIcon: Icon(Icons.star),
+                label: Text('Third'),
+              ),
+            ],
+          ),
+          const VerticalDivider(thickness: 1, width: 1),
+          // This is the main content.
+          // Expanded(
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: <Widget>[
+          //       Text('selectedIndex: $_selectedIndex'),
+          //       const SizedBox(height: 20),
+          //       Text('Label type: ${labelType.name}'),
+          //       const SizedBox(height: 10),
+          //       OverflowBar(
+          //         spacing: 10.0,
+          //         children: <Widget>[
+          //           ElevatedButton(
+          //             onPressed: () {
+          //               setState(() {
+          //                 labelType = NavigationRailLabelType.none;
+          //               });
+          //             },
+          //             child: const Text('None'),
+          //           ),
+          //           ElevatedButton(
+          //             onPressed: () {
+          //               setState(() {
+          //                 labelType = NavigationRailLabelType.selected;
+          //               });
+          //             },
+          //             child: const Text('Selected'),
+          //           ),
+          //           ElevatedButton(
+          //             onPressed: () {
+          //               setState(() {
+          //                 labelType = NavigationRailLabelType.all;
+          //               });
+          //             },
+          //             child: const Text('All'),
+          //           ),
+          //         ],
+          //       ),
+          //       const SizedBox(height: 20),
+          //       Text('Group alignment: $groupAligment'),
+          //       const SizedBox(height: 10),
+          //       OverflowBar(
+          //         spacing: 10.0,
+          //         children: <Widget>[
+          //           ElevatedButton(
+          //             onPressed: () {
+          //               setState(() {
+          //                 groupAligment = -1.0;
+          //               });
+          //             },
+          //             child: const Text('Top'),
+          //           ),
+          //           ElevatedButton(
+          //             onPressed: () {
+          //               setState(() {
+          //                 groupAligment = 0.0;
+          //               });
+          //             },
+          //             child: const Text('Center'),
+          //           ),
+          //           ElevatedButton(
+          //             onPressed: () {
+          //               setState(() {
+          //                 groupAligment = 1.0;
+          //               });
+          //             },
+          //             child: const Text('Bottom'),
+          //           ),
+          //         ],
+          //       ),
+          //       const SizedBox(height: 20),
+          //       OverflowBar(
+          //         spacing: 10.0,
+          //         children: <Widget>[
+          //           ElevatedButton(
+          //             onPressed: () {
+          //               setState(() {
+          //                 showLeading = !showLeading;
+          //               });
+          //             },
+          //             child:
+          //                 Text(showLeading ? 'Hide Leading' : 'Show Leading'),
+          //           ),
+          //           ElevatedButton(
+          //             onPressed: () {
+          //               setState(() {
+          //                 showTrailing = !showTrailing;
+          //               });
+          //             },
+          //             child: Text(
+          //                 showTrailing ? 'Hide Trailing' : 'Show Trailing'),
+          //           ),
+          //         ],
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          Container(
+            color: Colors.orange,
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width * 0.5,
+          ),
+          Container(
+            color: Colors.brown,
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width * 0.5,
+          ),
+          Container(
+            color: Colors.blueAccent,
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width * 0.5,
+          )
+        ],
       ),
     );
   }
