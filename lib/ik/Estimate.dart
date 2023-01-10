@@ -1169,37 +1169,68 @@ Future<void> addDealer(List data, sum, benef, customer, date) async {
   print('length :${data.length}');
 
   final numbers = List.generate(numero, (index) => index);
-  final postCollectionItemsSuperette =
-      FirebaseFirestore.instance.collection(customer); //.doc();
-  CollectionReference incrementQty =
-      FirebaseFirestore.instance.collection('Adventure');
+  final addDealerName = FirebaseFirestore.instance.collection('Dealers');
+  final postCollectionItems = FirebaseFirestore.instance
+      .collection('Dealers')
+      .doc()
+      .collection('DealerList');
+//  WriteBatch batch = FirebaseFirestore.instance.batch();
+
+  addDealerName.doc().set({
+    'name': customer,
+  });
   for (final number in numbers) {
     final item = data[number];
-    print('**************users[number]*****user.category*************');
 
-    postCollectionItemsSuperette
-            .doc(item['codebar'])
-            .set({
-              'createdAt': Timestamp.now().toDate(),
-              'category': item['category'],
-              'model': item['model'],
-              'description': item['description'],
-              'size': item['size'],
-              'prixAchat': item['prixAchat'],
-              'prixVente': item['prixVente'],
-              'stock': item['stock'],
-              'codebar': item['codebar'],
-              'oldStock': item['oldStock'],
-              'origine': item['origine'],
-              'user': item['user'],
-              'qty': item['qty'],
-            }, SetOptions(merge: true))
-            .then((value) => print("Item Added to Dealer"))
-            .catchError(
-                (error) => print("Failed to add Item to Dealer: $error"))
-        // .whenComplete(() => incrementQty
-        //     .doc(item['codebar'])
-        //     .update({'stock': FieldValue.increment(-item['qty'])}));
-        ;
+    postCollectionItems
+        .doc(item['codebar'])
+        .set({
+          'createdAt': Timestamp.now().toDate(),
+          'category': item['category'],
+          'model': item['model'],
+          'description': item['description'],
+          'size': item['size'],
+          'prixAchat': item['prixAchat'],
+          'prixVente': item['prixVente'],
+          'stock': item['stock'],
+          'codebar': item['codebar'],
+          'oldStock': item['oldStock'],
+          'origine': item['origine'],
+          'user': item['user'],
+          'qty': item['qty'],
+        }, SetOptions(merge: true))
+        .then((value) => print("Item Added to Dealer"))
+        .catchError((error) => print("Failed to add Item to Dealer: $error"));
+    // .whenComplete(() => incrementQty
+    //     .doc(item['codebar'])
+    //     .update({'stock': FieldValue.increment(-item['qty'])}));
+    // ;
+  }
+  ;
+}
+
+Future addCoin(String id, double amount) async {
+  try {
+    // String uid = FirebaseFirestore.instance.currentUser.uid;
+    var value = amount; // double.parse(amount);
+    DocumentReference documentReference = FirebaseFirestore.instance
+        .collection('users')
+        .doc('Ramzy') //.doc(uid)
+        .collection('Coins')
+        .doc(id);
+
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      DocumentSnapshot snapshot = await transaction.get(documentReference);
+
+      if (!snapshot.exists) {
+        documentReference.set({'Amount': value});
+        return true;
+      }
+      double newAmount = snapshot['Amount'] + value;
+      transaction.update(documentReference, {'Amount': newAmount});
+      return true;
+    });
+  } catch (e) {
+    return false;
   }
 }

@@ -1,0 +1,59 @@
+import 'package:dubai/ik/PublicHomeLIst.dart';
+import 'package:flutter/material.dart';
+
+import 'rmz/Oauth/AuthPage.dart';
+
+class main_out extends StatelessWidget {
+  const main_out({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    //return const AuthPage();
+    return publicNavigation();
+  }
+}
+
+class publicNavigation extends StatefulWidget {
+  const publicNavigation({super.key});
+
+  @override
+  State<publicNavigation> createState() => _publicNavigationState();
+}
+
+class _publicNavigationState extends State<publicNavigation> {
+  int currentPageIndex = 0;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      bottomNavigationBar: NavigationBar(
+        height: 60,
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+        selectedIndex: currentPageIndex,
+        destinations: <Widget>[
+          NavigationDestination(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.account_circle_rounded),
+            icon: ClipRRect(
+                clipBehavior: Clip.hardEdge,
+                borderRadius: BorderRadius.circular(50),
+                child: const Icon(Icons.account_circle)),
+            //Icon(Icons.account_circle_rounded),
+            label: 'Account',
+          ),
+        ],
+      ),
+      body: <Widget>[
+        publicHomeList(),
+        //estimateik(),
+        AuthPage(),
+      ][currentPageIndex],
+    );
+  }
+}

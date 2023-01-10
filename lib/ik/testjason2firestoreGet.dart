@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
@@ -14,9 +15,9 @@ import 'package:paginate_firestore/widgets/initial_loader.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 
-import '../main.dart';
 import 'Estimate.dart';
 import 'QrScanner.dart';
+import 'classes.dart';
 import 'invoiceList.dart';
 import 'pdf/chargesList.dart';
 
@@ -133,6 +134,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                   child: Slidable(
                     key: const Key('keyslidable'),
                     startActionPane: ActionPane(
+                      extentRatio: 0.25,
                       // A motion is a widget used to control how the pane animates.
                       motion: const StretchMotion(),
 
@@ -153,6 +155,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                       ],
                     ),
                     endActionPane: ActionPane(
+                      extentRatio: 0.25,
                       motion: const StretchMotion(),
                       children: [
                         SlidableAction(
@@ -252,9 +255,16 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                   ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
+                                      Icon(
+                                        Icons.factory,
+                                        color: colorGreen,
+                                        size: 18,
+                                      ),
                                       Text(
-                                        NumberFormat.currency(symbol: 'FAC ')
+                                        NumberFormat.currency(symbol: '')
                                             .format(data['prixAchat']),
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
@@ -263,8 +273,13 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                             color: colorGreen),
                                       ),
                                       Spacer(),
+                                      FaIcon(
+                                        FontAwesomeIcons.scissors,
+                                        size: 15,
+                                        color: colorRed,
+                                      ),
                                       Text(
-                                        NumberFormat.currency(symbol: 'TAX ')
+                                        NumberFormat.currency(symbol: '')
                                             .format(sumTaxeImport *
                                                 data['prixAchat'] /
                                                 summItems),
@@ -336,7 +351,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                         fontWeight: FontWeight.w500),
                                   ),
                                   Text(
-                                    NumberFormat.currency(symbol: 'WASLA ')
+                                    NumberFormat.currency(symbol: 'DAP ')
                                         .format(PUA),
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
@@ -344,15 +359,15 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                         fontWeight: FontWeight.w500,
                                         color: colorRed),
                                   ),
-                                  Text(
-                                    NumberFormat.currency(symbol: 'WASLA ')
-                                        .format(PUA),
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        color: colorRed),
-                                  ),
+                                  // Text(
+                                  //   NumberFormat.currency(symbol: 'WASLA ')
+                                  //       .format(PUA),
+                                  //   overflow: TextOverflow.ellipsis,
+                                  //   style: TextStyle(
+                                  //       fontSize: 12,
+                                  //       fontWeight: FontWeight.w500,
+                                  //       color: colorRed),
+                                  // ),
                                   earn > 0
                                       ? Text(
                                           NumberFormat.currency(symbol: 'Earn ')
