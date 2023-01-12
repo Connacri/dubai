@@ -50,7 +50,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 
 import 'main_in.dart';
-import 'rmz/Oauth/AuthPage.dart';
+import 'main_out.dart';
 import 'rmz/Oauth/Ogoogle/googleSignInProvider.dart';
 
 Future<void> main() async {
@@ -125,7 +125,7 @@ class _verifi_authState extends State<verifi_auth> {
               body: MultiProviderWidget(),
             );
           } else {
-            return AuthPage();
+            return main_out();
           }
         },
       ));

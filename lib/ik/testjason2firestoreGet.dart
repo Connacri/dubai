@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -126,7 +127,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                 GestureDetector(
                   onTap: () async {
                     if (data['stock'] == 0) {
-                      await AlertD();
+                      await showAlertDialogOut();
                     } else {
                       await addToDevisDialog(dataid, data, earn);
                     }
@@ -162,7 +163,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                           // An action can be bigger than the others.
                           flex: 2,
                           onPressed: (Context) async {
-                            await showAlertDialog(context, data, dataid);
+                            await showAlertDialogRemove(context, data, dataid);
                           },
                           backgroundColor: colorRed,
                           foregroundColor: Colors.white,
@@ -296,16 +297,22 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                                   ),
                                   FittedBox(
                                     child: LinearPercentIndicator(
-                                      trailing: Text(
-                                        NumberFormat.currency(
-                                                    symbol: '',
-                                                    decimalDigits: 0)
-                                                .format((data['stock'] *
-                                                    100 /
-                                                    data['oldStock'])) +
-                                            '%',
-                                        style: TextStyle(fontSize: 25),
-                                      ),
+                                      trailing: data['stock'] > data['oldStock']
+                                          ? Icon(FontAwesomeIcons.infinity)
+                                          // Text(
+                                          //         '100%',
+                                          //         style: TextStyle(fontSize: 25),
+                                          //       )
+                                          : Text(
+                                              NumberFormat.currency(
+                                                          symbol: '',
+                                                          decimalDigits: 0)
+                                                      .format((data['stock'] *
+                                                          100 /
+                                                          data['oldStock'])) +
+                                                  '%',
+                                              style: TextStyle(fontSize: 25),
+                                            ),
                                       width: MediaQuery.of(context).size.width,
                                       animation: true,
                                       lineHeight: 25.0,
@@ -459,74 +466,74 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
     );
   }
 
-  Future addToEstimateDialog(String dataid, earn, Map data) => showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Center(
-            child: FittedBox(
-              child: Text(
-                'Item : ${data['model'].toString()}'.toUpperCase(),
-                style: TextStyle(
-                  color: Colors.blue, // Colors.orange,
-                ),
-              ),
-            ),
-          ),
-          actions: [
-            Center(
-              child: ElevatedButton(
-                  onPressed: () {
-                    // Validate returns true if the form is valid, or false otherwise.
-                    if (!_formKeyQty.currentState!.validate()) {
-                      return;
-                    } else {
-                      //  setState(() {
-                      addItemsToDevis2(
-                        dataid,
-                        data,
-                        earn,
-                        _qtyController.text,
-                      );
-                      //_qtyController.clear();
-                      // });
-                    }
-
-                    Navigator.pop(context, false);
-                  },
-                  child: Text(
-                    'Add to Estimate'.toUpperCase(),
-                    style: const TextStyle(fontSize: 15, color: Colors.black54),
-                  )),
-            )
-          ],
-          content: Form(
-            key: _formKeyQty,
-            child: TextFormField(
-              autofocus: true,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 25,
-              ),
-              keyboardType: TextInputType.number,
-              controller: _qtyController,
-              validator: (valueQty) => valueQty!.isEmpty ||
-                      valueQty == null ||
-                      int.tryParse(valueQty.toString()) == 0
-                  ? 'Cant be 0 or Empty'
-                  : null,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                filled: true,
-                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-
-                hintText: 'Quantity',
-                fillColor: Colors.white,
-                //filled: true,
-              ),
-            ),
-          ), // availibility,
-        ),
-      );
+  // Future addToEstimateDialog(String dataid, earn, Map data) => showDialog(
+  //       context: context,
+  //       builder: (context) => AlertDialog(
+  //         title: Center(
+  //           child: FittedBox(
+  //             child: Text(
+  //               'Item : ${data['model'].toString()}'.toUpperCase(),
+  //               style: TextStyle(
+  //                 color: Colors.blue, // Colors.orange,
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //         actions: [
+  //           Center(
+  //             child: ElevatedButton(
+  //                 onPressed: () {
+  //                   // Validate returns true if the form is valid, or false otherwise.
+  //                   if (!_formKeyQty.currentState!.validate()) {
+  //                     return;
+  //                   } else {
+  //                     //  setState(() {
+  //                     addItemsToDevis2(
+  //                       dataid,
+  //                       data,
+  //                       earn,
+  //                       _qtyController.text,
+  //                     );
+  //                     //_qtyController.clear();
+  //                     // });
+  //                   }
+  //
+  //                   Navigator.pop(context, false);
+  //                 },
+  //                 child: Text(
+  //                   'Add to Estimate'.toUpperCase(),
+  //                   style: const TextStyle(fontSize: 15, color: Colors.black54),
+  //                 )),
+  //           )
+  //         ],
+  //         content: Form(
+  //           key: _formKeyQty,
+  //           child: TextFormField(
+  //             autofocus: true,
+  //             textAlign: TextAlign.center,
+  //             style: const TextStyle(
+  //               fontSize: 25,
+  //             ),
+  //             keyboardType: TextInputType.number,
+  //             controller: _qtyController,
+  //             validator: (valueQty) => valueQty!.isEmpty ||
+  //                     valueQty == null ||
+  //                     int.tryParse(valueQty.toString()) == 0
+  //                 ? 'Cant be 0 or Empty'
+  //                 : null,
+  //             decoration: const InputDecoration(
+  //               border: InputBorder.none,
+  //               filled: true,
+  //               contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+  //
+  //               hintText: 'Quantity',
+  //               fillColor: Colors.white,
+  //               //filled: true,
+  //             ),
+  //           ),
+  //         ), // availibility,
+  //       ),
+  //     );
 
   Future addToDevisDialog(dataid, data, earn) => showDialog(
         context: context,
@@ -574,7 +581,8 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                       //       -int.parse(_qtyController.text))
                       // });
                       // setState(() {
-                      addItemsToDevis2(dataid, data, earn, _qtyController.text);
+                      _addToDevisFunction(
+                          dataid, data, earn, _qtyController.text);
                       _qtyController.clear();
                       // });
                     } else {
@@ -617,7 +625,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
         ),
       );
 
-  Future AlertD() => showDialog(
+  Future showAlertDialogOut() => showDialog(
       context: context,
       builder: (context) => AlertDialog(
             backgroundColor: Colors.red.shade200,
@@ -662,7 +670,9 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
             ),
           ));
 
-  Future<void> addItemsToDevis2(dataid, data, earn, qty) async {
+  Future<void> _addToDevisFunction(dataid, data, earn, qty) async {
+    User? _user = FirebaseAuth.instance.currentUser;
+
     CollectionReference devisitem =
         FirebaseFirestore.instance.collection('Estimate');
 
@@ -690,7 +700,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
             'codebar': data['codebar'],
             'oldStock': data['oldStock'],
             'origine': data['origine'],
-            'user': data['user'],
+            'user': _user!.uid, //data['user'],
             'qty': int.parse(qty),
             'earn': earn,
           }, SetOptions(merge: true))
@@ -1039,15 +1049,16 @@ class SLiverHeader extends StatelessWidget {
                                               onTap: () {
                                                 Navigator.of(context)
                                                     .push(MaterialPageRoute(
-                                                  builder: (context) => StockPage(
-                                                      pageQuery:
-                                                          FirebaseFirestore
-                                                              .instance
-                                                              .collection(
-                                                                  'Adventure')
-                                                              .where('stock',
-                                                                  isGreaterThan:
-                                                                      0)),
+                                                  builder: (context) =>
+                                                      StockPage(
+                                                    pageQuery: FirebaseFirestore
+                                                        .instance
+                                                        .collection('Adventure')
+                                                        .where('stock',
+                                                            isGreaterThan: 0),
+                                                    colorGreen: colorGreen,
+                                                    colorRed: colorRed,
+                                                  ),
                                                 ));
                                               },
                                               child: Padding(
@@ -1103,16 +1114,19 @@ class SLiverHeader extends StatelessWidget {
                                               onTap: () {
                                                 Navigator.of(context)
                                                     .push(MaterialPageRoute(
-                                                  builder: (context) => StockPage(
-                                                      pageQuery: FirebaseFirestore
-                                                          .instance
-                                                          .collection(
-                                                              'Adventure')
-                                                          .where('stock',
-                                                              isGreaterThan: 0)
-                                                          .where('stock',
-                                                              isLessThanOrEqualTo:
-                                                                  5)),
+                                                  builder: (context) =>
+                                                      StockPage(
+                                                    pageQuery: FirebaseFirestore
+                                                        .instance
+                                                        .collection('Adventure')
+                                                        .where('stock',
+                                                            isGreaterThan: 0)
+                                                        .where('stock',
+                                                            isLessThanOrEqualTo:
+                                                                5),
+                                                    colorGreen: colorGreen,
+                                                    colorRed: colorRed,
+                                                  ),
                                                 ));
                                               },
                                               child: Padding(
@@ -1163,14 +1177,17 @@ class SLiverHeader extends StatelessWidget {
                                               onTap: () {
                                                 Navigator.of(context)
                                                     .push(MaterialPageRoute(
-                                                  builder: (context) => StockPage(
-                                                      pageQuery: FirebaseFirestore
-                                                          .instance
-                                                          .collection(
-                                                              'Adventure')
-                                                          .where('stock',
-                                                              isLessThanOrEqualTo:
-                                                                  0)),
+                                                  builder: (context) =>
+                                                      StockPage(
+                                                    pageQuery: FirebaseFirestore
+                                                        .instance
+                                                        .collection('Adventure')
+                                                        .where('stock',
+                                                            isLessThanOrEqualTo:
+                                                                0),
+                                                    colorGreen: colorGreen,
+                                                    colorRed: colorRed,
+                                                  ),
                                                 ));
                                               },
                                               child: Padding(
@@ -1218,7 +1235,7 @@ class SLiverHeader extends StatelessWidget {
   }
 }
 
-showAlertDialog(BuildContext context, data, dataid) {
+showAlertDialogRemove(BuildContext context, data, dataid) {
   // set up the buttons
   Widget cancelButton = ElevatedButton(
     style: ButtonStyle(
@@ -1299,11 +1316,15 @@ showAlertDialog(BuildContext context, data, dataid) {
 }
 
 class StockPage extends StatelessWidget {
-  StockPage({
+  const StockPage({
     Key? key,
     required this.pageQuery,
+    required this.colorGreen,
+    required this.colorRed,
   }) : super(key: key);
 
+  final Color colorGreen;
+  final Color colorRed;
   final pageQuery;
 
   @override
@@ -1389,28 +1410,41 @@ class StockPage extends StatelessWidget {
                         ),
                         FittedBox(
                           child: LinearPercentIndicator(
-                            trailing: Text(
-                              (data['stock'] * 100 / data['oldStock'])
-                                      .toString() +
-                                  '%',
-                              style: TextStyle(fontSize: 25),
-                            ),
+                            trailing: data['stock'] > data['oldStock']
+                                ? Icon(FontAwesomeIcons.infinity)
+                                // Text(
+                                //         '100%',
+                                //         style: TextStyle(fontSize: 25),
+                                //       )
+                                : Text(
+                                    NumberFormat.currency(
+                                                symbol: '', decimalDigits: 0)
+                                            .format((data['stock'] *
+                                                100 /
+                                                data['oldStock'])) +
+                                        '%',
+                                    style: TextStyle(fontSize: 25),
+                                  ),
                             width: MediaQuery.of(context).size.width,
                             animation: true,
                             lineHeight: 25.0,
                             animationDuration: 1000,
-                            percent: data['stock'] > data['oldStock']
+                            percent: data['stock'] > data['oldStock'] ||
+                                    data['stock'] < 0
                                 ? 1
                                 : data['stock'] / data['oldStock'],
-                            center: Text(
-                              (data['stock'] * 100 / data['oldStock'])
-                                      .toString() +
-                                  '%',
-                              style: TextStyle(),
-                            ),
+                            // center: Text(
+                            //   NumberFormat.currency(
+                            //               symbol: '', decimalDigits: 0)
+                            //           .format((data['stock'] *
+                            //               100 /
+                            //               data['oldStock'])) +
+                            //       '%',
+                            //   style: TextStyle(),
+                            // ),
                             barRadius: Radius.circular(20.0),
-                            progressColor: Colors.greenAccent,
-                            backgroundColor: Colors.red,
+                            progressColor: colorGreen,
+                            backgroundColor: colorRed,
                             restartAnimation: false,
                           ),
                         )

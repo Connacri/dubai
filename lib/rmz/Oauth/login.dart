@@ -83,11 +83,21 @@ class _LoginWidgetState extends State<LoginWidget> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Lottie.asset(
-                                'assets/lotties/127878-avatar-creation (2).json',
-                                repeat: true,
-                                // reverse: true,
-                                animate: true,
+                              Stack(
+                                children: [
+                                  Container(
+                                    height: 300,
+                                    width: 200,
+                                  ),
+                                  Lottie.asset(
+                                    'assets/lotties/127878-avatar-creation (2).json',
+                                    repeat: true,
+                                    // reverse: true,
+                                    animate: true,
+                                    height: 300,
+                                    width: 200,
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: 20),
                               Text(

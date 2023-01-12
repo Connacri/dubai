@@ -14,6 +14,7 @@ class Profile extends StatelessWidget {
     //var authInfo = Provider.of<googleSignInProvider>(context);
     final userGoo = FirebaseAuth.instance.currentUser;
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           Stack(
@@ -62,17 +63,14 @@ class Profile extends StatelessWidget {
               ),
             ],
           ),
-
           Padding(
             padding: const EdgeInsets.all(8.0),
             child:
                 Text(userGoo.emailVerified != true ? 'Email Not Verified' : ''),
           ),
-
           Text(userGoo.phoneNumber != null
               ? userGoo.phoneNumber.toString()
               : ' '.toUpperCase()),
-
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 38),
             child: ElevatedButton.icon(
@@ -111,12 +109,13 @@ class Profile extends StatelessWidget {
               //   //   builder: (context) => verifi_auth(),
               //   // ));
               // },
-              onPressed: () {
+              onPressed: () async {
                 FirebaseAuth.instance.signOut();
                 final provider =
                     Provider.of<googleSignInProvider>(context, listen: false);
-                provider.logout();
-                Navigator.of(context).pop();
+                await provider.logouta();
+                // Navigator.of(context).pop();
+                Navigator.pop(context, true);
               },
             ),
           ),
