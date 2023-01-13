@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -1229,6 +1230,69 @@ class SLiverHeader extends StatelessWidget {
             ),
           ),
           ViewGlobalCompte(),
+          Container(
+            height: 60,
+            child: StreamBuilder(
+                stream:
+                    FirebaseFirestore.instance.collection('Users').snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Text('');
+                  } else {
+                    return //Text(snapshot.data!.size.toString());
+                        ListView.builder(
+                            physics: BouncingScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: snapshot.data!.docs.length,
+                            shrinkWrap: true,
+                            itemBuilder: (_, intex) {
+                              DocumentSnapshot _UnsplashUrlSnapshot =
+                                  snapshot.data!.docs[intex];
+                              return UnsplashAvatar(
+                                  UnsplashUrl: _UnsplashUrlSnapshot[
+                                      'userAvatar']); //['userAvatar']
+                            });
+                  }
+                }),
+          ),
+          // Container(
+          //   height: 60,
+          //   child: ListView(
+          //     shrinkWrap: true,
+          //     physics: BouncingScrollPhysics(),
+          //     scrollDirection: Axis.horizontal,
+          //     children: [
+          //       UnsplashAvatar(
+          //           UnsplashUrl:
+          //               'https://img1.wsimg.com/isteam/ip/d48b4882-6d43-4aed-ac22-2834c9891797/ADV%20TYRES%20MOTOZ.jpg/:/cr=t:0%25,l:0%25,w:100%25,h:100%25/rs=w:1300,h:800'),
+          //       UnsplashAvatar(
+          //           UnsplashUrl:
+          //               'https://source.unsplash.com/random/250×200/?motocycle'),
+          //       UnsplashAvatar(
+          //           UnsplashUrl:
+          //               'https://source.unsplash.com/random/400×300/?motocycle'),
+          //       UnsplashAvatar(
+          //           UnsplashUrl:
+          //               'https://source.unsplash.com/random/300×200/?motos'),
+          //       UnsplashAvatar(
+          //           UnsplashUrl:
+          //               'https://source.unsplash.com/random/300×300/?moto'),
+          //       UnsplashAvatar(
+          //           UnsplashUrl:
+          //               'https://source.unsplash.com/random/300×200/?motor'),
+          //       UnsplashAvatar(
+          //           UnsplashUrl:
+          //               'https://img1.wsimg.com/isteam/ip/d48b4882-6d43-4aed-ac22-2834c9891797/Motoz_edits-8402-resized.jpg/:/rs=w:1300,h:800'),
+          //       UnsplashAvatar(
+          //           UnsplashUrl:
+          //               'https://img1.wsimg.com/isteam/ip/d48b4882-6d43-4aed-ac22-2834c9891797/4.jpg/:/rs=w:1300,h:800'),
+          //       UnsplashAvatar(
+          //           UnsplashUrl:
+          //               'https://img1.wsimg.com/isteam/ip/d48b4882-6d43-4aed-ac22-2834c9891797/motoz-505.jpg/:/rs=w:1300,h:800'),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );
@@ -1666,5 +1730,37 @@ class ViewGlobalCompte extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class UnsplashAvatar extends StatelessWidget {
+  const UnsplashAvatar({
+    Key? key,
+    required this.UnsplashUrl,
+  }) : super(key: key);
+
+  final String UnsplashUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          width: 50.0,
+          height: 50.0,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+          ),
+          child: CachedNetworkImage(
+            imageUrl: UnsplashUrl,
+            imageBuilder: (context, imageProvider) => Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+              ),
+            ),
+            errorWidget: (context, url, error) => Icon(Icons.error),
+          ),
+        ));
   }
 }
