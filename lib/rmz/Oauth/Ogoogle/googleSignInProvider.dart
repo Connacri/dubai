@@ -39,6 +39,37 @@ class googleSignInProvider extends ChangeNotifier {
     }
   }
 
+  // Future readUserX() async {
+  //   final user = await FirebaseAuth.instance.currentUser;
+  //   final _docUser =
+  //       await FirebaseFirestore.instance.collection('Users').doc(user!.uid);
+  //   final snapshot = await _docUser.get();
+  //   if (snapshot.exists) {
+  //     print(snapshot.data()!['userDisplayName']);
+  //     return snapshot.data()!['userDisplayName'].toString();
+  //   }
+  // }
+//
+//   late String _name;
+//   late String _productId;
+//   late double _price;
+//
+// //getters:
+//   String get getName => _name;
+//   double get getPrice => _price;
+//
+// //Setters:
+//
+//   void changeProductName(String val) {
+//     _name = val;
+//     notifyListeners();
+//   }
+//
+//   void changeProductPrice(String val) {
+//     _price = double.parse(val);
+//     notifyListeners();
+//   }
+
   Future logouta() async {
     await googleSignIn.disconnect();
     await FirebaseAuth.instance.signOut();

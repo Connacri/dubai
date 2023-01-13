@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
+import '../ik/classes.dart';
 import 'Oauth/Ogoogle/googleSignInProvider.dart';
 
 class Profile extends StatelessWidget {
@@ -11,7 +12,8 @@ class Profile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //var authInfo = Provider.of<googleSignInProvider>(context);
+    var authInfo = Provider.of<googleSignInProvider>(context);
+    final prov = Provider.of<SuperHero>(context, listen: false);
     final userGoo = FirebaseAuth.instance.currentUser;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -43,6 +45,7 @@ class Profile extends StatelessWidget {
                     ),
                   ),
                   Text(userGoo.displayName.toString().toUpperCase()),
+                  //Text(authInfo.user.email),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -63,6 +66,7 @@ class Profile extends StatelessWidget {
               ),
             ],
           ),
+          Text(prov.userAvatar),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child:

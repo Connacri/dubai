@@ -91,3 +91,111 @@ class Invoice {
         itemCodeBar: json['item CodeBar']! as List,
       );
 }
+
+class UserDetail {
+  Timestamp UcreatedAt;
+  int userAge;
+  String userAvatar;
+  String userDisplayName;
+  String userEmail;
+  String userID;
+  int userItemsNbr;
+  int userPhone;
+  String userSex;
+  bool userState;
+  String userRole;
+
+  UserDetail(
+      this.UcreatedAt,
+      this.userAge,
+      this.userAvatar,
+      this.userDisplayName,
+      this.userEmail,
+      this.userID,
+      this.userItemsNbr,
+      this.userPhone,
+      this.userSex,
+      this.userState,
+      this.userRole);
+
+  Map<String, dynamic> createMap() {
+    return {
+      'UcreatedAt': UcreatedAt,
+      'userAge': userAge,
+      'userAvatar': userAvatar,
+      'userDisplayName': userDisplayName,
+      'userEmail': userEmail,
+      'userID': userID,
+      'userItemsNbr': userItemsNbr,
+      'userPhone': userPhone,
+      'userSex': userSex,
+      'userState': userState,
+      'userRole': userRole,
+    };
+  }
+
+  UserDetail.fromFirestore(Map<String, dynamic> parsedJSON)
+      : UcreatedAt = parsedJSON['UcreatedAt'],
+        userAge = parsedJSON['userAge'],
+        userAvatar = parsedJSON['userAvatar'],
+        userDisplayName = parsedJSON['userDisplayName'],
+        userEmail = parsedJSON['userEmail'],
+        userID = parsedJSON['userID'],
+        userItemsNbr = parsedJSON['userItemsNbr'],
+        userPhone = parsedJSON['userPhone'],
+        userSex = parsedJSON['userSex'],
+        userState = parsedJSON['userState'],
+        userRole = parsedJSON['userRole'];
+}
+
+// class UserPro {
+//   Timestamp UcreatedAt;
+//   int userAge;
+//   String userAvatar;
+//   String userDisplayName;
+//   String userEmail;
+//   String userID;
+//   int userItemsNbr;
+//   int userPhone;
+//   String userSex;
+//   bool userState;
+//   String userRole;
+//
+//   UserPro.name(
+//       this.UcreatedAt,
+//       this.userAge,
+//       this.userAvatar,
+//       this.userDisplayName,
+//       this.userEmail,
+//       this.userID,
+//       this.userItemsNbr,
+//       this.userPhone,
+//       this.userSex,
+//       this.userState,
+//       this.userRole);
+//
+//   UserPro.fromJson(Map<String, dynamic> parsedJSON)
+//       : UcreatedAt = parsedJSON['UcreatedAt'],
+//         userAge = parsedJSON['userAge'],
+//         userAvatar = parsedJSON['userAvatar'],
+//         userDisplayName = parsedJSON['userDisplayName'],
+//         userEmail = parsedJSON['userEmail'],
+//         userID = parsedJSON['userID'],
+//         userItemsNbr = parsedJSON['userItemsNbr'],
+//         userPhone = parsedJSON['userPhone'],
+//         userSex = parsedJSON['userSex'],
+//         userState = parsedJSON['userState'],
+//         userRole = parsedJSON['userRole'];
+// }
+
+class SuperHero {
+  final String userDisplayName;
+  final String userAvatar;
+
+  SuperHero({required this.userDisplayName, required this.userAvatar});
+
+  static SuperHero fromJson(json) => SuperHero(
+        userDisplayName: json['userDisplayName'] ?? '',
+        userAvatar: json['userAvatar'] ?? '',
+      );
+}

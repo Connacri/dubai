@@ -922,6 +922,7 @@ class SLiverHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // var userDetail = Provider.of<googleSignInProvider>(context).readUserX();
     return SliverToBoxAdapter(
       child: Column(
         children: [
@@ -964,14 +965,14 @@ class SLiverHeader extends StatelessWidget {
                             // .where((DocumentSnapshot documentSnapshot) =>
                             //     documentSnapshot['stock'])
                             .toList();
-                        print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
-                        print(totalPneuxList[0]['stock']);
+                        // print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+                        // print(totalPneuxList[0]['stock']);
                         int tota = 0;
                         for (int i = 0; i < totalPneuxList.length; i++) {
                           tota += totalPneuxList[i]['stock'] as int;
                         }
-                        print('88888888888888888888888');
-                        print(tota);
+                        // print('88888888888888888888888');
+                        // print(tota);
 
                         //print(count0);
                         return ListView(
@@ -1231,7 +1232,7 @@ class SLiverHeader extends StatelessWidget {
           ),
           ViewGlobalCompte(),
           Container(
-            height: 60,
+            height: 100,
             child: StreamBuilder(
                 stream:
                     FirebaseFirestore.instance.collection('Users').snapshots(),
@@ -1249,9 +1250,14 @@ class SLiverHeader extends StatelessWidget {
                             itemBuilder: (_, intex) {
                               DocumentSnapshot _UnsplashUrlSnapshot =
                                   snapshot.data!.docs[intex];
-                              return UnsplashAvatar(
-                                  UnsplashUrl: _UnsplashUrlSnapshot[
-                                      'userAvatar']); //['userAvatar']
+                              return Column(
+                                children: [
+                                  UnsplashAvatar(
+                                      UnsplashUrl:
+                                          _UnsplashUrlSnapshot['userAvatar']),
+                                  Text(_UnsplashUrlSnapshot['userDisplayName'])
+                                ],
+                              ); //['userAvatar']
                             });
                   }
                 }),
@@ -1603,7 +1609,7 @@ class ViewGlobalCompte extends StatelessWidget {
       }
     }
 
-    print(sumTotalInvoice);
+    //print(sumTotalInvoice);
 
     return Padding(
       padding: const EdgeInsets.all(18.0),

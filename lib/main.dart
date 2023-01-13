@@ -94,7 +94,9 @@ class Materialclass extends StatelessWidget {
           ),
 //          darkTheme: _darkTheme,
 
-          home: const verifi_auth(),
+          home: Scaffold(
+            body: const verifi_auth(),
+          ),
         ),
       );
 }

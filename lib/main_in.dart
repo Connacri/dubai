@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +19,7 @@ class MultiProviderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final FirebaseServices firebaseServices = FirebaseServices();
+    final GoogleUser2 = FirebaseAuth.instance.currentUser;
     return MultiProvider(
       providers: [
         StreamProvider<List<Charges>>(
@@ -34,6 +34,14 @@ class MultiProviderWidget extends StatelessWidget {
           create: (_) => firebaseServices.getInvoiceList(),
           initialData: [],
         ),
+        StreamProvider<SuperHero>.value(
+          // All children will have access to SuperHero data
+          value: firebaseServices.streamHero(GoogleUser2!.uid),
+          initialData: SuperHero(
+            userDisplayName: GoogleUser2.displayName.toString(),
+            userAvatar: GoogleUser2.photoURL.toString(),
+          ),
+        ),
       ],
       // child: logIn(),
       child: NavigationExample(),
@@ -45,8 +53,6 @@ class MultiProviderWidget extends StatelessWidget {
 
 class FirebaseServices {
   FirebaseFirestore _fireStoreDataBase = FirebaseFirestore.instance;
-
-  //recieve the data
 
   Stream<List<Charges>> getCostsTaxesList() {
     return _fireStoreDataBase.collection('Charges').snapshots().map(
@@ -68,6 +74,15 @@ class FirebaseServices {
             .map((document) => Invoice.fromJson(document.data()))
             .toList());
   }
+
+  /// Get a stream of a single document
+  Stream<SuperHero> streamHero(String? id) {
+    return _fireStoreDataBase
+        .collection('Users')
+        .doc(id)
+        .snapshots()
+        .map((documen) => SuperHero.fromJson(documen.data()));
+  }
 }
 
 class NavigationExample extends StatefulWidget {
@@ -80,8 +95,18 @@ class NavigationExample extends StatefulWidget {
 class _NavigationExampleState extends State<NavigationExample> {
   int currentPageIndex = 0;
   final user = FirebaseAuth.instance.currentUser;
+
+  // @override
+  // void initState() {
+  //
+  //   final prov = Provider.of<SuperHero>(context, listen: false);
+  //   super.initState();
+  // }
+
   @override
   Widget build(BuildContext context) {
+    late final prov = Provider.of<SuperHero>(context, listen: false);
+
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         height: 60,
@@ -97,80 +122,70 @@ class _NavigationExampleState extends State<NavigationExample> {
             label: 'Home',
           ),
           NavigationDestination(
-            icon: Icon(Icons.accessibility),
-            label: 'Customers',
-          ),
-          // NavigationDestination(
-          //   selectedIcon: Icon(Icons.account_circle_rounded),
-          //   icon: ClipRRect(
-          //     clipBehavior: Clip.hardEdge,
-          //     borderRadius: BorderRadius.circular(50),
-          //     child: ClipRRect(
-          //       clipBehavior: Clip.hardEdge,
-          //       borderRadius: BorderRadius.circular(50),
-          //       child: user!.photoURL == null
-          //           ? const Icon(Icons.account_circle)
-          //           : FutureBuilder(
-          //         future: readUser(),
-          //         builder: (BuildContext context,
-          //             AsyncSnapshot<dynamic> snapshot) {
-          //           if (snapshot.hasData) {
-          //             final user1 = snapshot.data;
-          //             return user1 != null
-          //                 ? CachedNetworkImage(
-          //               imageUrl: user1['userAvatar'],
-          //               width: 30,
-          //               height: 30,
-          //               fit: BoxFit.cover,
-          //             )
-          //                 : Icon(Icons.account_circle_rounded);
-          //           } else {
-          //             return Center(
-          //               child: CircularProgressIndicator(),
-          //             );
-          //           }
-          //         },
-          //       ),
-          //     ),
-          //   ),
-          //
-          //   //Icon(Icons.account_circle_rounded),
-          //   label: user!.displayName.toString(),
-          // ),
-          FutureBuilder(
-            future: readUser(),
-            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-              if (snapshot.hasData) {
-                final user1 = snapshot.data;
-                return NavigationDestination(
-                  selectedIcon: Icon(Icons.account_circle_rounded),
-                  icon: ClipRRect(
-                    clipBehavior: Clip.hardEdge,
-                    borderRadius: BorderRadius.circular(50),
-                    child: ClipRRect(
-                      clipBehavior: Clip.hardEdge,
-                      borderRadius: BorderRadius.circular(50),
-                      child: user!.photoURL == null
-                          ? const Icon(Icons.account_circle)
-                          : CachedNetworkImage(
-                              imageUrl: user1['userAvatar'],
-                              width: 30,
-                              height: 30,
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                  ),
+              icon: Icon(Icons.accessibility), label: 'Customers'),
+          NavigationDestination(
+              icon: ClipRRect(
+                  clipBehavior: Clip.hardEdge,
+                  borderRadius: BorderRadius.circular(50),
+                  child: Image.network(
+                    prov.userAvatar.toString(),
+                    fit: BoxFit.cover,
+                    height: 30,
+                    width: 30,
+                  )
 
-                  //Icon(Icons.account_circle_rounded),
-                  label: user1['userDisplayName'],
-                );
-              } else {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            },
-          ),
+                  // prov.userAvatar == null
+                  //     ? const Icon(Icons.account_circle)
+                  //     : CachedNetworkImage(
+                  //         imageUrl: '${prov.userAvatar}',
+                  //         width: 30,
+                  //         height: 30,
+                  //         fit: BoxFit.cover,
+                  //         imageBuilder: (context, imageProvider) => Container(
+                  //               decoration: BoxDecoration(
+                  //                 shape: BoxShape.circle,
+                  //                 image: DecorationImage(
+                  //                     image: imageProvider, fit: BoxFit.cover),
+                  //               ),
+                  //             ),
+                  //         errorWidget: (context, url, error) => Icon(Icons.error),
+                  //         placeholderFadeInDuration: Duration(seconds: 1)),
+                  ),
+              label: prov.userDisplayName),
+          // FutureBuilder(
+          //   future: readUser(),
+          //   builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          //     if (snapshot.hasData) {
+          //       final user1 = snapshot.data;
+          //       return NavigationDestination(
+          //         selectedIcon: Icon(Icons.account_circle_rounded),
+          //         icon: ClipRRect(
+          //           clipBehavior: Clip.hardEdge,
+          //           borderRadius: BorderRadius.circular(50),
+          //           child: ClipRRect(
+          //             clipBehavior: Clip.hardEdge,
+          //             borderRadius: BorderRadius.circular(50),
+          //             child: user!.photoURL == null
+          //                 ? const Icon(Icons.account_circle)
+          //                 : CachedNetworkImage(
+          //                     imageUrl: user1['userAvatar'],
+          //                     width: 30,
+          //                     height: 30,
+          //                     fit: BoxFit.cover,
+          //                   ),
+          //           ),
+          //         ),
+          //
+          //         //Icon(Icons.account_circle_rounded),
+          //         label: user1['userDisplayName'],
+          //       );
+          //     } else {
+          //       return Center(
+          //         child: CircularProgressIndicator(),
+          //       );
+          //     }
+          //   },
+          // ),
         ],
       ),
       body: <Widget>[
