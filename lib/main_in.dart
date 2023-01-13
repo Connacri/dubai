@@ -82,8 +82,6 @@ class _NavigationExampleState extends State<NavigationExample> {
   final user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
-    var authInfo = Provider.of<List<Charges>>(context);
-
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         height: 60,
@@ -102,22 +100,76 @@ class _NavigationExampleState extends State<NavigationExample> {
             icon: Icon(Icons.accessibility),
             label: 'Customers',
           ),
-          NavigationDestination(
-            selectedIcon: Icon(Icons.account_circle_rounded),
-            icon: ClipRRect(
-              clipBehavior: Clip.hardEdge,
-              borderRadius: BorderRadius.circular(50),
-              child: user!.photoURL == null
-                  ? const Icon(Icons.account_circle)
-                  : CachedNetworkImage(
-                      fit: BoxFit.cover,
-                      imageUrl: user!.photoURL!,
-                      width: 30,
-                      height: 30,
+          // NavigationDestination(
+          //   selectedIcon: Icon(Icons.account_circle_rounded),
+          //   icon: ClipRRect(
+          //     clipBehavior: Clip.hardEdge,
+          //     borderRadius: BorderRadius.circular(50),
+          //     child: ClipRRect(
+          //       clipBehavior: Clip.hardEdge,
+          //       borderRadius: BorderRadius.circular(50),
+          //       child: user!.photoURL == null
+          //           ? const Icon(Icons.account_circle)
+          //           : FutureBuilder(
+          //         future: readUser(),
+          //         builder: (BuildContext context,
+          //             AsyncSnapshot<dynamic> snapshot) {
+          //           if (snapshot.hasData) {
+          //             final user1 = snapshot.data;
+          //             return user1 != null
+          //                 ? CachedNetworkImage(
+          //               imageUrl: user1['userAvatar'],
+          //               width: 30,
+          //               height: 30,
+          //               fit: BoxFit.cover,
+          //             )
+          //                 : Icon(Icons.account_circle_rounded);
+          //           } else {
+          //             return Center(
+          //               child: CircularProgressIndicator(),
+          //             );
+          //           }
+          //         },
+          //       ),
+          //     ),
+          //   ),
+          //
+          //   //Icon(Icons.account_circle_rounded),
+          //   label: user!.displayName.toString(),
+          // ),
+          FutureBuilder(
+            future: readUser(),
+            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+              if (snapshot.hasData) {
+                final user1 = snapshot.data;
+                return NavigationDestination(
+                  selectedIcon: Icon(Icons.account_circle_rounded),
+                  icon: ClipRRect(
+                    clipBehavior: Clip.hardEdge,
+                    borderRadius: BorderRadius.circular(50),
+                    child: ClipRRect(
+                      clipBehavior: Clip.hardEdge,
+                      borderRadius: BorderRadius.circular(50),
+                      child: user!.photoURL == null
+                          ? const Icon(Icons.account_circle)
+                          : CachedNetworkImage(
+                              imageUrl: user1['userAvatar'],
+                              width: 30,
+                              height: 30,
+                              fit: BoxFit.cover,
+                            ),
                     ),
-            ),
-            //Icon(Icons.account_circle_rounded),
-            label: user!.displayName.toString(),
+                  ),
+
+                  //Icon(Icons.account_circle_rounded),
+                  label: user1['userDisplayName'],
+                );
+              } else {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
           ),
         ],
       ),
@@ -130,5 +182,14 @@ class _NavigationExampleState extends State<NavigationExample> {
         Profile(),
       ][currentPageIndex],
     );
+  }
+
+  Future<Map<String, dynamic>?> readUser() async {
+    final _docUser =
+        FirebaseFirestore.instance.collection('Users').doc(user!.uid);
+    final snapshot = await _docUser.get();
+    if (snapshot.exists) {
+      return snapshot.data();
+    }
   }
 }
