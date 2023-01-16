@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -600,6 +601,11 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
           content: Form(
             key: _formKeyQty,
             child: TextFormField(
+              inputFormatters: [
+                //FilteringTextInputFormatter.deny(RegExp(r'[,]')),
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                //CommaTextInputFormatter(),
+              ],
               autofocus: true,
               textAlign: TextAlign.center,
               style: const TextStyle(
@@ -799,13 +805,22 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                   ),
                 ),
                 TextField(
+                  inputFormatters: [
+                    //FilteringTextInputFormatter.deny(RegExp(r'[,]')),
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    //CommaTextInputFormatter(),
+                  ],
                   controller: _stockController,
                   decoration: const InputDecoration(
-                    label: Text('Stock'),
+                    label: Text('Stock Dispo'),
                   ),
                   keyboardType: TextInputType.number,
                 ),
                 TextField(
+                  inputFormatters: [
+                    //FilteringTextInputFormatter.deny(RegExp(r'[,]')),
+                    CommaTextInputFormatter(),
+                  ],
                   controller: _prixAchatController,
                   decoration: const InputDecoration(
                     label: Text('Factory Price'),
@@ -813,6 +828,11 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                   keyboardType: TextInputType.number,
                 ),
                 TextField(
+                  inputFormatters: [
+                    //FilteringTextInputFormatter.deny(RegExp(r'[,]')),
+                    //FilteringTextInputFormatter.deny(RegExp(r'[0-9]')),
+                    CommaTextInputFormatter(),
+                  ],
                   controller: _prixVenteController,
                   decoration: const InputDecoration(
                     label: Text('Retail Price'),
@@ -826,6 +846,11 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                   ),
                 ),
                 TextField(
+                  inputFormatters: [
+                    //FilteringTextInputFormatter.deny(RegExp(r'[,]')),
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    //CommaTextInputFormatter(),
+                  ],
                   controller: _oldStockController,
                   decoration: const InputDecoration(
                     label: Text('Initial Stock'),
@@ -903,6 +928,22 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
             ),
           );
         });
+  }
+}
+
+class CommaTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    String truncated = newValue.text;
+    final TextSelection newSelection = newValue.selection;
+    if (newValue.text.contains(',')) {
+      truncated = newValue.text.replaceFirst(RegExp(','), '.');
+    }
+    return TextEditingValue(
+      text: truncated,
+      selection: newSelection,
+    );
   }
 }
 

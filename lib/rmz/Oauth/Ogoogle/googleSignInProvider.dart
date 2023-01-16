@@ -100,6 +100,7 @@ Future setUserDoc(User userGoo) async {
   List usersLike = ['sans'];
   int userAge = 20;
   int userItemsNbr = 0;
+  String userRole = 'dealer';
   int userPhone = 65498321000; //int.parse(userGoo.phoneNumber.toString());
   String userSex = 'mal';
   bool userState = true;
@@ -114,6 +115,7 @@ Future setUserDoc(User userGoo) async {
     'userDisplayName': userDisplayName,
     'userAge': userAge,
     'userItemsNbr': FieldValue.increment(1),
+    'userRole': userRole,
     'userPhone': userPhone,
     'userSex': userSex,
     'userState': userState,

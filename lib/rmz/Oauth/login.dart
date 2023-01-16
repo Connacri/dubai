@@ -7,7 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
-import '../../main_in.dart';
+import '../../main.dart';
 import 'Ogoogle/googleSignInProvider.dart';
 
 class LoginWidget extends StatefulWidget {
@@ -128,19 +128,17 @@ class _LoginWidgetState extends State<LoginWidget> {
                                       fontSize: 24, color: Colors.white),
                                 ),
                                 onPressed: () async {
-                                  // final provider =
-                                  await Provider.of<googleSignInProvider>(
+                                  final provider =
+                                      await Provider.of<googleSignInProvider>(
                                           context,
-                                          listen: false)
-                                      .googleLogin()
-                                      .whenComplete(() => Navigator.of(context)
-                                              .pushAndRemoveUntil(
-                                                  MaterialPageRoute(
-                                                      builder: (context) {
-                                            return Builder(builder: (context) {
-                                              return MultiProviderWidget();
-                                            }); // Profile();
-                                          }), ModalRoute.withName('/')));
+                                          listen: false);
+                                  provider.googleLogin().whenComplete(() =>
+                                      Navigator.of(context).pushAndRemoveUntil(
+                                          MaterialPageRoute(builder: (context) {
+                                        return Builder(builder: (context) {
+                                          return verifi_auth(); //CheckRole();
+                                        }); // Profile();
+                                      }), ModalRoute.withName('/')));
                                   // (route) => true
                                 },
                               ), // Google

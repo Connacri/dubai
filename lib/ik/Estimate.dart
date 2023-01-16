@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 
+import 'ListDealers.dart';
 import 'invoiceList.dart';
+import 'testjason2firestoreGet.dart';
 
 class estimateik extends StatefulWidget {
   const estimateik({Key? key}) : super(key: key);
@@ -319,6 +322,11 @@ class _estimateikState extends State<estimateik> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
+                    inputFormatters: [
+                      //FilteringTextInputFormatter.deny(RegExp(r'[,]')),
+                      //FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      CommaTextInputFormatter(),
+                    ],
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 25,
@@ -1024,9 +1032,26 @@ class _addCustomerToEstimate2State extends State<addCustomerToEstimate2> {
                 ),
               ],
             ), // Switch
-            SizedBox(
-              height: 50,
+
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 25.0, horizontal: 80),
+              child: isSwitched
+                  ? TextButton.icon(
+                      onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => ListDealers())),
+                      icon: Icon(
+                        Icons.account_circle_rounded,
+                        color: Colors.cyan,
+                      ),
+                      label: Text(
+                        'Select Dealer',
+                        style: TextStyle(color: Colors.cyan),
+                      ))
+                  : null,
             ),
+
             TextFormField(
               autofocus: true,
               textAlign: TextAlign.center,
@@ -1040,7 +1065,7 @@ class _addCustomerToEstimate2State extends State<addCustomerToEstimate2> {
                       int.tryParse(value.toString()) == 0
                   ? 'Cant be Empty'
                   : null,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 border: InputBorder.none,
                 filled: true,
                 contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -1050,6 +1075,7 @@ class _addCustomerToEstimate2State extends State<addCustomerToEstimate2> {
                 //filled: true,
               ),
             ),
+            Divider(),
             TextField(
               controller: dateinput,
               //editing controller of this TextField

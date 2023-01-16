@@ -30,19 +30,31 @@ class Profile extends StatelessWidget {
               ),
               Column(
                 children: [
-                  AvatarGlow(
-                    glowColor: Colors.purple,
-                    endRadius: 60.0,
-                    child: Material(
-                      // Replace this child with your own
-                      elevation: 8.0,
-                      shape: CircleBorder(),
-                      child: CircleAvatar(
-                        backgroundImage:
-                            NetworkImage(userGoo!.photoURL.toString()),
-                        radius: 30.0,
+                  Stack(
+                    children: [
+                      AvatarGlow(
+                        glowColor: Colors.black54,
+                        endRadius: 60.0,
+                        child: Material(
+                          // Replace this child with your own
+                          elevation: 8.0,
+                          shape: CircleBorder(),
+                          child: CircleAvatar(
+                            backgroundImage:
+                                NetworkImage(userGoo!.photoURL.toString()),
+                            radius: 30.0,
+                          ),
+                        ),
                       ),
-                    ),
+                      Positioned(
+                        right: 27,
+                        bottom: 27,
+                        child: Icon(
+                          Icons.check_circle,
+                          color: Colors.blue,
+                        ),
+                      )
+                    ],
                   ),
                   Text(userGoo.displayName.toString().toUpperCase()),
                   //Text(authInfo.user.email),
@@ -67,6 +79,7 @@ class Profile extends StatelessWidget {
             ],
           ),
           Text(prov.userAvatar),
+
           Padding(
             padding: const EdgeInsets.all(8.0),
             child:

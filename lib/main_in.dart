@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -5,8 +6,8 @@ import 'package:provider/provider.dart';
 
 import 'ik/classes.dart';
 import 'ik/testjason2firestoreGet.dart';
-import 'rmz/Profile.dart';
 import 'rmz/home.dart';
+import 'rmz/publicProfil.dart';
 
 class MultiProviderWidget extends StatelessWidget {
   const MultiProviderWidget({
@@ -127,8 +128,8 @@ class _NavigationExampleState extends State<NavigationExample> {
               icon: ClipRRect(
                   clipBehavior: Clip.hardEdge,
                   borderRadius: BorderRadius.circular(50),
-                  child: Image.network(
-                    prov.userAvatar.toString(),
+                  child: CachedNetworkImage(
+                    imageUrl: prov.userAvatar.toString(),
                     fit: BoxFit.cover,
                     height: 30,
                     width: 30,
@@ -194,17 +195,8 @@ class _NavigationExampleState extends State<NavigationExample> {
         home(),
         //NavRailExample(),
         // dealer(),
-        Profile(),
+        publicProfil(),
       ][currentPageIndex],
     );
-  }
-
-  Future<Map<String, dynamic>?> readUser() async {
-    final _docUser =
-        FirebaseFirestore.instance.collection('Users').doc(user!.uid);
-    final snapshot = await _docUser.get();
-    if (snapshot.exists) {
-      return snapshot.data();
-    }
   }
 }
