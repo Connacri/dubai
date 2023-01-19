@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,17 +9,14 @@ import 'rmz/home.dart';
 import 'rmz/publicProfil.dart';
 
 class MultiProviderWidget extends StatelessWidget {
-  const MultiProviderWidget({
-    Key? key,
-    // required this.firebaseServices,
-  }) : super(key: key);
+  MultiProviderWidget({Key? key, required this.userRole}) : super(key: key);
 
-  // final FirebaseServices firebaseServices;
+  var userRole;
 
   @override
   Widget build(BuildContext context) {
     final FirebaseServices firebaseServices = FirebaseServices();
-    final GoogleUser2 = FirebaseAuth.instance.currentUser;
+
     return MultiProvider(
       providers: [
         StreamProvider<List<Charges>>(
@@ -35,17 +31,23 @@ class MultiProviderWidget extends StatelessWidget {
           create: (_) => firebaseServices.getInvoiceList(),
           initialData: [],
         ),
-        StreamProvider<SuperHero>.value(
-          // All children will have access to SuperHero data
-          value: firebaseServices.streamHero(GoogleUser2!.uid),
-          initialData: SuperHero(
-            userDisplayName: GoogleUser2.displayName.toString(),
-            userAvatar: GoogleUser2.photoURL.toString(),
-          ),
-        ),
+        // StreamProvider<SuperHero>.value(
+        //   // All children will have access to SuperHero data
+        //   value: firebaseServices.streamHero(GoogleUser2!.uid),
+        //   initialData: SuperHero(
+        //     userDisplayName: GoogleUser2.displayName.toString(),
+        //     userAvatar: GoogleUser2.photoURL.toString(),
+        //   ),
+        // ),
       ],
       // child: logIn(),
-      child: NavigationExample(),
+      child:
+          // Center(
+          //   child: Text(userRole['userDisplayName']),
+          // ),
+          NavigationExample(
+        userRole: userRole,
+      ),
       //**************************************
       //child: mainPageFirestoreGetik(),
     );
@@ -77,17 +79,18 @@ class FirebaseServices {
   }
 
   /// Get a stream of a single document
-  Stream<SuperHero> streamHero(String? id) {
-    return _fireStoreDataBase
-        .collection('Users')
-        .doc(id)
-        .snapshots()
-        .map((documen) => SuperHero.fromJson(documen.data()));
-  }
+  // Stream<SuperHero> streamHero(String? id) {
+  //   return _fireStoreDataBase
+  //       .collection('Users')
+  //       .doc(id)
+  //       .snapshots()
+  //       .map((documen) => SuperHero.fromJson(documen.data()));
+  // }
 }
 
 class NavigationExample extends StatefulWidget {
-  const NavigationExample({super.key});
+  NavigationExample({Key? key, required this.userRole}) : super(key: key);
+  final userRole;
 
   @override
   State<NavigationExample> createState() => _NavigationExampleState();
@@ -95,7 +98,6 @@ class NavigationExample extends StatefulWidget {
 
 class _NavigationExampleState extends State<NavigationExample> {
   int currentPageIndex = 0;
-  final user = FirebaseAuth.instance.currentUser;
 
   // @override
   // void initState() {
@@ -106,8 +108,6 @@ class _NavigationExampleState extends State<NavigationExample> {
 
   @override
   Widget build(BuildContext context) {
-    late final prov = Provider.of<SuperHero>(context, listen: false);
-
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         height: 60,
@@ -125,34 +125,35 @@ class _NavigationExampleState extends State<NavigationExample> {
           NavigationDestination(
               icon: Icon(Icons.accessibility), label: 'Customers'),
           NavigationDestination(
-              icon: ClipRRect(
-                  clipBehavior: Clip.hardEdge,
-                  borderRadius: BorderRadius.circular(50),
-                  child: CachedNetworkImage(
-                    imageUrl: prov.userAvatar.toString(),
-                    fit: BoxFit.cover,
-                    height: 30,
-                    width: 30,
-                  )
+            icon: ClipRRect(
+                clipBehavior: Clip.hardEdge,
+                borderRadius: BorderRadius.circular(50),
+                child: CachedNetworkImage(
+                  imageUrl: widget.userRole['userAvatar'],
+                  fit: BoxFit.cover,
+                  height: 30,
+                  width: 30,
+                )
 
-                  // prov.userAvatar == null
-                  //     ? const Icon(Icons.account_circle)
-                  //     : CachedNetworkImage(
-                  //         imageUrl: '${prov.userAvatar}',
-                  //         width: 30,
-                  //         height: 30,
-                  //         fit: BoxFit.cover,
-                  //         imageBuilder: (context, imageProvider) => Container(
-                  //               decoration: BoxDecoration(
-                  //                 shape: BoxShape.circle,
-                  //                 image: DecorationImage(
-                  //                     image: imageProvider, fit: BoxFit.cover),
-                  //               ),
-                  //             ),
-                  //         errorWidget: (context, url, error) => Icon(Icons.error),
-                  //         placeholderFadeInDuration: Duration(seconds: 1)),
-                  ),
-              label: prov.userDisplayName),
+                // prov.userAvatar == null
+                //     ? const Icon(Icons.account_circle)
+                //     : CachedNetworkImage(
+                //         imageUrl: '${prov.userAvatar}',
+                //         width: 30,
+                //         height: 30,
+                //         fit: BoxFit.cover,
+                //         imageBuilder: (context, imageProvider) => Container(
+                //               decoration: BoxDecoration(
+                //                 shape: BoxShape.circle,
+                //                 image: DecorationImage(
+                //                     image: imageProvider, fit: BoxFit.cover),
+                //               ),
+                //             ),
+                //         errorWidget: (context, url, error) => Icon(Icons.error),
+                //         placeholderFadeInDuration: Duration(seconds: 1)),
+                ),
+            label: widget.userRole['userDisplayName'],
+          ),
           // FutureBuilder(
           //   future: readUser(),
           //   builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -195,7 +196,9 @@ class _NavigationExampleState extends State<NavigationExample> {
         home(),
         //NavRailExample(),
         // dealer(),
-        publicProfil(),
+        publicProfil(
+          userRole: widget.userRole,
+        ),
       ][currentPageIndex],
     );
   }

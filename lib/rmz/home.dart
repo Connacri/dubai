@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -53,9 +54,18 @@ class home extends StatelessWidget {
                 return ListView.builder(
                   itemCount: snapshot.data.length,
                   itemBuilder: (_, index) {
-                    return Center(
-                      child: Text(snapshot.data[index].id.toString()),
+                    var data = snapshot.data![index];
+                    return ListTile(
+                      leading: CachedNetworkImage(
+                        imageUrl: data['userAvatar'],
+                      ),
+                      title: Text(data['userDisplayName'].toString()),
+                      subtitle: Text(data['userEmail'].toString()),
                     );
+
+                    //   Center(
+                    //   child: Text(snapshot.data[index].id.toString()),
+                    // );
                   },
                 );
               }
@@ -67,7 +77,7 @@ class home extends StatelessWidget {
 
   Future getposts() async {
     var firestore = FirebaseFirestore.instance;
-    QuerySnapshot qn = await firestore.collection('Dealers').get();
+    QuerySnapshot qn = await firestore.collection('Users').get();
     return qn.docs;
   }
 }

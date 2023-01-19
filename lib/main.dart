@@ -61,7 +61,7 @@ Future<void> main() async {
       //options: DefaultFirebaseOptions.currentPlatform,
       );
   FlutterNativeSplash.removeAfter(initialization);
-  runApp(const Materialclass());
+  runApp(Materialclass());
 }
 
 Future initialization(BuildContext? context) async {
@@ -72,36 +72,64 @@ final navigatorKey = GlobalKey<NavigatorState>();
 
 /// This is the main application widget.
 class Materialclass extends StatelessWidget {
-  const Materialclass({Key? key}) : super(key: key);
+  Materialclass({Key? key}) : super(key: key);
 
   static const String _title = 'Oran ';
+  final GoogleUser2 = FirebaseAuth.instance.currentUser;
 
   @override
-  Widget build(BuildContext context) => ChangeNotifierProvider(
-        create: (context) => googleSignInProvider(),
-        child: MaterialApp(
-          locale: const Locale('fr', ''),
-          //scaffoldMessengerKey: Utils.messengerKey,
-          navigatorKey: navigatorKey,
-          debugShowCheckedModeBanner: false,
-          title: _title,
-          themeMode: ThemeMode.dark,
-          theme: ThemeData(
-            useMaterial3: true,
-            fontFamily: "Oswald",
-            //fontFamily: lang.languageCode == "ar" ? 'ArbFONTS-khalaad-al-arabeh' : "Oswald",
-            //   fontFamily:
-            //   Localizations.localeOf(context).languageCode == 'ar'?
-            //   'ArbFONTS-khalaad-al-arabeh' : 'Oswald'
-          ),
+  Widget build(BuildContext context) {
+    // final GoogleSignInProvider googleSignInProviderStream =
+    //     GoogleSignInProvider();
+
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => googleSignInProvider(),
+        ),
+        // StreamProvider<SuperHero>(
+        //   create: (_) =>
+        //       googleSignInProviderStream.streamHero(GoogleUser2!.uid),
+        //   initialData: SuperHero(userDisplayName: 'df', userAvatar: 'fd'),
+        //   lazy: true,
+        // ),
+      ],
+      child: MaterialApp(
+        locale: const Locale('fr', ''),
+        //scaffoldMessengerKey: Utils.messengerKey,
+        navigatorKey: navigatorKey,
+        debugShowCheckedModeBanner: false,
+        title: _title,
+        themeMode: ThemeMode.dark,
+        theme: ThemeData(
+          useMaterial3: true,
+          fontFamily: "Oswald",
+          //fontFamily: lang.languageCode == "ar" ? 'ArbFONTS-khalaad-al-arabeh' : "Oswald",
+          //   fontFamily:
+          //   Localizations.localeOf(context).languageCode == 'ar'?
+          //   'ArbFONTS-khalaad-al-arabeh' : 'Oswald'
+        ),
 //          darkTheme: _darkTheme,
 
-          home: Scaffold(
-            body: const verifi_auth(),
-          ),
-        ),
-      );
+        home: const verifi_auth(),
+      ),
+    );
+  }
 }
+
+// class GoogleSignInProvider {
+//   Stream<SuperHero> streamHero(id) {
+//     final _fireStoreDataBase = FirebaseFirestore.instance;
+//     return _fireStoreDataBase
+//         .collection('Users')
+//         .doc(id)
+//         .snapshots()
+//         .map((documen) {
+//       final dataQ = SuperHero.fromJson(documen.data());
+//       return dataQ;
+//     });
+//   }
+// }
 
 class verifi_auth extends StatefulWidget {
   const verifi_auth({Key? key}) : super(key: key);
@@ -155,7 +183,7 @@ class CheckRole extends StatelessWidget {
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
-              title: Text("Document does not exist"),
+              title: Text("${users.id} Document does not exist"),
               centerTitle: true,
             ),
             body: Center(
@@ -195,9 +223,13 @@ class CheckRole extends StatelessWidget {
           Map<String, dynamic> userRole =
               snapshot.data!.data() as Map<String, dynamic>;
           if (userRole['userRole'] == 'admin') {
-            return MultiProviderWidget();
+            return MultiProviderWidget(
+              userRole: userRole,
+            );
           } else {
-            return publicLogged();
+            return publicLogged(
+              userRole: userRole,
+            );
           }
         }
 

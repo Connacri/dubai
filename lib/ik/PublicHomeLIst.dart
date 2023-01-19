@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -11,6 +12,8 @@ import 'package:paginate_firestore/widgets/empty_display.dart';
 import 'package:paginate_firestore/widgets/empty_separator.dart';
 import 'package:paginate_firestore/widgets/initial_loader.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../rmz/detailItem.dart';
 
 class publicHomeList extends StatefulWidget {
   const publicHomeList({Key? key}) : super(key: key);
@@ -44,6 +47,7 @@ class _publicHomeListState extends State<publicHomeList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         centerTitle: true,
         title: Text('Call AdventureGG'),
         actions: [
@@ -101,42 +105,73 @@ class _publicHomeListState extends State<publicHomeList> {
         padding: const EdgeInsets.all(8.0),
         child: PaginateFirestore(
             header: SliverToBoxAdapter(
-              child: Container(
-                height: 200.0,
-                child: ListView(
-                  shrinkWrap: true,
-                  physics: BouncingScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    UnsplashCard(
-                        UnsplashUrl:
-                            'https://img1.wsimg.com/isteam/ip/d48b4882-6d43-4aed-ac22-2834c9891797/ADV%20TYRES%20MOTOZ.jpg/:/cr=t:0%25,l:0%25,w:100%25,h:100%25/rs=w:1300,h:800'),
-                    UnsplashCard(
-                        UnsplashUrl:
-                            'https://source.unsplash.com/random/250×200/?motocycle'),
-                    UnsplashCard(
-                        UnsplashUrl:
-                            'https://source.unsplash.com/random/400×300/?motocycle'),
-                    UnsplashCard(
-                        UnsplashUrl:
-                            'https://source.unsplash.com/random/300×200/?motos'),
-                    UnsplashCard(
-                        UnsplashUrl:
-                            'https://source.unsplash.com/random/300×300/?moto'),
-                    UnsplashCard(
-                        UnsplashUrl:
-                            'https://source.unsplash.com/random/300×200/?motor'),
-                    UnsplashCard(
-                        UnsplashUrl:
-                            'https://img1.wsimg.com/isteam/ip/d48b4882-6d43-4aed-ac22-2834c9891797/Motoz_edits-8402-resized.jpg/:/rs=w:1300,h:800'),
-                    UnsplashCard(
-                        UnsplashUrl:
-                            'https://img1.wsimg.com/isteam/ip/d48b4882-6d43-4aed-ac22-2834c9891797/4.jpg/:/rs=w:1300,h:800'),
-                    UnsplashCard(
-                        UnsplashUrl:
-                            'https://img1.wsimg.com/isteam/ip/d48b4882-6d43-4aed-ac22-2834c9891797/motoz-505.jpg/:/rs=w:1300,h:800'),
-                  ],
-                ),
+              child: Column(
+                children: [
+                  Container(
+                      height: 200.0,
+                      child: CarouselSlider.builder(
+                        itemCount: 20,
+                        itemBuilder: (BuildContext context, int index,
+                                int pageViewIndex) =>
+                            UnsplashSlider(
+                          UnsplashUrl:
+                              'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/wall%2Fwall%20(${index}).jpg?alt=media&token=eda95dcc-770f-4497-af4f-c39f59a15c8b',
+                        ),
+                        options: CarouselOptions(
+                          //height: 400,
+                          aspectRatio: 16 / 9,
+                          viewportFraction: 0.8,
+                          initialPage: 0,
+                          enableInfiniteScroll: true,
+                          reverse: false,
+                          autoPlay: true,
+                          autoPlayInterval: Duration(seconds: 3),
+                          autoPlayAnimationDuration:
+                              Duration(milliseconds: 800),
+                          autoPlayCurve: Curves.fastOutSlowIn,
+                          enlargeCenterPage: true,
+                          enlargeFactor: 0.3,
+                          //onPageChanged: callbackFunction,
+                          scrollDirection: Axis.horizontal,
+                        ),
+                      )),
+                  Container(
+                    height: 200.0,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: BouncingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 12,
+                      itemBuilder: (BuildContext context, int index) {
+                        return UnsplashSlider(
+                          UnsplashUrl:
+                              'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/carre%2Fcarre%20(${index + 1}).jpg?alt=media&token=68e384f1-bb64-47cf-a245-9f7f12202443',
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            footer: SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  Container(
+                    height: 200.0,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: BouncingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 21,
+                      itemBuilder: (BuildContext context, int index) {
+                        return UnsplashSlider(
+                          UnsplashUrl:
+                              'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/mob%2Fmob%20(${index}).jpg?alt=media&token=e307d1db-a16f-42f9-a472-1f3a2f47ee79',
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
             itemsPerPage: 10000,
@@ -152,8 +187,16 @@ class _publicHomeListState extends State<publicHomeList> {
             itemBuilder: (BuildContext, DocumentSnapshot, int) {
               var data = DocumentSnapshot[int].data() as Map?;
               String dataid = DocumentSnapshot[int].id;
-
+              String randomPhoto =
+                  'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/mob%2Fmob%20(${int}).jpg?alt=media&token=e307d1db-a16f-42f9-a472-1f3a2f47ee79';
               return GestureDetector(
+                onDoubleTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => SilverdetailItem(
+                    intex: int,
+                    data: data,
+                    UnsplashUrl: randomPhoto,
+                  ),
+                )),
                 onTap: () async {
                   await showDetailPublic(data, int);
                 },
@@ -336,6 +379,9 @@ class _publicHomeListState extends State<publicHomeList> {
   Future showDetailPublic(data, int) => showDialog(
         context: context,
         builder: (context) => AlertDialog(
+          //  backgroundColor: Colors.transparent,
+
+          insetPadding: EdgeInsets.all(10),
           title: Center(
             child: Text(
               'Item : ${data['model'].toString()}'.toUpperCase(),
@@ -345,6 +391,7 @@ class _publicHomeListState extends State<publicHomeList> {
               ),
             ),
           ),
+
           content: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -409,8 +456,8 @@ class _publicHomeListState extends State<publicHomeList> {
       );
 }
 
-class UnsplashCard extends StatelessWidget {
-  const UnsplashCard({
+class UnsplashSlider extends StatelessWidget {
+  const UnsplashSlider({
     Key? key,
     required this.UnsplashUrl,
   }) : super(key: key);
@@ -419,28 +466,35 @@ class UnsplashCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      elevation: 5,
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      semanticContainer: true,
-      child: ShaderMask(
-        shaderCallback: (rect) {
-          return const LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomLeft,
-            colors: [Colors.transparent, Colors.black],
-          ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-        },
-        blendMode: BlendMode.darken,
-        child: CachedNetworkImage(
-          fit: BoxFit.cover,
-          imageUrl: UnsplashUrl,
-          errorWidget: (context, url, error) => const Icon(
-            Icons.error,
-            color: Colors.red,
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => UnsplashSlider(
+          UnsplashUrl: UnsplashUrl,
+        ),
+      )),
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        elevation: 5,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        semanticContainer: true,
+        child: ShaderMask(
+          shaderCallback: (rect) {
+            return const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomLeft,
+              colors: [Colors.transparent, Colors.black],
+            ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+          },
+          blendMode: BlendMode.darken,
+          child: CachedNetworkImage(
+            fit: BoxFit.cover,
+            imageUrl: UnsplashUrl,
+            errorWidget: (context, url, error) => const Icon(
+              Icons.error,
+              color: Colors.red,
+            ),
           ),
         ),
       ),

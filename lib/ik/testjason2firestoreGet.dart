@@ -1,4 +1,6 @@
 import 'dart:core';
+import 'dart:math';
+import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -964,6 +967,7 @@ class SLiverHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // var userDetail = Provider.of<googleSignInProvider>(context).readUserX();
+    Random random = new Random();
     return SliverToBoxAdapter(
       child: Column(
         children: [
@@ -1273,7 +1277,7 @@ class SLiverHeader extends StatelessWidget {
           ),
           ViewGlobalCompte(),
           Container(
-            height: 100,
+            height: 200,
             child: StreamBuilder(
                 stream:
                     FirebaseFirestore.instance.collection('Users').snapshots(),
@@ -1283,23 +1287,189 @@ class SLiverHeader extends StatelessWidget {
                     return Text('');
                   } else {
                     return //Text(snapshot.data!.size.toString());
-                        ListView.builder(
-                            physics: BouncingScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: snapshot.data!.docs.length,
-                            shrinkWrap: true,
-                            itemBuilder: (_, intex) {
-                              DocumentSnapshot _UnsplashUrlSnapshot =
-                                  snapshot.data!.docs[intex];
-                              return Column(
+                        Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListView.builder(
+                          physics: BouncingScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: snapshot.data!.docs.length,
+                          shrinkWrap: true,
+                          itemBuilder: (_, intex) {
+                            DocumentSnapshot _UnsplashUrlSnapshot =
+                                snapshot.data!.docs[intex];
+
+                            //final int inte = random.nextInt(13 - intex);
+                            final int inte = random.nextInt(13);
+
+                            return Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Stack(
+                                alignment: Alignment.topCenter,
                                 children: [
-                                  UnsplashAvatar(
-                                      UnsplashUrl:
-                                          _UnsplashUrlSnapshot['userAvatar']),
-                                  Text(_UnsplashUrlSnapshot['userDisplayName'])
+                                  ShaderMask(
+                                    shaderCallback: (rect) {
+                                      return const RadialGradient(
+                                        radius: 1,
+                                        colors: [Colors.white, Colors.black54],
+                                      ).createShader(rect);
+                                    },
+                                    blendMode: BlendMode.darken,
+                                    child: Stack(
+                                      children: [
+                                        Container(
+                                          height: 250,
+                                          width: 100,
+                                          child: CachedNetworkImage(
+                                            imageUrl:
+                                                'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/carre%2Fcarre%20(${inte}).jpg?alt=media&token=fbcb6223-39c8-4ed7-9b62-13acac60fe94',
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 250,
+                                          width: 100,
+                                          // decoration: BoxDecoration(
+                                          //   image: DecorationImage(
+                                          //     image: NetworkImage(
+                                          //       'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/carre%2Fcarre%20(${inte}).jpg?alt=media&token=fbcb6223-39c8-4ed7-9b62-13acac60fe94',
+                                          //     ),
+                                          //     fit: BoxFit.cover,
+                                          //   ),
+                                          // ),
+                                          child: ClipRRect(
+                                            // make sure we apply clip it properly
+                                            child: BackdropFilter(
+                                              filter: ImageFilter.blur(
+                                                  sigmaX: 3, sigmaY: 3),
+                                              child: Container(
+                                                padding: EdgeInsets.all(15),
+                                                alignment: Alignment.center,
+                                                color: Colors.grey
+                                                    .withOpacity(0.1),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 15.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        UnsplashAvatar(
+                                            UnsplashUrl: _UnsplashUrlSnapshot[
+                                                'userAvatar']),
+                                        Container(
+                                          width: 90,
+                                          child: FittedBox(
+                                            child: RatingBar.builder(
+                                              initialRating: double.parse(
+                                                  _UnsplashUrlSnapshot[
+                                                          'userItemsNbr']
+                                                      .toString()),
+                                              ignoreGestures: true,
+                                              minRating: 1,
+                                              direction: Axis.horizontal,
+                                              allowHalfRating: true,
+                                              itemCount: 5,
+                                              itemPadding: EdgeInsets.symmetric(
+                                                  horizontal: 4.0),
+                                              itemBuilder: (context, _) => Icon(
+                                                Icons.star,
+                                                color: Colors.amber,
+                                              ),
+                                              onRatingUpdate: (rating) {
+                                                print(rating);
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: 80,
+                                          height: 40,
+                                          child: FittedBox(
+                                            child: Text(
+                                              _UnsplashUrlSnapshot[
+                                                      'userDisplayName']
+                                                  .toString()
+                                                  .toUpperCase(),
+                                              style: TextStyle(
+                                                  color: Colors.white70,
+                                                  fontSize: 28,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                        _UnsplashUrlSnapshot['userRole'] ==
+                                                'admin'
+                                            ? ShaderMask(
+                                                blendMode: BlendMode.srcIn,
+                                                shaderCallback: (Rect bounds) =>
+                                                    LinearGradient(
+                                                      colors: <Color>[
+                                                        Colors.red,
+                                                        Colors.yellowAccent,
+                                                        Color.fromRGBO(
+                                                            246, 132, 2, 1.0),
+                                                      ],
+                                                      begin: Alignment.topLeft,
+                                                      end:
+                                                          Alignment.bottomRight,
+                                                    ).createShader(bounds),
+                                                child: Text(
+                                                  _UnsplashUrlSnapshot[
+                                                          'userRole']
+                                                      .toString()
+                                                      .toUpperCase(),
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ))
+                                            : Text(
+                                                _UnsplashUrlSnapshot['userRole']
+                                                    .toString()
+                                                    .toUpperCase(),
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                      ],
+                                    ),
+                                  ),
+                                  _UnsplashUrlSnapshot['userRole'] == 'admin'
+                                      ? Positioned(
+                                          top: 8,
+                                          child: ShaderMask(
+                                            blendMode: BlendMode.srcIn,
+                                            shaderCallback: (Rect bounds) =>
+                                                LinearGradient(
+                                              colors: <Color>[
+                                                Colors.red,
+                                                Colors.yellowAccent,
+                                                Color.fromRGBO(
+                                                    246, 132, 2, 1.0),
+                                              ],
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                            ).createShader(bounds),
+                                            child: Icon(
+                                              FontAwesomeIcons.crown,
+                                              color: Colors.amber,
+                                            ),
+                                          ))
+                                      : Container()
                                 ],
-                              ); //['userAvatar']
-                            });
+                              ),
+                            ); //['userAvatar']
+                          }),
+                    );
                   }
                 }),
           ),
@@ -1651,130 +1821,157 @@ class ViewGlobalCompte extends StatelessWidget {
     }
 
     //print(sumTotalInvoice);
+    Random random = new Random();
 
+    int intex = random.nextInt(19);
     return Padding(
       padding: const EdgeInsets.all(18.0),
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            gradient: LinearGradient(colors: [
-              Color.fromARGB(255, 139, 169, 2), //Colors.greenAccent;
-              Color.fromARGB(255, 66, 58, 41),
-            ])),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Whole Invest'.toUpperCase(),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500),
+      child: Stack(
+        children: [
+          ShaderMask(
+            shaderCallback: (rect) {
+              return const RadialGradient(
+                radius: 1,
+                colors: [Colors.white, Colors.black54],
+              ).createShader(rect);
+            },
+            blendMode: BlendMode.darken,
+            child: Stack(
+              children: [
+                Container(
+                  height: 150,
+                  width: MediaQuery.of(context).size.width,
+                  child: CachedNetworkImage(
+                    imageUrl:
+                        'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/wall%2Fwall%20(${intex}).jpg?alt=media&token=84432892-026e-458f-a0fb-b5a11123a880',
+                    fit: BoxFit.cover,
                   ),
-                  Text(
-                    NumberFormat.currency(symbol: '')
-                        .format(sumTaxeImport + summItems),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500),
+                ),
+                BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                  child: Container(
+                    alignment: Alignment.center,
+                    color: Colors.grey.withOpacity(0.1),
                   ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Factory Order'.toUpperCase(),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: colorWhite,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  Text(
-                    NumberFormat.currency(symbol: '').format(summItems),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: colorWhite,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Fix Taxes'.toUpperCase(),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.yellow),
-                  ),
-                  Text(
-                    NumberFormat.currency(symbol: '').format(sumTaxeImport),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: Colors.yellow,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Sales Total'.toUpperCase(),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: colorWhite,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  Text(
-                    NumberFormat.currency(symbol: '').format(sumTotalInvoice),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: colorWhite,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Earnings '.toUpperCase(),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.greenAccent),
-                  ),
-                  Text(
-                    NumberFormat.currency(symbol: '').format(sumInvoice),
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.greenAccent),
-                  ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Whole Invest'.toUpperCase(),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    Text(
+                      NumberFormat.currency(symbol: '')
+                          .format(sumTaxeImport + summItems),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Factory Order'.toUpperCase(),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: colorWhite,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    Text(
+                      NumberFormat.currency(symbol: '').format(summItems),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: colorWhite,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Fix Taxes'.toUpperCase(),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.yellow),
+                    ),
+                    Text(
+                      NumberFormat.currency(symbol: '').format(sumTaxeImport),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.yellow,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Sales Total'.toUpperCase(),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: colorWhite,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    Text(
+                      NumberFormat.currency(symbol: '').format(sumTotalInvoice),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: colorWhite,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Earnings '.toUpperCase(),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.greenAccent),
+                    ),
+                    Text(
+                      NumberFormat.currency(symbol: '').format(sumInvoice),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.greenAccent),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1791,23 +1988,24 @@ class UnsplashAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          width: 50.0,
-          height: 50.0,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-          ),
-          child: CachedNetworkImage(
-            imageUrl: UnsplashUrl,
-            imageBuilder: (context, imageProvider) => Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
-              ),
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        width: 40.0,
+        height: 40.0,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+        ),
+        child: CachedNetworkImage(
+          imageUrl: UnsplashUrl,
+          imageBuilder: (context, imageProvider) => Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
             ),
-            errorWidget: (context, url, error) => Icon(Icons.error),
           ),
-        ));
+          errorWidget: (context, url, error) => Icon(Icons.error),
+        ),
+      ),
+    );
   }
 }

@@ -1,13 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../ik/PublicHomeLIst.dart';
-import '../ik/classes.dart';
 import 'publicProfil.dart';
 
 class publicLogged extends StatefulWidget {
+  publicLogged({Key? key, required this.userRole}) : super(key: key);
+  final userRole;
+
   @override
   _publicLoggedState createState() {
     return _publicLoggedState();
@@ -29,7 +30,7 @@ class _publicLoggedState extends State<publicLogged> {
   @override
   Widget build(BuildContext context) {
     final currentuser = FirebaseAuth.instance.currentUser;
-    late final prov = Provider.of<SuperHero>(context, listen: false);
+    // final prov = Provider.of<SuperHero>(context, listen: false);
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         height: 60,
@@ -45,7 +46,22 @@ class _publicLoggedState extends State<publicLogged> {
             label: 'Home',
           ),
           NavigationDestination(
-            selectedIcon: Icon(Icons.account_circle_rounded),
+            selectedIcon: ClipRRect(
+              clipBehavior: Clip.hardEdge,
+              borderRadius: BorderRadius.circular(50),
+              child: currentuser == null
+                  ? const Icon(Icons.account_circle)
+                  : ClipRRect(
+                      clipBehavior: Clip.hardEdge,
+                      borderRadius: BorderRadius.circular(50),
+                      child: CachedNetworkImage(
+                        imageUrl: widget.userRole['userAvatar'],
+                        fit: BoxFit.cover,
+                        height: 30,
+                        width: 30,
+                      ),
+                    ),
+            ),
             icon: ClipRRect(
               clipBehavior: Clip.hardEdge,
               borderRadius: BorderRadius.circular(50),
@@ -55,7 +71,7 @@ class _publicLoggedState extends State<publicLogged> {
                       clipBehavior: Clip.hardEdge,
                       borderRadius: BorderRadius.circular(50),
                       child: CachedNetworkImage(
-                        imageUrl: currentuser.photoURL.toString(),
+                        imageUrl: widget.userRole['userAvatar'],
                         fit: BoxFit.cover,
                         height: 30,
                         width: 30,
@@ -65,14 +81,15 @@ class _publicLoggedState extends State<publicLogged> {
             //Icon(Icons.account_circle_rounded),
             label: currentuser == null
                 ? 'Account'
-                : currentuser.displayName.toString().toUpperCase(),
+                : widget.userRole['userDisplayName'].toUpperCase(),
           ),
         ],
       ),
       body: <Widget>[
         publicHomeList(),
-        publicProfil(),
-
+        publicProfil(
+          userRole: widget.userRole,
+        ),
         //estimateik(),
       ][currentPageIndex],
     );

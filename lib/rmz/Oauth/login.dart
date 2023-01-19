@@ -7,7 +7,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
-import '../../main.dart';
 import 'Ogoogle/googleSignInProvider.dart';
 
 class LoginWidget extends StatefulWidget {
@@ -132,13 +131,13 @@ class _LoginWidgetState extends State<LoginWidget> {
                                       await Provider.of<googleSignInProvider>(
                                           context,
                                           listen: false);
-                                  provider.googleLogin().whenComplete(() =>
-                                      Navigator.of(context).pushAndRemoveUntil(
-                                          MaterialPageRoute(builder: (context) {
-                                        return Builder(builder: (context) {
-                                          return verifi_auth(); //CheckRole();
-                                        }); // Profile();
-                                      }), ModalRoute.withName('/')));
+                                  provider.googleLogin()
+                                      // .whenComplete(() =>
+                                      // Navigator.of(context).pushAndRemoveUntil(
+                                      //     MaterialPageRoute(builder: (context) {
+                                      //   return verifi_auth(); //CheckRole();
+                                      // }), ModalRoute.withName('/')))
+                                      ;
                                   // (route) => true
                                 },
                               ), // Google
