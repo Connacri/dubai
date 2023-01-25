@@ -9,7 +9,18 @@ class main_out extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //return const AuthPage();
-    return publicNavigation();
+    // return MyHomePage();
+    //return publicNavigation();
+    return Home();
+  }
+}
+
+class Home extends StatelessWidget {
+  const Home({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const publicHomeList();
   }
 }
 
@@ -26,7 +37,8 @@ class _publicNavigationState extends State<publicNavigation> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: NavigationBar(
-        height: 60,
+        backgroundColor: Colors.transparent,
+        height: 80,
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;

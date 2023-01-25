@@ -134,7 +134,11 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                     if (data['stock'] == 0) {
                       await showAlertDialogOut();
                     } else {
-                      await addToDevisDialog(dataid, data, earn);
+                      await addToDevisDialog(
+                        dataid,
+                        data,
+                        /*earn*/ PUA,
+                      );
                     }
                   },
                   child: Slidable(
@@ -540,7 +544,12 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
   //       ),
   //     );
 
-  Future addToDevisDialog(dataid, data, earn) => showDialog(
+  Future addToDevisDialog(
+          dataid,
+          data,
+          /*earn*/
+          PUA) =>
+      showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Center(
@@ -587,7 +596,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                       // });
                       // setState(() {
                       _addToDevisFunction(
-                          dataid, data, earn, _qtyController.text);
+                          dataid, data, /*earn,*/ PUA, _qtyController.text);
                       _qtyController.clear();
                       // });
                     } else {
@@ -680,7 +689,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
             ),
           ));
 
-  Future<void> _addToDevisFunction(dataid, data, earn, qty) async {
+  Future<void> _addToDevisFunction(dataid, data, /*earn,*/ PUA, qty) async {
     User? _user = FirebaseAuth.instance.currentUser;
 
     CollectionReference devisitem =
@@ -712,7 +721,8 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
             'origine': data['origine'],
             'user': _user!.uid, //data['user'],
             'qty': int.parse(qty),
-            'earn': earn,
+            //'earn': earn,
+            'PUA': PUA,
           }, SetOptions(merge: true))
           .then((value) => print("Item Added to Devis"))
           .catchError((error) => print("Failed to add Item to Devis: $error"))

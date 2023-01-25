@@ -54,7 +54,9 @@ dependencies:
   url_launcher: ^6.1.7
   whatsapp_unilink: ^2.1.0
   flutter_rating_bar: ^4.0.1
-
+  floating_frosted_bottom_bar:
+  youtube_player_flutter: ^8.1.2
+  faded_image_list: ^0.0.3
 
 
   # The following adds the Cupertino Icons font to your application.

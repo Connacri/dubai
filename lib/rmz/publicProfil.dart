@@ -1,8 +1,12 @@
+import 'dart:math';
+import 'dart:ui';
+
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 
 import 'Oauth/Ogoogle/googleSignInProvider.dart';
@@ -10,6 +14,7 @@ import 'Oauth/Ogoogle/googleSignInProvider.dart';
 class publicProfil extends StatelessWidget {
   const publicProfil({Key? key, required this.userRole}) : super(key: key);
   final userRole;
+
   @override
   Widget build(BuildContext context) {
     final userGoo = FirebaseAuth.instance.currentUser;
@@ -17,12 +22,19 @@ class publicProfil extends StatelessWidget {
     // final userDoc = Provider.of<SuperHero>(context, listen: false);
     // print(userDoc.userDisplayName);
 
+    final double widthR = (MediaQuery.of(context).size.width -
+            MediaQuery.of(context).size.width * 0.6) /
+        2;
+
+    Random random = new Random();
+    var index = random.nextInt(15);
+
     return Scaffold(
       body: Stack(
-        alignment: Alignment.bottomCenter,
+        alignment: Alignment.center,
         children: [
           CarouselSlider.builder(
-            itemCount: 19,
+            itemCount: 15,
             itemBuilder: (BuildContext context, int index, int pageViewIndex) =>
                 ShaderMask(
               shaderCallback: (rect) {
@@ -38,7 +50,7 @@ class publicProfil extends StatelessWidget {
                 height: MediaQuery.of(context).size.height,
                 fit: BoxFit.cover,
                 imageUrl:
-                    'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/mob%2Fmob%20(${index + 1}).jpg?alt=media&token=9d17aa6e-0622-4d1f-bf78-97c0fe87da77',
+                    'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/mob%2Fmob%20(${index}).jpg?alt=media&token=9d17aa6e-0622-4d1f-bf78-97c0fe87da77',
                 errorWidget: (context, url, error) => const Icon(
                   Icons.error,
                   color: Colors.red,
@@ -53,7 +65,7 @@ class publicProfil extends StatelessWidget {
               enableInfiniteScroll: true,
               reverse: false,
               autoPlay: true,
-              autoPlayInterval: Duration(seconds: 3),
+              autoPlayInterval: Duration(seconds: 10),
               autoPlayAnimationDuration: Duration(milliseconds: 800),
               autoPlayCurve: Curves.fastOutSlowIn,
               enlargeCenterPage: true,
@@ -63,14 +75,8 @@ class publicProfil extends StatelessWidget {
             ),
           ),
           Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Lottie.asset(
-              //   'assets/lotties/132349-business-woman.json',
-              //   repeat: true,
-              //   // reverse: true,
-              //   animate: true,
-              // ),
               Stack(
                 children: [
                   AvatarGlow(
@@ -96,52 +102,123 @@ class publicProfil extends StatelessWidget {
                   )
                 ],
               ),
-              Text(
-                userGoo!.displayName.toString().toUpperCase(),
-                style: TextStyle(color: Colors.white),
-              ),
-              // Center(
-              //   child: Text('ID : ${userGoo.uid.toString().toUpperCase()}'),
-              // ),
-              ////////////////////// a verifi
-              Center(
-                  //  child: Text('Age : ${userDoc.userDisplayName}'),
-                  ),
-              ////////////////////// fin a verifi
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  userGoo.emailVerified == true
-                      ? Icon(
-                          Icons.check_circle,
-                          color: Colors.blue,
-                        )
-                      : Icon(
-                          Icons.not_interested_outlined,
-                          color: Colors.red,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                  child: Container(
+                    padding: EdgeInsets.all(15),
+                    alignment: Alignment.center,
+                    color: Colors.grey.withOpacity(0.3),
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    child: FittedBox(
+                      child: RatingBar.builder(
+                        initialRating:
+                            double.parse(userRole['userItemsNbr'].toString()),
+                        ignoreGestures: true,
+                        minRating: 1,
+                        direction: Axis.horizontal,
+                        allowHalfRating: true,
+                        itemCount: 5,
+                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        itemBuilder: (context, _) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
                         ),
-                  Text(
-                    userGoo.email.toString().toUpperCase(),
-                    style: TextStyle(color: Colors.white),
+                        onRatingUpdate: (rating) {
+                          print(rating);
+                        },
+                      ),
+                    ),
                   ),
-                  // Padding(
-                  //   padding: const EdgeInsets.all(8.0),
-                  //   child: Text(userGoo.emailVerified != true
-                  //       ? 'Email Not Verified'
-                  //       : 'Verified'),
-                  // ),
-                ],
-              ),
-              Text(
-                userGoo.phoneNumber != null
-                    ? userGoo.phoneNumber.toString()
-                    : ' '.toUpperCase(),
-                style: TextStyle(color: Colors.white),
+                ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 100),
+                padding: const EdgeInsets.only(top: 10.0),
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  child: FittedBox(
+                    child: Text(
+                      userRole['userDisplayName'].toString().toUpperCase(),
+                      style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.6,
+                child: FittedBox(
+                  child: userRole['userRole'] == 'admin'
+                      ? ShaderMask(
+                          blendMode: BlendMode.srcIn,
+                          shaderCallback: (Rect bounds) => LinearGradient(
+                                colors: <Color>[
+                                  Colors.red,
+                                  Colors.yellowAccent,
+                                  Color.fromRGBO(246, 132, 2, 1.0),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ).createShader(bounds),
+                          child: Text(
+                            userRole['userRole'].toString().toUpperCase(),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 50,
+                                fontWeight: FontWeight.bold),
+                          ))
+                      : Text(
+                          userRole['userRole'].toString().toUpperCase(),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 50,
+                              fontWeight: FontWeight.bold),
+                        ),
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.58,
+                child: FittedBox(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      userGoo!.emailVerified == true
+                          ? Icon(
+                              Icons.check_circle,
+                              color: Colors.blue,
+                            )
+                          : Icon(
+                              Icons.not_interested_outlined,
+                              color: Colors.red,
+                            ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        userGoo.email.toString().toUpperCase(),
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Container(
+              //   width: MediaQuery.of(context).size.width * 0.6,
+              //   child: FittedBox(
+              //     child: Text(
+              //       userGoo.phoneNumber != null
+              //           ? userGoo.phoneNumber.toString()
+              //           : ' '.toUpperCase(),
+              //       style: TextStyle(color: Colors.white),
+              //     ),
+              //   ),
+              // ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: widthR, vertical: 50),
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                       primary: Colors.blueGrey,

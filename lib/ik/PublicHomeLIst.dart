@@ -1,10 +1,14 @@
 import 'dart:core';
+import 'dart:math';
+import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:paginate_firestore/paginate_firestore.dart';
 import 'package:paginate_firestore/widgets/bottom_loader.dart';
@@ -12,8 +16,11 @@ import 'package:paginate_firestore/widgets/empty_display.dart';
 import 'package:paginate_firestore/widgets/empty_separator.dart';
 import 'package:paginate_firestore/widgets/initial_loader.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+import '../rmz/Oauth/AuthPage.dart';
 import '../rmz/detailItem.dart';
+import 'testjason2firestoreGet.dart';
 
 class publicHomeList extends StatefulWidget {
   const publicHomeList({Key? key}) : super(key: key);
@@ -36,11 +43,35 @@ class _publicHomeListState extends State<publicHomeList> {
   Color color1 = const Color.fromARGB(255, 243, 236, 216);
   Color color2 = const Color.fromARGB(255, 127, 136, 106);
   Color color3 = const Color.fromARGB(255, 62, 80, 60);
-
+  final url = 'https://www.youtube.com/watch?v=ZV5HEqyXmUY';
   @override
   void initState() {
     // getdatata();
     super.initState();
+
+    final videoId = YoutubePlayer.convertUrlToId(url);
+    ControllerYoutube = YoutubePlayerController(
+        initialVideoId: videoId!,
+        flags: const YoutubePlayerFlags(
+          mute: false,
+          loop: true,
+          autoPlay: false,
+        ));
+  }
+
+  User? user = FirebaseAuth.instance.currentUser;
+
+  late YoutubePlayerController ControllerYoutube;
+  @override
+  void desativate() {
+    ControllerYoutube.pause();
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    ControllerYoutube.dispose();
+    super.dispose();
   }
 
   @override
@@ -107,34 +138,305 @@ class _publicHomeListState extends State<publicHomeList> {
             header: SliverToBoxAdapter(
               child: Column(
                 children: [
+                  user == null
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 70.0),
+                          child: Card(
+                            // margin: const EdgeInsets.all(5),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            elevation: 5,
+                            child: Stack(
+                              children: [
+                                ShaderMask(
+                                  shaderCallback: (rect) {
+                                    return const LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomLeft,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black
+                                      ],
+                                    ).createShader(Rect.fromLTRB(
+                                        0, 0, rect.width, rect.height));
+                                  },
+                                  blendMode: BlendMode.darken,
+                                  child: Container(
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: CachedNetworkImageProvider(
+                                          'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/wall%2Fwall%20(4).jpg?alt=media&token=c5c01dca-4b32-4b9d-88fe-717e976ac2f5',
+                                        ),
+                                        fit: BoxFit.cover,
+                                        alignment: Alignment.topCenter,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Center(
+                                  child: TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AuthPage()));
+                                    },
+                                    child: Text(
+                                      'Google Sign in',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : Container(),
+                  ShaderMask(
+                    shaderCallback: (rect) {
+                      return const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomLeft,
+                        colors: [Colors.transparent, Colors.black],
+                      ).createShader(
+                          Rect.fromLTRB(0, 0, rect.width, rect.height));
+                    },
+                    blendMode: BlendMode.darken,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      height: 210,
+                      child: YoutubePlayerBuilder(
+                          player: YoutubePlayer(
+                            controller: ControllerYoutube,
+                            showVideoProgressIndicator: true,
+                            aspectRatio: 16 / 9,
+                            // thumbnail: CachedNetworkImage(
+                            //   fit: BoxFit.cover,
+                            //   imageUrl:
+                            //       'https://images.unsplash.com/photo-1533112050809-b85548ba39c4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=871&q=80',
+                            // ),
+                            onReady: () => debugPrint(
+                                'Readyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy'),
+                          ),
+                          builder: (context, player) => ListView(
+                                children: [
+                                  player,
+                                ],
+                              )),
+                    ),
+                  ),
                   Container(
-                      height: 200.0,
-                      child: CarouselSlider.builder(
-                        itemCount: 20,
-                        itemBuilder: (BuildContext context, int index,
-                                int pageViewIndex) =>
-                            UnsplashSlider(
-                          UnsplashUrl:
-                              'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/wall%2Fwall%20(${index}).jpg?alt=media&token=eda95dcc-770f-4497-af4f-c39f59a15c8b',
-                        ),
-                        options: CarouselOptions(
-                          //height: 400,
-                          aspectRatio: 16 / 9,
-                          viewportFraction: 0.8,
-                          initialPage: 0,
-                          enableInfiniteScroll: true,
-                          reverse: false,
-                          autoPlay: true,
-                          autoPlayInterval: Duration(seconds: 3),
-                          autoPlayAnimationDuration:
-                              Duration(milliseconds: 800),
-                          autoPlayCurve: Curves.fastOutSlowIn,
-                          enlargeCenterPage: true,
-                          enlargeFactor: 0.3,
-                          //onPageChanged: callbackFunction,
-                          scrollDirection: Axis.horizontal,
-                        ),
-                      )),
+                    height: 200,
+                    child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('Users')
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Text('');
+                          } else {
+                            return //Text(snapshot.data!.size.toString());
+                                Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: CarouselSlider.builder(
+                                itemCount: snapshot.data!.docs.length,
+                                itemBuilder: (BuildContext context, int index,
+                                        int pageViewIndex) =>
+                                    Card(
+                                  // margin: const EdgeInsets.all(5),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  elevation: 5,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      ShaderMask(
+                                        shaderCallback: (rect) {
+                                          return const LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomLeft,
+                                            colors: [
+                                              Colors.transparent,
+                                              Colors.black
+                                            ],
+                                          ).createShader(Rect.fromLTRB(
+                                              0, 0, rect.width, rect.height));
+                                        },
+                                        blendMode: BlendMode.darken,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: CachedNetworkImageProvider(
+                                                'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/wall%2Fwall%20(${index}).jpg?alt=media&token=c5c01dca-4b32-4b9d-88fe-717e976ac2f5',
+                                              ),
+                                              fit: BoxFit.cover,
+                                              alignment: Alignment.topCenter,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 250,
+                                        width: 100,
+                                        // decoration: BoxDecoration(
+                                        //   image: DecorationImage(
+                                        //     image: NetworkImage(
+                                        //       'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/carre%2Fcarre%20(${inte}).jpg?alt=media&token=fbcb6223-39c8-4ed7-9b62-13acac60fe94',
+                                        //     ),
+                                        //     fit: BoxFit.cover,
+                                        //   ),
+                                        // ),
+                                        child: ClipRRect(
+                                          // make sure we apply clip it properly
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(
+                                                sigmaX: 3, sigmaY: 3),
+                                            child: Container(
+                                              padding: EdgeInsets.all(15),
+                                              alignment: Alignment.center,
+                                              color:
+                                                  Colors.grey.withOpacity(0.1),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 15.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            UnsplashAvatar(
+                                                UnsplashUrl: snapshot.data!
+                                                    .docs[index]['userAvatar']),
+                                            Container(
+                                              width: 90,
+                                              child: FittedBox(
+                                                child: RatingBar.builder(
+                                                  initialRating: double.parse(
+                                                      snapshot
+                                                          .data!
+                                                          .docs[index]
+                                                              ['userItemsNbr']
+                                                          .toString()),
+                                                  ignoreGestures: true,
+                                                  minRating: 1,
+                                                  direction: Axis.horizontal,
+                                                  allowHalfRating: true,
+                                                  itemCount: 5,
+                                                  itemPadding:
+                                                      EdgeInsets.symmetric(
+                                                          horizontal: 4.0),
+                                                  itemBuilder: (context, _) =>
+                                                      Icon(
+                                                    Icons.star,
+                                                    color: Colors.amber,
+                                                  ),
+                                                  onRatingUpdate: (rating) {
+                                                    print(rating);
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 80,
+                                              height: 40,
+                                              child: FittedBox(
+                                                child: Text(
+                                                  snapshot
+                                                      .data!
+                                                      .docs[index]
+                                                          ['userDisplayName']
+                                                      .toString()
+                                                      .toUpperCase(),
+                                                  style: TextStyle(
+                                                      color: Colors.white70,
+                                                      fontSize: 28,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                            ),
+                                            snapshot.data!.docs[index]
+                                                        ['userRole'] ==
+                                                    'admin'
+                                                ? ShaderMask(
+                                                    blendMode: BlendMode.srcIn,
+                                                    shaderCallback: (Rect
+                                                            bounds) =>
+                                                        LinearGradient(
+                                                          colors: <Color>[
+                                                            Colors.red,
+                                                            Colors.yellowAccent,
+                                                            Color.fromRGBO(246,
+                                                                132, 2, 1.0),
+                                                          ],
+                                                          begin:
+                                                              Alignment.topLeft,
+                                                          end: Alignment
+                                                              .bottomRight,
+                                                        ).createShader(bounds),
+                                                    child: Text(
+                                                      snapshot
+                                                          .data!
+                                                          .docs[index]
+                                                              ['userRole']
+                                                          .toString()
+                                                          .toUpperCase(),
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ))
+                                                : Text(
+                                                    snapshot.data!
+                                                        .docs[index]['userRole']
+                                                        .toString()
+                                                        .toUpperCase(),
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                options: CarouselOptions(
+                                  //height: 400,
+                                  aspectRatio: 16 / 9,
+                                  viewportFraction: 0.8,
+                                  initialPage: 0,
+                                  enableInfiniteScroll: true,
+                                  reverse: false,
+                                  autoPlay: true,
+                                  autoPlayInterval: Duration(seconds: 3),
+                                  autoPlayAnimationDuration:
+                                      Duration(milliseconds: 800),
+                                  autoPlayCurve: Curves.fastOutSlowIn,
+                                  enlargeCenterPage: true,
+                                  enlargeFactor: 0.3,
+                                  //onPageChanged: callbackFunction,
+                                  scrollDirection: Axis.horizontal,
+                                ),
+                              ),
+                            );
+                          }
+                        }),
+                  ),
                   Container(
                     height: 200.0,
                     child: ListView.builder(
@@ -162,7 +464,7 @@ class _publicHomeListState extends State<publicHomeList> {
                       shrinkWrap: true,
                       physics: BouncingScrollPhysics(),
                       scrollDirection: Axis.horizontal,
-                      itemCount: 21,
+                      itemCount: 16,
                       itemBuilder: (BuildContext context, int index) {
                         return UnsplashSlider(
                           UnsplashUrl:
@@ -187,8 +489,11 @@ class _publicHomeListState extends State<publicHomeList> {
             itemBuilder: (BuildContext, DocumentSnapshot, int) {
               var data = DocumentSnapshot[int].data() as Map?;
               String dataid = DocumentSnapshot[int].id;
+              Random random = new Random();
+              var randomNumber = random.nextInt(37);
               String randomPhoto =
-                  'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/mob%2Fmob%20(${int}).jpg?alt=media&token=e307d1db-a16f-42f9-a472-1f3a2f47ee79';
+                  'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/carre%2Fcarre%20(${int}).jpg?alt=media&token=7347a738-f3f1-431b-a0f2-707238f4f1dc';
+
               return GestureDetector(
                 onDoubleTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => SilverdetailItem(
@@ -201,162 +506,107 @@ class _publicHomeListState extends State<publicHomeList> {
                   await showDetailPublic(data, int);
                 },
                 child: Card(
-                  child: GridTile(
-                    // header section
-                    // header: GridTileBar(
-                    //   backgroundColor: Colors.white,
-                    //   leading: const CircleAvatar(
-                    //     backgroundColor: Colors.deepOrange,
-                    //     child: Text(
-                    //       'K',
-                    //       style: TextStyle(color: Colors.white, fontSize: 30),
-                    //     ),
-                    //   ),
-                    //   title: const Text(
-                    //     'KindaCode.com',
-                    //     style: TextStyle(color: Colors.black),
-                    //   ),
-                    //   subtitle: const Text('5 minutes ago',
-                    //       style: TextStyle(color: Colors.grey)),
-                    //   trailing: IconButton(
-                    //       onPressed: () {},
-                    //       icon: const Icon(
-                    //         Icons.more_vert_rounded,
-                    //         color: Colors.black54,
-                    //       )),
-                    // ),
-                    // footer section
-                    footer: GridTileBar(
-                      backgroundColor: Colors.black54,
-                      title: Text(
-                        NumberFormat.currency(symbol: 'AED ', decimalDigits: 0)
-                            .format(data!['prixVente']),
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            //backgroundColor: Colors.black45,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.amberAccent,
-                            fontFamily: 'oswald'),
+                  margin: const EdgeInsets.all(5),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  elevation: 5,
+                  child: Stack(
+                    children: [
+                      ShaderMask(
+                        shaderCallback: (rect) {
+                          return const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomLeft,
+                            colors: [Colors.transparent, Colors.black],
+                          ).createShader(
+                              Rect.fromLTRB(0, 0, rect.width, rect.height));
+                        },
+                        blendMode: BlendMode.darken,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: CachedNetworkImageProvider(
+                                'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/tyres%2Ftyres%20(${randomNumber}).jpg?alt=media&token=291ec2fb-6013-45a0-8513-5611136125cb',
+                              ),
+                              fit: BoxFit.cover,
+                              alignment: Alignment.topCenter,
+                            ),
+                          ),
+                        ),
                       ),
-                      trailing: Text(
-                        data['code'],
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500),
+                      GridTile(
+                        header: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.black54,
+                                  borderRadius: BorderRadius.circular(8)),
+                              padding: const EdgeInsets.all(5.0),
+                              child: FittedBox(
+                                child: Text(
+                                  data!['category'],
+                                  overflow: TextOverflow.fade,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        footer: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(
+                            child: Text(
+                              NumberFormat.currency(
+                                      symbol: 'AED ', decimalDigits: 2)
+                                  .format(data!['prixVente']),
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  //backgroundColor: Colors.black45,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.amberAccent,
+                                  fontFamily: 'oswald'),
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          '',
+                          // data['code'],
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500),
+                        ),
                       ),
-                    ),
-                    // main child
-                    child: CachedNetworkImage(
-                      imageUrl:
-                          'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/tyres%2Ftyres%20(${int + 1}).jpg?alt=media&token=b3c6a2c0-c5ad-4433-95f2-60c42ebbc092',
-                      fit: BoxFit.cover,
-                      errorWidget: (context, url, error) => Image.network(
-                          'https://img1.wsimg.com/isteam/ip/d48b4882-6d43-4aed-ac22-2834c9891797/4.jpg/:/rs=w:1300,h:800'),
-                    ),
+                      Positioned(
+                        left: 8,
+                        top: 40,
+                        child: Center(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.black54,
+                                borderRadius: BorderRadius.circular(8)),
+                            padding: const EdgeInsets.all(5.0),
+                            child: Text(
+                              data['code'],
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               );
-
-              //   Container(
-              //   child: Column(
-              //     mainAxisAlignment: MainAxisAlignment.start,
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Stack(
-              //         // alignment: Alignment.center,
-              //         fit: StackFit.expand,
-              //         children: [
-              //           CachedNetworkImage(
-              //             imageUrl:
-              //                 'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/tyres%2Ftyres%20(${int + 1}).jpg?alt=media&token=b3c6a2c0-c5ad-4433-95f2-60c42ebbc092',
-              //             fit: BoxFit.cover,
-              //             errorWidget: (context, url, error) => Image.network(
-              //                 'https://img1.wsimg.com/isteam/ip/d48b4882-6d43-4aed-ac22-2834c9891797/4.jpg/:/rs=w:1300,h:800'),
-              //           ),
-              //           Column(
-              //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //             //crossAxisAlignment: CrossAxisAlignment.center,
-              //             children: [
-              //               Text(
-              //                 data!['code'],
-              //                 style: TextStyle(
-              //                     backgroundColor: Colors.indigo,
-              //                     color: Colors.white,
-              //                     fontSize: 16,
-              //                     fontWeight: FontWeight.w500),
-              //               ),
-              //
-              //               Text(
-              //                 NumberFormat.currency(
-              //                         symbol: 'AED ', decimalDigits: 0)
-              //                     .format(data['prixVente']),
-              //                 overflow: TextOverflow.ellipsis,
-              //                 style: TextStyle(
-              //                     backgroundColor: Colors.black45,
-              //                     fontSize: 18,
-              //                     fontWeight: FontWeight.w500,
-              //                     color: Colors.greenAccent),
-              //               ),
-              //               // GridTile(
-              //               //   header: Text(
-              //               //     data!['code'],
-              //               //     style: TextStyle(
-              //               //         fontSize: 16, fontWeight: FontWeight.w500),
-              //               //   ),
-              //               //
-              //               //   // child: Column(
-              //               //   //   mainAxisAlignment: MainAxisAlignment.start,
-              //               //   //   crossAxisAlignment: CrossAxisAlignment.start,
-              //               //   //   children: [
-              //               //   //     SizedBox(
-              //               //   //       height: 25,
-              //               //   //     ),
-              //               //   //     Text(
-              //               //   //       data['model'].toString().toUpperCase(),
-              //               //   //       //overflow: TextOverflow.ellipsis,
-              //               //   //     ),
-              //               //   //     Text(
-              //               //   //       data['size'].toString(),
-              //               //   //       style: TextStyle(color: Colors.blueGrey),
-              //               //   //       // overflow: TextOverflow.ellipsis,
-              //               //   //     ),
-              //               //   //   ],
-              //               //   // ),
-              //               //   footer: Text(
-              //               //     NumberFormat.currency(symbol: 'AED ', decimalDigits: 0)
-              //               //         .format(data['prixVente']),
-              //               //     overflow: TextOverflow.ellipsis,
-              //               //     style: TextStyle(
-              //               //         fontSize: 18,
-              //               //         fontWeight: FontWeight.w500,
-              //               //         color: Colors.green),
-              //               //   ),
-              //               //   child: CachedNetworkImage(
-              //               //     imageUrl:
-              //               //         'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/tyres%2Ftyres%20(${int + 1}).jpg?alt=media&token=b3c6a2c0-c5ad-4433-95f2-60c42ebbc092',
-              //               //     fit: BoxFit.cover,
-              //               //     errorWidget: (context, url, error) => Image.network(
-              //               //         'https://img1.wsimg.com/isteam/ip/d48b4882-6d43-4aed-ac22-2834c9891797/4.jpg/:/rs=w:1300,h:800'),
-              //               //   ),
-              //               // ),
-              //             ],
-              //           ),
-              //         ],
-              //       ),
-              //       Text(
-              //         data['model'].toString().toUpperCase(),
-              //         //overflow: TextOverflow.ellipsis,
-              //       ),
-              //       Text(
-              //         data['size'].toString(),
-              //         style: TextStyle(color: Colors.blueGrey),
-              //         // overflow: TextOverflow.ellipsis,
-              //       ),
-              //     ],
-              //   ),
-              // );
             }),
       ),
     );

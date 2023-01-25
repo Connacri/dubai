@@ -3,9 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'ik/Dealer.dart';
 import 'ik/classes.dart';
 import 'ik/testjason2firestoreGet.dart';
-import 'rmz/home.dart';
 import 'rmz/publicProfil.dart';
 
 class MultiProviderWidget extends StatelessWidget {
@@ -110,7 +110,7 @@ class _NavigationExampleState extends State<NavigationExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: NavigationBar(
-        height: 60,
+        height: 80,
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;
@@ -192,10 +192,7 @@ class _NavigationExampleState extends State<NavigationExample> {
       ),
       body: <Widget>[
         mainPageFirestoreGetik(),
-        //estimateik(),
-        home(),
-        //NavRailExample(),
-        // dealer(),
+        dealer(),
         publicProfil(
           userRole: widget.userRole,
         ),

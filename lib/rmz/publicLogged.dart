@@ -33,7 +33,7 @@ class _publicLoggedState extends State<publicLogged> {
     // final prov = Provider.of<SuperHero>(context, listen: false);
     return Scaffold(
       bottomNavigationBar: NavigationBar(
-        height: 60,
+        height: 80,
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;

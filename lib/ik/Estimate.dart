@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 
+import 'CustomerOrDealer.dart';
 import 'ListDealers.dart';
 import 'invoiceList.dart';
 import 'testjason2firestoreGet.dart';
@@ -116,17 +117,20 @@ class _estimateikState extends State<estimateik> {
                             cout += ds[i]['prixAchat'] * (ds[i]['qty']);
                           }
                           double countEarn = 0;
+
                           for (int i = 0; i < ds.length; i++) {
-                            countEarn += ds[i]['earn'] * (ds[i]['qty']);
+                            double ss = ds[i]['prixVente'] - ds[i]['prixAchat'];
+                            countEarn += ss * (ds[i]['qty']);
                           }
 
                           Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => addCustomerToEstimate2(
-                              dataDevis: LLIst,
-                              sum: summ,
-                              benef: countEarn,
-                            ),
-                          ));
+                              builder: (context) => CustomerOrDealer(
+                                    dataDevis: LLIst,
+                                    sum: summ,
+                                    benef: countEarn,
+                                    dataDealer: {},
+                                    switched: false,
+                                  )));
                         },
                       ),
                       // IconButton(
@@ -227,7 +231,9 @@ class _estimateikState extends State<estimateik> {
                                       NumberFormat.currency(
                                               //locale: 'aed',
                                               symbol: '')
-                                          .format((_documentSnapshot['earn'] *
+                                          .format(((_documentSnapshot[
+                                                      'prixVente'] -
+                                                  _documentSnapshot['PUA']) *
                                               _documentSnapshot['qty'])),
                                       // .toString() +  '0',
                                       style: TextStyle(
@@ -265,7 +271,9 @@ class _estimateikState extends State<estimateik> {
                                         Text(
                                           NumberFormat.currency(symbol: 'Earn ')
                                               .format(_documentSnapshot[
-                                                  'earn']), //.toString() + '0'),
+                                                      'prixVente'] -
+                                                  _documentSnapshot[
+                                                      'PUA']), //.toString() + '0'),
                                           style: TextStyle(color: colorGreen),
                                         )
                                       ],
@@ -505,7 +513,7 @@ class _estimateikState extends State<estimateik> {
 
             double countEarn = 0;
             for (int i = 0; i < ds.length; i++) {
-              countEarn += ds[i]['earn'] * (ds[i]['qty']);
+              countEarn += ds[i]['PUA'] * (ds[i]['qty']);
             }
             return Padding(
               padding: const EdgeInsets.only(right: 10),
@@ -548,7 +556,7 @@ class _estimateikState extends State<estimateik> {
                       ),
                       Text(
                         NumberFormat.currency(symbol: '')
-                            .format(countEarn), //.toString() + '0',
+                            .format(summ - countEarn), //.toString() + '0',
                         style: TextStyle(
                             color: colorGreen,
                             fontFamily: 'Oswald',
@@ -936,11 +944,13 @@ class addCustomerToEstimate2 extends StatefulWidget {
     required this.dataDevis,
     required this.sum,
     required this.benef,
+    required this.userDisplayName,
   }) : super(key: key);
 
   final List dataDevis;
   final double sum;
   final double benef;
+  final String userDisplayName;
 
   @override
   State<addCustomerToEstimate2> createState() => _addCustomerToEstimate2State();
@@ -963,12 +973,15 @@ class _addCustomerToEstimate2State extends State<addCustomerToEstimate2> {
   void initState() {
     dateinput.text = DateFormat('yyyy-MM-dd')
         .format(DateTime.now()); //set the initial value of text field
+    final String dealerName = widget.userDisplayName;
     super.initState();
   }
 
   bool isSwitched = false;
   @override
   Widget build(BuildContext context) {
+    final TextEditingController _customerControllerSwitched =
+        TextEditingController(text: widget.userDisplayName);
     return Scaffold(
       appBar: AppBar(
         title: Center(
@@ -1040,7 +1053,11 @@ class _addCustomerToEstimate2State extends State<addCustomerToEstimate2> {
                   ? TextButton.icon(
                       onPressed: () => Navigator.of(context).push(
                           MaterialPageRoute(
-                              builder: (context) => ListDealers())),
+                              builder: (context) => ListDealers(
+                                  LLIst: widget.dataDevis,
+                                  summ: widget.sum,
+                                  countEarn: widget.benef,
+                                  userDisplayName: ''))),
                       icon: Icon(
                         Icons.account_circle_rounded,
                         color: Colors.cyan,
@@ -1059,7 +1076,9 @@ class _addCustomerToEstimate2State extends State<addCustomerToEstimate2> {
                 fontSize: 25,
               ),
               keyboardType: TextInputType.text,
-              controller: _customerController,
+              controller: isSwitched
+                  ? _customerControllerSwitched
+                  : _customerController,
               validator: (value) => value!.isEmpty ||
                       value == null ||
                       int.tryParse(value.toString()) == 0

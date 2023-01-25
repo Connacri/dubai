@@ -21,7 +21,7 @@ class SilverdetailItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Random random = new Random();
-    int randomNumber = random.nextInt(100);
+    int randomNumber = random.nextInt(37);
     return MaterialApp(
       home: Scaffold(
         body: CustomScrollView(
