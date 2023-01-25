@@ -21,6 +21,7 @@ import 'package:paginate_firestore/widgets/initial_loader.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 
+import 'AddingItems.dart';
 import 'Estimate.dart';
 import 'QrScanner.dart';
 import 'classes.dart';
@@ -72,6 +73,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
     super.initState();
   }
 
+  final _formKeyPneu = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     double sumTaxeImport = 0;
@@ -444,6 +446,11 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
         //   icon: Icon(Icons.connecting_airports_sharp),
         // ),
         IconButton(
+            onPressed: () async {
+              await addCode();
+            },
+            icon: Icon(Icons.add)),
+        IconButton(
           icon: const Icon(Icons.incomplete_circle),
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
@@ -543,6 +550,82 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
   //         ), // availibility,
   //       ),
   //     );
+
+  Future addCode() => showDialog<void>(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            title: Center(child: FittedBox(child: Text('Tyres Adding'))),
+            content: Form(
+              key: _formKeyPneu,
+              child: TextFormField(
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 25,
+                ),
+                controller: _codeController,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  labelStyle: TextStyle(
+                    fontSize: 12,
+                  ),
+                  hintText: 'BarCode',
+                  fillColor: Colors.white,
+                  filled: true,
+                  contentPadding: EdgeInsets.all(15),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter Category';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            actions: <Widget>[
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.blue),
+                  foregroundColor: MaterialStateProperty.all(Colors.white),
+                  fixedSize: MaterialStateProperty.all(Size.fromWidth(100)),
+                ),
+                onPressed: () async {
+                  // Validate returns true if the form is valid, or false otherwise.
+                  if (_formKeyPneu.currentState!.validate()) {
+                    // showDialog(
+                    //   context: context,
+                    //   builder: (context) =>
+                    //       Center(child: CircularProgressIndicator()),
+                    // );
+
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) => Addingitems(
+                            code: _codeController.text.toString())));
+                    //
+                    // Navigator.pop(context);
+                    // Navigator.of(context, rootNavigator: true).pop();
+
+                    // Navigator.pop(context);
+                    // ScaffoldMessenger.of(context).showSnackBar(
+                    //   const SnackBar(content: Text('Processing Data')),
+                    // );
+
+                  }
+                  // Navigator.of(context, rootNavigator: true).pop();
+                  // Navigator.pop(context);
+                },
+                child: const Text('Submit'),
+              ),
+              TextButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+                },
+              ),
+            ],
+          );
+        },
+      );
 
   Future addToDevisDialog(
           dataid,
@@ -780,13 +863,6 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                     dataid.toUpperCase().toString(),
                   ),
                 ),
-                // TextField(
-                //   scribbleEnabled: true,
-                //   controller: _codeController,
-                //   decoration: const InputDecoration(
-                //     label: Text('code'),
-                //   ),
-                // ),
                 TextField(
                   controller: _codebarController,
                   decoration: const InputDecoration(
@@ -870,13 +946,6 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                   ),
                   keyboardType: TextInputType.number,
                 ),
-                // TextField(
-                //   controller: _userController,
-                //   decoration: const InputDecoration(
-                //     label: Text('User'),
-                //   ),
-                //   keyboardType: TextInputType.text,
-                // ),
                 ElevatedButton(
                     onPressed: () async {
                       final String _code = _codeController.text;
@@ -892,7 +961,8 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                       final double _prixVente =
                           double.parse(_prixVenteController.text);
                       final int _oldStock = int.parse(_oldStockController.text);
-                      final String _user = _userController.text;
+                      final String _user =
+                          FirebaseAuth.instance.currentUser!.uid;
                       final String _origine = _origineController.text;
 
                       //final double _price =  double.tryParse(_priceController.text);
@@ -914,19 +984,6 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                         'user': _user,
                         'origine': _origine,
                       });
-                      // _codeController.text = '';
-                      // _codebarController.text = '';
-                      // _categoryController.text = '';
-                      // _modelController.text = '';
-                      // _descriptionController.text = '';
-                      // _sizeController.text = '';
-                      // _stockController.text = '';
-                      // _prixAchatController.text = '';
-                      // _prixVenteController.text = '';
-                      // _oldStockController.text = '';
-                      // _userController.text = '';
-                      // _origineController.text = '';
-                      //}
 
                       // Navigator.of(context).pop();
                       Navigator.of(context, rootNavigator: true).pop();
@@ -941,6 +998,33 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
             ),
           );
         });
+  }
+
+  Future<void> AddItem(code) async {
+    CollectionReference ItemDetail =
+        FirebaseFirestore.instance.collection('Adventure');
+    return ItemDetail.doc(_codeController.text)
+        .set({
+          'createdAt': Timestamp.now().toDate(), //*****
+          'category': _categoryController.text, //*****
+          'code': code.toString(), //*****
+          'model': _modelController.text, //*****
+          'description': _descriptionController.text, //*****
+          'size': _sizeController.text, //*****
+          'prixAchat': double.parse(_prixAchatController.text), //*****
+          'prixVente': double.parse(_prixVenteController.text), //*****
+          'stock': int.parse(_stockController.text), //*****
+          'codebar': code.toString(), //*****
+          'oldStock': int.parse(_stockController.text), //*****
+          'origine': _origineController.text, //*****
+          'user': 'unknow', //*****
+        }, SetOptions(merge: true))
+        .then((value) => print("Item Added"))
+        .catchError((error) => print("Failed to Add: $error"));
+    // .whenComplete(() => PriceDealer.doc().set({
+    //       'price': int.parse(_saleController.text),
+    //       'dealerName': _dealerNameController.text,
+    //     }, SetOptions(merge: true)));
   }
 }
 
