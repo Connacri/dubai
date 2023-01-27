@@ -157,7 +157,6 @@ class _verifi_authState extends State<verifi_auth> {
           if (snapshot.hasData) {
             final userD = snapshot.data!.uid;
             return CheckRole(userD); //MultiProviderWidget();
-
           } else {
             return main_out();
           }

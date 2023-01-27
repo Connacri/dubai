@@ -7,14 +7,14 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutterflow_paginate_firestore/paginate_firestore.dart';
+import 'package:flutterflow_paginate_firestore/widgets/bottom_loader.dart';
+import 'package:flutterflow_paginate_firestore/widgets/empty_display.dart';
+import 'package:flutterflow_paginate_firestore/widgets/empty_separator.dart';
+import 'package:flutterflow_paginate_firestore/widgets/initial_loader.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:paginate_firestore/paginate_firestore.dart';
-import 'package:paginate_firestore/widgets/bottom_loader.dart';
-import 'package:paginate_firestore/widgets/empty_display.dart';
-import 'package:paginate_firestore/widgets/empty_separator.dart';
-import 'package:paginate_firestore/widgets/initial_loader.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -98,7 +98,7 @@ class _publicHomeListState extends State<publicHomeList> {
               }),
           IconButton(
               icon: Icon(
-                Icons.whatsapp,
+                FontAwesomeIcons.whatsapp,
                 color: Colors.green,
               ),
               onPressed: () async {

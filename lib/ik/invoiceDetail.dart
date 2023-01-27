@@ -166,9 +166,9 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
             Container(
               alignment: Alignment.centerRight,
               child: Text(
-                'Vat 20% : ' +
+                'Vat 0% : ' +
                     NumberFormat.currency(symbol: '')
-                        .format((widget.doc['total'] * 0.2))
+                        .format((widget.doc['total'] * 0.0))
                         .toString(),
                 style: TextStyle(fontSize: 12),
               ),
@@ -176,8 +176,8 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
             Container(
               alignment: Alignment.centerRight,
               child: Text('TTC : ' +
-                  NumberFormat.currency(symbol: '')
-                      .format(widget.doc['total'] * 1.2)),
+                  NumberFormat.currency(symbol: '').format(
+                      (widget.doc['total'] * 0.0) + widget.doc['total'])),
             ),
             Container(
               alignment: Alignment.centerRight,

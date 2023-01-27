@@ -6,18 +6,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutterflow_paginate_firestore/paginate_firestore.dart';
+import 'package:flutterflow_paginate_firestore/widgets/bottom_loader.dart';
+import 'package:flutterflow_paginate_firestore/widgets/empty_display.dart';
+import 'package:flutterflow_paginate_firestore/widgets/empty_separator.dart';
+import 'package:flutterflow_paginate_firestore/widgets/initial_loader.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
-import 'package:paginate_firestore/paginate_firestore.dart';
-import 'package:paginate_firestore/widgets/bottom_loader.dart';
-import 'package:paginate_firestore/widgets/empty_display.dart';
-import 'package:paginate_firestore/widgets/empty_separator.dart';
-import 'package:paginate_firestore/widgets/initial_loader.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 
@@ -564,6 +563,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                   fontSize: 25,
                 ),
                 controller: _codeController,
+                autofocus: true,
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                   labelStyle: TextStyle(
@@ -576,7 +576,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter Category';
+                    return 'Please enter Barcode';
                   }
                   return null;
                 },
@@ -609,12 +609,11 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                     // ScaffoldMessenger.of(context).showSnackBar(
                     //   const SnackBar(content: Text('Processing Data')),
                     // );
-
                   }
                   // Navigator.of(context, rootNavigator: true).pop();
                   // Navigator.pop(context);
                 },
-                child: const Text('Submit'),
+                child: const Text('Next'),
               ),
               TextButton(
                 child: Text('Cancel'),

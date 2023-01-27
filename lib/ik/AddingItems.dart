@@ -1,5 +1,6 @@
 import 'package:barcode_widget/barcode_widget.dart' as bbarcode;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Addingitems extends StatelessWidget {
@@ -382,6 +383,7 @@ class Addingitems extends StatelessWidget {
   Future<void> AddItem(code) async {
     CollectionReference ItemDetail =
         FirebaseFirestore.instance.collection('Adventure');
+    User? user = FirebaseAuth.instance.currentUser;
     return ItemDetail.doc(_codeController.text)
         .set({
           'createdAt': Timestamp.now().toDate(), //*****
@@ -396,7 +398,7 @@ class Addingitems extends StatelessWidget {
           'codebar': code.toString(), //*****
           'oldStock': int.parse(_stockController.text), //*****
           'origine': _origineController.text, //*****
-          'user': 'unknow', //*****
+          'user': user!.uid,
         }, SetOptions(merge: true))
         .then((value) => print("Item Added"))
         .catchError((error) => print("Failed to Add: $error"));
