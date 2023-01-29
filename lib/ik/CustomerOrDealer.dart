@@ -497,13 +497,14 @@ class _buildColumnState extends State<buildColumn> {
                   print(
                       '******************************************************'); //
                   widget.isSwitched
-                      ? addDealer(
-                          widget.dataDevis,
-                          widget.sum.toString(),
-                          widget.benef,
-                          customerControllerSwitched.text,
-                          DateTime.now(),
-                        )
+                      ? testDealer()
+                      // ? addDealer(
+                      //     widget.dataDevis,
+                      //     widget.sum.toString(),
+                      //     widget.benef,
+                      //     customerControllerSwitched.text,
+                      //     DateTime.now(),
+                      //   )
                       : addDevisToInvoiceList(
                           widget.dataDevis,
                           widget.sum.toString(),

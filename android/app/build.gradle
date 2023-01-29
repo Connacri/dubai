@@ -1,5 +1,7 @@
 import kotlin.io.FileSystemException
 
+import java.nio.file.FileSystemException
+
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {

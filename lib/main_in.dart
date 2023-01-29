@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'ik/Dealer.dart';
 import 'ik/classes.dart';
 import 'ik/testjason2firestoreGet.dart';
+import 'messagerie/auth_ChatGpt.dart';
 import 'rmz/publicProfil.dart';
 
 class MultiProviderWidget extends StatelessWidget {

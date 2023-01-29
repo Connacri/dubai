@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "981347749568",
+    "firebase_url": "https://adventure-eb4ca-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "adventure-eb4ca",
     "storage_bucket": "adventure-eb4ca.appspot.com"
   },
@@ -14,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "981347749568-lpdufpduefivnoqprcqbu84fvs2reqgj.apps.googleusercontent.com",
+          "client_id": "981347749568-e4t7b63mkt1m08kqb4r0ij51du3k80s7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.adventure.gg",
-            "certificate_hash": "581f74c40577c2627786a69d59090f6ef821aa3b"
+            "certificate_hash": "fa42f03ee65f57067cbc164f946389b506817dcc"
           }
         },
         {

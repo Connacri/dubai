@@ -27,18 +27,18 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Processing Data')),
               );
-              Navigator.of(context)
-                  .push(MaterialPageRoute(
-                    builder: (context) => PdfPageTa3List(
-                      array: widget.doc['item CodeBar'],
-                      //dataDevis: widget.doc,
-                      customer: widget.doc['customer'],
-                      date: widget.doc['date'].toDate() ?? DateTime.now(),
-                      codeDevis: widget.doc.id,
-                    ),
-                  ))
-                  .whenComplete(() =>
-                      debugPrint('is fiiiiiiiiiiiiiiiiiiiiiiiinishhhhhhhhhh'));
+              // Navigator.of(context)
+              //     .push(MaterialPageRoute(
+              //       builder: (context) => PdfPageTa3List(
+              //         array: widget.doc['item CodeBar'],
+              //         //dataDevis: widget.doc,
+              //         customer: widget.doc['customer'],
+              //         date: widget.doc['date'].toDate() ?? DateTime.now(),
+              //         codeDevis: widget.doc.id,
+              //       ),
+              //     ))
+              //     .whenComplete(() =>
+              //         debugPrint('is fiiiiiiiiiiiiiiiiiiiiiiiinishhhhhhhhhh'));
               //print(widget.doc['item CodeBar']);
             },
           ),

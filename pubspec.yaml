@@ -31,15 +31,60 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cloud_firestore:
-  firebase_messaging:
+#  cloud_firestore:
+#  firebase_messaging:
+#  firebase_auth: ^4.2.5
+#  google_sign_in:
+#  cached_network_image: ^3.2.3
+#  flutter_slidable:
+#  lottie:
+#  mapbox_search:
+##  paginate_firestore:
+#  flutterflow_paginate_firestore: ^1.0.3+1
+#  intl:
+#  carousel_slider:
+#  qr_code_scanner:
+#  firebase_core_platform_interface: 4.5.2
+#  community_material_icon: ^5.9.55
+#  barcode_widget: ^2.0.3
+#  provider: ^6.0.5
+#  fluttertoast:
+#  email_validator:
+#  font_awesome_flutter: ^10.3.0
+#  avatar_glow: ^2.0.2
+#  url_launcher: ^6.1.8
+#  whatsapp_unilink: ^2.1.0
+#  flutter_rating_bar: ^4.0.1
+#  floating_frosted_bottom_bar:
+#  youtube_player_flutter: ^8.1.2
+#  faded_image_list: ^0.0.3
+#
+#
+#  # The following adds the Cupertino Icons font to your application.
+#  # Use with the CupertinoIcons class for iOS style icons.
+#  cupertino_icons: ^1.0.5
+#  pdf: ^3.8.4
+#  path_provider: ^2.0.12
+#  #  open_document: ^1.0.5
+#  share_extend: ^2.0.0
+#  easy_pdf_viewer: ^1.0.6
+#  shared_preferences: ^2.0.17
+#  percent_indicator: ^4.2.2
+#  printing: ^5.9.3
+#  open_file_plus: ^3.3.0
+#  number_to_character: ^0.0.12
+#  number_slide_animation: ^0.2.1
+#  flutter_native_splash: ^2.2.16
+  cloud_firestore: ^4.3.1
+  firebase_messaging: ^14.2.1
+  firebase_database: ^10.0.9
+  firebase_core: ^2.4.1
   firebase_auth: ^4.2.5
-  google_sign_in:
+  google_sign_in: ^5.4.4
   cached_network_image: ^3.2.3
-  flutter_slidable:
+  flutter_slidable: ^2.0.0
   lottie:
   mapbox_search:
-#  paginate_firestore:
   flutterflow_paginate_firestore: ^1.0.3+1
   intl:
   carousel_slider:
@@ -49,7 +94,7 @@ dependencies:
   barcode_widget: ^2.0.3
   provider: ^6.0.5
   fluttertoast:
-  email_validator:
+  email_validator: ^2.1.17
   font_awesome_flutter: ^10.3.0
   avatar_glow: ^2.0.2
   url_launcher: ^6.1.8
@@ -58,25 +103,22 @@ dependencies:
   floating_frosted_bottom_bar:
   youtube_player_flutter: ^8.1.2
   faded_image_list: ^0.0.3
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.5
   pdf: ^3.8.4
   path_provider: ^2.0.12
-  #  open_document: ^1.0.5
+  open_document: ^1.0.5
   share_extend: ^2.0.0
   easy_pdf_viewer: ^1.0.6
   shared_preferences: ^2.0.17
   percent_indicator: ^4.2.2
-  printing: ^5.9.3
+#  printing: ^5.9.3
   open_file_plus: ^3.3.0
   number_to_character: ^0.0.12
   number_slide_animation: ^0.2.1
   flutter_native_splash: ^2.2.16
-
   hash: ^1.0.4
+  image: ^3.0.1
+
+
 
 dev_dependencies:
   flutter_test:
