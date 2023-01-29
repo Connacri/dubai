@@ -105,9 +105,9 @@ dependencies:
   faded_image_list: ^0.0.3
   pdf: ^3.8.4
   path_provider: ^2.0.12
-  open_document: ^1.0.5
+#  open_document: ^1.0.5
   share_extend: ^2.0.0
-  easy_pdf_viewer: ^1.0.6
+#  easy_pdf_viewer: ^1.0.6
   shared_preferences: ^2.0.17
   percent_indicator: ^4.2.2
 #  printing: ^5.9.3

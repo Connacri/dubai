@@ -1204,34 +1204,87 @@ Future<void> addItemsToDevis2(dataid, data, qty) async {
 //   }
 // }
 
-
-Future<void> testDealer(List dataDevis, sum, benef, customer, date)async {
+Future<void> testDealerx(
+    List dataDevis, sum, benef, customer, idcustomer, date) async {
   final numero = await dataDevis.length;
 
   print('length :${dataDevis.length}');
 
   final numbers = List.generate(numero, (index) => index);
-  final CollectionReference Collection = FirebaseFirestore.instance.collection("Dealers");
-  final DocumentReference newDocumentP = Collection.doc();
+  final CollectionReference Collection =
+      FirebaseFirestore.instance.collection("Dealers");
+
   final Map<String, dynamic> datap = {
     'name': customer,
+    'idcustomer': idcustomer,
   };
-  newDocumentP.set(datap);
-
-  final CollectionReference subCollection = FirebaseFirestore.instance.collection("Dealers").doc(newDocumentP.id).collection("dealerList");
-  final DocumentReference newDocument = subCollection.doc();
-
-  final CollectionReference collection = FirebaseFirestore.instance.collection('users');
-
+  //newDocumentP.set(datap);
+  Collection.doc(idcustomer).set(datap);
+  final DocumentReference newDocumentP = Collection.doc(idcustomer);
+  final CollectionReference subCollection = FirebaseFirestore.instance
+      .collection("Dealers")
+      .doc(newDocumentP.id)
+      .collection("productsList");
 
   for (final number in numbers) {
     final item = dataDevis[number];
- // newDocument.set(
-    subCollection.add(
-      {'prixAchat': item['prixAchat']},).then((_) {
-    // Document successfully added
-  });}
 
+    subCollection.doc(item['codebar']).set(
+      {
+        'createdAt': Timestamp.now().toDate(),
+        'category': item['category'],
+        'model': item['model'],
+        'description': item['description'],
+        'size': item['size'],
+        'prixAchat': item['prixAchat'],
+        'prixVente': item['prixVente'],
+        'stock': item['stock'],
+        'codebar': item['codebar'],
+        'oldStock': item['oldStock'],
+        'origine': item['origine'],
+        'user': item['user'],
+        'qty': item['qty'],
+      },
+    ).then((_) {
+      // Document successfully added
+    });
+  }
+}
+
+Future<void> testDealer(
+    List dataDevis, sum, benef, customer, idcustomer, date) async {
+  final numero = await dataDevis.length;
+
+  print('length :${dataDevis.length}');
+
+  final numbers = List.generate(numero, (index) => index);
+  final CollectionReference Collection =
+      FirebaseFirestore.instance.collection("Dealers");
+  final DocumentReference newDocumentP = Collection.doc();
+  final Map<String, dynamic> datap = {
+    'name': customer,
+    'idcustomer': idcustomer,
+  };
+  Collection.doc(idcustomer).set(datap);
+
+  final CollectionReference subCollection = FirebaseFirestore.instance
+      .collection("Dealers")
+      .doc(newDocumentP.id)
+      .collection("productList");
+  final DocumentReference newDocument = subCollection.doc();
+
+  final CollectionReference collection =
+      FirebaseFirestore.instance.collection('users');
+
+  for (final number in numbers) {
+    final item = dataDevis[number];
+    // newDocument.set(
+    subCollection.doc(item['codebar']).set(
+      {'codebar': item['codebar'], 'prixAchat': item['prixAchat']},
+    ).then((_) {
+      // Document successfully added
+    });
+  }
 }
 
 Future<void> addDealer(List data, sum, benef, customer, date) async {
