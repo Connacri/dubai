@@ -63,7 +63,7 @@ class _estimateikState extends State<estimateik> {
                 return Scaffold(
                   appBar: AppBar(
                     toolbarHeight: 90.0,
-                    title: Text('Estimate'),
+                    title: Text('Quotation'),
                     actions: [
                       // IconButton(
                       //   onPressed: () {
@@ -245,9 +245,40 @@ class _estimateikState extends State<estimateik> {
                                         _documentSnapshot['qty'].toString()),
                                   ),
                                 ),
-                                title: Text(
-                                  _documentSnapshot['model'],
-                                  overflow: TextOverflow.ellipsis,
+                                title: Row(
+                                  children: [
+                                    _documentSnapshot['state'] == true
+                                        ? Icon(
+                                            Icons.verified,
+                                            color: Colors.green,
+                                          )
+                                        : Icon(Icons.cancel, color: Colors.red),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    // Switch(
+                                    //   value: _giveVerse,
+                                    //   onChanged: (bool newValue) {
+                                    //     bool _giveVerse =
+                                    //         _documentSnapshot['state'];
+                                    //     setState(() {
+                                    //       _giveVerse = newValue;
+                                    //     });
+                                    //     () async {
+                                    //       await FirebaseFirestore.instance
+                                    //           .collection('Estimate')
+                                    //           .doc(_documentSnapshot.id)
+                                    //           .update({
+                                    //         'state': false,
+                                    //       });
+                                    //     };
+                                    //   },
+                                    // ),
+                                    Text(
+                                      _documentSnapshot['model'],
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
                                 ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,

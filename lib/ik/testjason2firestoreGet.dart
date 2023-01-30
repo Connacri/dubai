@@ -630,6 +630,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
           dataid,
           data,
           /*earn*/
+
           PUA) =>
       showDialog(
         context: context,
@@ -803,6 +804,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
             'origine': data['origine'],
             'user': _user!.uid, //data['user'],
             'qty': int.parse(qty),
+            'state': true,
             //'earn': earn,
             'PUA': PUA,
           }, SetOptions(merge: true))
