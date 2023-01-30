@@ -1274,6 +1274,7 @@ Future<void> testDealerx(
         'oldStock': item['oldStock'],
         'origine': item['origine'],
         'user': item['user'],
+        'state': item['state'],
         'qty': item['qty'],
       },
     ).then((_) {

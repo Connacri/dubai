@@ -64,13 +64,6 @@ class _dealerState extends State<dealer> {
                                         return ListTile(
                                           title: Row(
                                             children: [
-                                              Text(
-                                                  'Code : ${Datasub.id.toUpperCase()}'),
-                                              SizedBox(
-                                                width: 20,
-                                              ),
-                                              Text(
-                                                  'Qty : ${Datasub['qty'].toString().toUpperCase()}'),
                                               Datasub['state'] == true
                                                   ? Icon(Icons.verified_user,
                                                       color: Colors.green)
@@ -78,6 +71,13 @@ class _dealerState extends State<dealer> {
                                                       Icons.cancel,
                                                       color: Colors.red,
                                                     ),
+                                              Text(
+                                                  'Code : ${Datasub.id.toUpperCase()}'),
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              Text(
+                                                  'Qty : ${Datasub['qty'].toString().toUpperCase()}'),
                                             ],
                                           ),
                                         );

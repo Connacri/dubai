@@ -481,75 +481,6 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
     );
   }
 
-  // Future addToEstimateDialog(String dataid, earn, Map data) => showDialog(
-  //       context: context,
-  //       builder: (context) => AlertDialog(
-  //         title: Center(
-  //           child: FittedBox(
-  //             child: Text(
-  //               'Item : ${data['model'].toString()}'.toUpperCase(),
-  //               style: TextStyle(
-  //                 color: Colors.blue, // Colors.orange,
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //         actions: [
-  //           Center(
-  //             child: ElevatedButton(
-  //                 onPressed: () {
-  //                   // Validate returns true if the form is valid, or false otherwise.
-  //                   if (!_formKeyQty.currentState!.validate()) {
-  //                     return;
-  //                   } else {
-  //                     //  setState(() {
-  //                     addItemsToDevis2(
-  //                       dataid,
-  //                       data,
-  //                       earn,
-  //                       _qtyController.text,
-  //                     );
-  //                     //_qtyController.clear();
-  //                     // });
-  //                   }
-  //
-  //                   Navigator.pop(context, false);
-  //                 },
-  //                 child: Text(
-  //                   'Add to Estimate'.toUpperCase(),
-  //                   style: const TextStyle(fontSize: 15, color: Colors.black54),
-  //                 )),
-  //           )
-  //         ],
-  //         content: Form(
-  //           key: _formKeyQty,
-  //           child: TextFormField(
-  //             autofocus: true,
-  //             textAlign: TextAlign.center,
-  //             style: const TextStyle(
-  //               fontSize: 25,
-  //             ),
-  //             keyboardType: TextInputType.number,
-  //             controller: _qtyController,
-  //             validator: (valueQty) => valueQty!.isEmpty ||
-  //                     valueQty == null ||
-  //                     int.tryParse(valueQty.toString()) == 0
-  //                 ? 'Cant be 0 or Empty'
-  //                 : null,
-  //             decoration: const InputDecoration(
-  //               border: InputBorder.none,
-  //               filled: true,
-  //               contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-  //
-  //               hintText: 'Quantity',
-  //               fillColor: Colors.white,
-  //               //filled: true,
-  //             ),
-  //           ),
-  //         ), // availibility,
-  //       ),
-  //     );
-
   Future addCode() => showDialog<void>(
         context: context,
         builder: (BuildContext dialogContext) {
@@ -626,13 +557,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
         },
       );
 
-  Future addToDevisDialog(
-          dataid,
-          data,
-          /*earn*/
-
-          PUA) =>
-      showDialog(
+  Future addToDevisDialog(dataid, data, PUA) => showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Center(
@@ -670,18 +595,11 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                       return;
                     } else if (data['stock'] >=
                         int.parse(_qtyController.text)) {
-                      // FirebaseFirestore.instance
-                      //     .collection('Market')
-                      //     .doc(dataid)
-                      //     .update({
-                      //   'stock': FieldValue.increment(
-                      //       -int.parse(_qtyController.text))
-                      // });
-                      // setState(() {
-                      _addToDevisFunction(
-                          dataid, data, /*earn,*/ PUA, _qtyController.text);
+                      moveStock(
+                          dataid, data, int.parse(_qtyController.text), PUA);
+                      // _addToDevisFunction(
+                      //     dataid, data, PUA, _qtyController.text);
                       _qtyController.clear();
-                      // });
                     } else {
                       return;
                     }
@@ -726,6 +644,81 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
           ),
         ),
       );
+
+  Future<void> moveStock(String productID, data, int amount, PUA) async {
+    final CollectionReference productsCollection =
+        FirebaseFirestore.instance.collection('Adventure');
+    final CollectionReference productsEstimateCollection =
+        FirebaseFirestore.instance.collection('Estimate');
+    final DocumentReference sourceReference = productsCollection.doc(productID);
+    final DocumentReference destinationReference =
+        productsEstimateCollection.doc(productID);
+    User? _user = FirebaseAuth.instance.currentUser;
+
+    await FirebaseFirestore.instance
+        .runTransaction((Transaction transaction) async {
+      //start
+      DocumentSnapshot sourceSnapshot = await transaction.get(sourceReference);
+      DocumentSnapshot destinationSnapshot =
+          await transaction.get(destinationReference);
+
+      int sourceStock = data['stock'];
+      //    int destinationStock = destinationSnapshot.data()['qty'];
+      DocumentSnapshot<Map<String?, dynamic>> docEstimate =
+          await FirebaseFirestore.instance
+              .collection('Estimate')
+              .doc(productID)
+              .get();
+
+      if (sourceStock >= amount) {
+        if (docEstimate.exists) {
+          await transaction
+              .update(sourceReference, {'stock': sourceStock - amount});
+          await transaction.update(destinationReference, {
+            'createdAt': Timestamp.now().toDate(),
+            'category': data['category'],
+            'model': data['model'],
+            'description': data['description'],
+            'size': data['size'],
+            'prixAchat': data['prixAchat'],
+            'prixVente': data['prixVente'],
+            'stock': data['stock'],
+            'codebar': data['codebar'],
+            'oldStock': data['oldStock'],
+            'origine': data['origine'],
+            'user': _user!.uid, //data['user'],
+            'qty': FieldValue.increment(amount),
+            'state': true,
+            //'earn': earn,
+            'PUA': PUA,
+          });
+        } else {
+          await transaction
+              .update(sourceReference, {'stock': sourceStock - amount});
+          await transaction.set(destinationReference, {
+            'createdAt': Timestamp.now().toDate(),
+            'category': data['category'],
+            'model': data['model'],
+            'description': data['description'],
+            'size': data['size'],
+            'prixAchat': data['prixAchat'],
+            'prixVente': data['prixVente'],
+            'stock': data['stock'],
+            'codebar': data['codebar'],
+            'oldStock': data['oldStock'],
+            'origine': data['origine'],
+            'user': _user!.uid, //data['user'],
+            'qty': FieldValue.increment(amount),
+            'state': true,
+            //'earn': earn,
+            'PUA': PUA,
+          });
+        }
+      } else {
+        throw Exception('Not enough stock in source product');
+      }
+    });
+  }
 
   Future showAlertDialogOut() => showDialog(
       context: context,
@@ -1153,13 +1146,15 @@ class SLiverHeader extends StatelessWidget {
                                                 style: TextStyle(
                                                     color: Colors.white),
                                               ),
-                                              Text(
-                                                // data.length.toString() +
-                                                //     '/' +
-                                                tota.toString(),
-                                                style: TextStyle(
-                                                    fontSize: 30.0,
-                                                    color: Colors.white),
+                                              FittedBox(
+                                                child: Text(
+                                                  // data.length.toString() +
+                                                  //     '/' +
+                                                  tota.toString(),
+                                                  style: TextStyle(
+                                                      fontSize: 30.0,
+                                                      color: Colors.white),
+                                                ),
                                               ),
                                             ],
                                           ),

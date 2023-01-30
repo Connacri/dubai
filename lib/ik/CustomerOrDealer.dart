@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'Dealer.dart';
 import 'Estimate.dart';
 import 'invoiceList.dart';
 
@@ -327,12 +328,14 @@ class _buildColumnState extends State<buildColumn> {
             fontSize: 25,
           ),
           onChanged: (value) {
+            print('value');
             print(value);
+            print('customerControllerSwitched.text');
             print(customerControllerSwitched.text);
             setState(() {
               if (value != name) {
                 id = '';
-                name = '';
+                name = ''; //customerControllerSwitched.text;
               } else {
                 id;
                 name;
@@ -498,14 +501,13 @@ class _buildColumnState extends State<buildColumn> {
                       '******************************************************'); //
                   widget.isSwitched
                       ? testDealerx(
-                    widget.dataDevis,
-                        widget.sum.toString(),
-                        widget.benef,
-                        customerControllerSwitched.text,
-                        id,
-                        DateTime.now(),
-
-                  )
+                          widget.dataDevis,
+                          widget.sum.toString(),
+                          widget.benef,
+                          customerControllerSwitched.text,
+                          id,
+                          DateTime.now(),
+                        )
                       // ? addDealer(
                       //     widget.dataDevis,
                       //     widget.sum.toString(),
@@ -526,7 +528,8 @@ class _buildColumnState extends State<buildColumn> {
 
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
-                    builder: (context) => invoiceList(),
+                    builder: (context) =>
+                        widget.isSwitched ? dealer() : invoiceList(),
                   ),
                   (route) => route.isFirst,
                 );
