@@ -137,6 +137,7 @@ class publicProfil extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 10.0),
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.6,
+                  height: MediaQuery.of(context).size.height * 0.1,
                   child: FittedBox(
                     child: Text(
                       userRole['userDisplayName'].toString().toUpperCase(),
@@ -149,7 +150,8 @@ class publicProfil extends StatelessWidget {
                 ),
               ),
               Container(
-                width: MediaQuery.of(context).size.width * 0.6,
+                padding: EdgeInsets.only(bottom: 10),
+                width: MediaQuery.of(context).size.width * 0.3,
                 child: FittedBox(
                   child: userRole['userRole'] == 'admin'
                       ? ShaderMask(
