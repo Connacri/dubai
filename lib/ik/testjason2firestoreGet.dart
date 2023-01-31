@@ -994,32 +994,32 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
         });
   }
 
-  Future<void> AddItem(code) async {
-    CollectionReference ItemDetail =
-        FirebaseFirestore.instance.collection('Adventure');
-    return ItemDetail.doc(_codeController.text)
-        .set({
-          'createdAt': Timestamp.now().toDate(), //*****
-          'category': _categoryController.text, //*****
-          'code': code.toString(), //*****
-          'model': _modelController.text, //*****
-          'description': _descriptionController.text, //*****
-          'size': _sizeController.text, //*****
-          'prixAchat': double.parse(_prixAchatController.text), //*****
-          'prixVente': double.parse(_prixVenteController.text), //*****
-          'stock': int.parse(_stockController.text), //*****
-          'codebar': code.toString(), //*****
-          'oldStock': int.parse(_stockController.text), //*****
-          'origine': _origineController.text, //*****
-          'user': 'unknow', //*****
-        }, SetOptions(merge: true))
-        .then((value) => print("Item Added"))
-        .catchError((error) => print("Failed to Add: $error"));
-    // .whenComplete(() => PriceDealer.doc().set({
-    //       'price': int.parse(_saleController.text),
-    //       'dealerName': _dealerNameController.text,
-    //     }, SetOptions(merge: true)));
-  }
+  // Future<void> AddItem(code) async {
+  //   CollectionReference ItemDetail =
+  //       FirebaseFirestore.instance.collection('Adventure');
+  //   return ItemDetail.doc(_codeController.text)
+  //       .set({
+  //         'createdAt': Timestamp.now().toDate(), //*****
+  //         'category': _categoryController.text, //*****
+  //         'code': code.toString(), //*****
+  //         'model': _modelController.text, //*****
+  //         'description': _descriptionController.text, //*****
+  //         'size': _sizeController.text, //*****
+  //         'prixAchat': double.parse(_prixAchatController.text), //*****
+  //         'prixVente': double.parse(_prixVenteController.text), //*****
+  //         'stock': int.parse(_stockController.text), //*****
+  //         'codebar': code.toString(), //*****
+  //         'oldStock': int.parse(_stockController.text), //*****
+  //         'origine': _origineController.text, //*****
+  //         'user': 'unknow', //*****
+  //       }, SetOptions(merge: true))
+  //       .then((value) => print("Item Added"))
+  //       .catchError((error) => print("Failed to Add: $error"));
+  //   // .whenComplete(() => PriceDealer.doc().set({
+  //   //       'price': int.parse(_saleController.text),
+  //   //       'dealerName': _dealerNameController.text,
+  //   //     }, SetOptions(merge: true)));
+  // }
 }
 
 class CommaTextInputFormatter extends TextInputFormatter {
@@ -1563,43 +1563,6 @@ class SLiverHeader extends StatelessWidget {
                   }
                 }),
           ),
-          // Container(
-          //   height: 60,
-          //   child: ListView(
-          //     shrinkWrap: true,
-          //     physics: BouncingScrollPhysics(),
-          //     scrollDirection: Axis.horizontal,
-          //     children: [
-          //       UnsplashAvatar(
-          //           UnsplashUrl:
-          //               'https://img1.wsimg.com/isteam/ip/d48b4882-6d43-4aed-ac22-2834c9891797/ADV%20TYRES%20MOTOZ.jpg/:/cr=t:0%25,l:0%25,w:100%25,h:100%25/rs=w:1300,h:800'),
-          //       UnsplashAvatar(
-          //           UnsplashUrl:
-          //               'https://source.unsplash.com/random/250×200/?motocycle'),
-          //       UnsplashAvatar(
-          //           UnsplashUrl:
-          //               'https://source.unsplash.com/random/400×300/?motocycle'),
-          //       UnsplashAvatar(
-          //           UnsplashUrl:
-          //               'https://source.unsplash.com/random/300×200/?motos'),
-          //       UnsplashAvatar(
-          //           UnsplashUrl:
-          //               'https://source.unsplash.com/random/300×300/?moto'),
-          //       UnsplashAvatar(
-          //           UnsplashUrl:
-          //               'https://source.unsplash.com/random/300×200/?motor'),
-          //       UnsplashAvatar(
-          //           UnsplashUrl:
-          //               'https://img1.wsimg.com/isteam/ip/d48b4882-6d43-4aed-ac22-2834c9891797/Motoz_edits-8402-resized.jpg/:/rs=w:1300,h:800'),
-          //       UnsplashAvatar(
-          //           UnsplashUrl:
-          //               'https://img1.wsimg.com/isteam/ip/d48b4882-6d43-4aed-ac22-2834c9891797/4.jpg/:/rs=w:1300,h:800'),
-          //       UnsplashAvatar(
-          //           UnsplashUrl:
-          //               'https://img1.wsimg.com/isteam/ip/d48b4882-6d43-4aed-ac22-2834c9891797/motoz-505.jpg/:/rs=w:1300,h:800'),
-          //     ],
-          //   ),
-          // ),
         ],
       ),
     );
