@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'ik/Dealer.dart';
-import 'ik/Estimate.dart';
 import 'ik/classes.dart';
 import 'ik/testjason2firestoreGet.dart';
-import 'messagerie/auth_ChatGpt.dart';
 import 'rmz/publicProfil.dart';
 
 class MultiProviderWidget extends StatelessWidget {
@@ -33,14 +31,6 @@ class MultiProviderWidget extends StatelessWidget {
           create: (_) => firebaseServices.getInvoiceList(),
           initialData: [],
         ),
-        // StreamProvider<SuperHero>.value(
-        //   // All children will have access to SuperHero data
-        //   value: firebaseServices.streamHero(GoogleUser2!.uid),
-        //   initialData: SuperHero(
-        //     userDisplayName: GoogleUser2.displayName.toString(),
-        //     userAvatar: GoogleUser2.photoURL.toString(),
-        //   ),
-        // ),
       ],
       // child: logIn(),
       child:

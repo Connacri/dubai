@@ -291,7 +291,7 @@ class buildColumn extends StatefulWidget {
   final double sum;
   final double benef;
 
-  var datepass;
+  DateTime datepass = Timestamp.now().toDate();
 
   @override
   _buildColumnState createState() {
@@ -474,10 +474,12 @@ class _buildColumnState extends State<buildColumn> {
               //you can implement different kind of Date Format here according to your requirement
 
               setState(() {
-                widget.datepass = pickedDate;
                 widget.dateinput.text =
                     formattedDate; //set output date to TextField value.
+                widget.datepass = pickedDate;
               });
+              print('widget.datepass');
+              print(widget.datepass);
             } else {
               print("Date is not selected");
             }
@@ -506,14 +508,14 @@ class _buildColumnState extends State<buildColumn> {
                           widget.benef,
                           customerControllerSwitched.text,
                           id,
-                          widget.dateinput,
+                          widget.datepass,
                         )
                       : addDevisToInvoiceList(
                           widget.dataDevis,
                           widget.sum.toString(),
                           widget.benef,
                           customerController.text,
-                          widget.dateinput,
+                          widget.datepass,
                         );
                   print('sum : ${widget.sum.toString()}'
                       ' benef : ${widget.benef}'
@@ -547,97 +549,60 @@ Future getposts() async {
 }
 
 Future<void> addDevisToInvoiceList(
-    List data, sum, benef, customer, date) async {
+    List data, sum, benef, customer, dateInvoice) async {
   final numero = await data.length;
-  print('data');
-  print(data);
-
-  print('length :${data.length}');
 
   final numbers = List.generate(numero, (index) => index);
   final postCollectionItemsSuperette =
       FirebaseFirestore.instance.collection('Invoice').doc();
   for (final number in numbers) {
     final item = data[number];
-    print('**************users[number]*****user.category*************');
-
     postCollectionItemsSuperette
-        .set({
-          'item CodeBar': FieldValue.arrayUnion([
-            {
-              'category': item['category'],
-              'model': item['model'],
-              'description': item['description'],
-              'size': item['size'],
-              'prixAchat': item['prixAchat'],
-              'prixVente': item['prixVente'],
-              'stock': item['stock'],
-              'codebar': item['codebar'],
-              'oldStock': item['oldStock'],
-              'origine': item['origine'],
-              'user': item['user'],
-              'qty': item['qty'],
-            }
-          ]),
-          'total': double.parse(sum),
-          'customer': customer,
-          'date': date,
-          'benef': benef,
-        })
+        .set({'item CodeBar': ''})
+        .whenComplete(() => postCollectionItemsSuperette.update(
+              {
+                'item CodeBar': FieldValue.arrayUnion([
+                  {
+                    'createdAt': Timestamp.now().toDate(),
+                    'category': item['category'],
+                    'model': item['model'],
+                    'description': item['description'],
+                    'size': item['size'],
+                    'prixAchat': item['prixAchat'],
+                    'prixVente': item['prixVente'],
+                    'stock': item['stock'],
+                    'codebar': item['codebar'],
+                    'oldStock': item['oldStock'],
+                    'origine': item['origine'],
+                    'user': item['user'],
+                    'qty': item['qty'],
+                  }
+                ]),
+                'total': double.parse(sum),
+                'customer': customer,
+                'date': dateInvoice,
+                'benef': benef,
+              }, //SetOptions(merge: false)
+            ))
         .then((value) => print("Item Added"))
         .catchError((error) => print("Failed to Add: $error"));
-    // postCollectionItemsSuperette
-    //     .set({'item CodeBar': ''})
-    //     .whenComplete(() => postCollectionItemsSuperette.update(
-    //           //.set(
-    //
-    //           {
-    //             'item CodeBar': FieldValue.arrayUnion([
-    //               {
-    //                 'createdAt': Timestamp.now().toDate(),
-    //                 'category': item['category'],
-    //                 'model': item['model'],
-    //                 'description': item['description'],
-    //                 'size': item['size'],
-    //                 'prixAchat': item['prixAchat'],
-    //                 'prixVente': item['prixVente'],
-    //                 'stock': item['stock'],
-    //                 'codebar': item['codebar'],
-    //                 'oldStock': item['oldStock'],
-    //                 'origine': item['origine'],
-    //                 'user': item['user'],
-    //                 'qty': item['qty'],
-    //               }
-    //             ]),
-    //             'total': double.parse(sum),
-    //             'customer': customer,
-    //             'date': date,
-    //             'benef': benef,
-    //           }, //SetOptions(merge: false)
-    //         ))
-    //     .then((value) => print("Item Added"))
-    //     .catchError((error) => print("Failed to Add: $error"));
   }
 }
 
 Future<void> testDealerx(
-    List dataDevis, sum, benef, customer, idcustomer, date) async {
+    List dataDevis, sum, benef, customer, idcustomer, dateInvoice) async {
   final numero = await dataDevis.length;
 
   print('length :${dataDevis.length}');
   print('idcustomer');
   print(idcustomer);
   print(customer);
+  print(dateInvoice);
   final numbers = List.generate(numero, (index) => index);
   final CollectionReference Collection =
       FirebaseFirestore.instance.collection("Dealers");
 
   if (idcustomer == '') {
-    //newDocumentP.set(datap);
-    // var doccc = Collection.doc().set({
-    //   'name': customer,
-    //   'idcustomer': customer,
-    // });
     print('ok');
 
     final collRef = FirebaseFirestore.instance.collection('Dealers');
@@ -658,7 +623,7 @@ Future<void> testDealerx(
             .doc(item['codebar'])
             .set(
           {
-            'createdAt': date, // Timestamp.now().toDate(),
+            // 'createdAt': date, // Timestamp.now().toDate(),
             'category': item['category'],
             'model': item['model'],
             'description': item['description'],
@@ -744,7 +709,7 @@ Future<void> testDealerx(
 
       subCollection.doc(item['codebar']).set(
         {
-          'createdAt': date, //Timestamp.now().toDate(),
+          'createdAt': dateInvoice, //Timestamp.now().toDate(),
           'category': item['category'],
           'model': item['model'],
           'description': item['description'],

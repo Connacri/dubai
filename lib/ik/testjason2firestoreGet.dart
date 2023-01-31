@@ -979,8 +979,8 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
                         'origine': _origine,
                       });
 
-                      // Navigator.of(context).pop();
-                      Navigator.of(context, rootNavigator: true).pop();
+                      Navigator.of(context).pop();
+                      //Navigator.of(context, rootNavigator: true).pop();
                       // setState(() {
                       //   data.clear();
                       // });
@@ -1449,9 +1449,17 @@ class SLiverHeader extends StatelessWidget {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        UnsplashAvatar(
-                                            UnsplashUrl: _UnsplashUrlSnapshot[
-                                                'userAvatar']),
+                                        _UnsplashUrlSnapshot['userAvatar'] != ''
+                                            ? UnsplashAvatar(
+                                                UnsplashUrl:
+                                                    _UnsplashUrlSnapshot[
+                                                        'userAvatar'])
+                                            : CircleAvatar(
+                                                child: Icon(
+                                                  Icons.face,
+                                                  size: 30,
+                                                ),
+                                              ),
                                         Container(
                                           width: 90,
                                           child: FittedBox(
@@ -1860,6 +1868,7 @@ class ViewGlobalCompte extends StatelessWidget {
     }
 
     List invoiceList = Provider.of<List<Invoice>>(context);
+
     double sumInvoice = 0;
     double sumTotalInvoice = 0;
 
@@ -1873,7 +1882,7 @@ class ViewGlobalCompte extends StatelessWidget {
       }
     }
 
-    //print(sumTotalInvoice);
+    print(sumTotalInvoice);
     Random random = new Random();
 
     int intex = random.nextInt(19);

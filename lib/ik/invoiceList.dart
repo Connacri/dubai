@@ -21,12 +21,13 @@ class invoiceList extends StatelessWidget {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('Invoice')
-            .orderBy('date', descending: true)
+            // .orderBy('date', descending: true)
             .snapshots(),
         //.get(),
         builder: (BuildContext context, snapshot) {
           if (snapshot.hasData) {
-            final List<DocumentSnapshot> documents = snapshot.data!.docs;
+            final List documents = snapshot.data!.docs;
+            //print(documents);
 
             return documents.isEmpty
                 ? Center(

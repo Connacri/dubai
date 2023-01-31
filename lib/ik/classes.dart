@@ -74,21 +74,24 @@ class ItemsA {
 class Invoice {
   final double benef;
   final String customer;
-  // final DateTime date;
+  final Timestamp date;
   final List itemCodeBar;
+  final double total;
 
   const Invoice({
     required this.benef,
     required this.customer,
-    //  required this.date,
+    required this.date,
     required this.itemCodeBar,
+    required this.total,
   });
 
   static Invoice fromJson(json) => Invoice(
         benef: json['benef'] as double,
         customer: json['customer']! as String,
-        //date: DateTime.parse(json['date']!) as DateTime,
+        date: json['date']! as Timestamp,
         itemCodeBar: json['item CodeBar']! as List,
+        total: json['total'] as double,
       );
 }
 

@@ -376,7 +376,8 @@ class _addCustomerToEstimate3State extends State<addCustomerToEstimate3> {
                               widget.sum.toString(),
                               widget.benef,
                               _customerController.text,
-                              DateTime.now(),
+                              // DateTime.now(),
+                              dateinput,
                             );
                     }
                     ;
