@@ -549,3 +549,134 @@ Future getposts() async {
   QuerySnapshot qn = await firestore.collection('Users').get();
   return qn.docs;
 }
+
+Future<void> testDealerx(
+    List dataDevis, sum, benef, customer, idcustomer, date) async {
+  final numero = await dataDevis.length;
+
+  print('length :${dataDevis.length}');
+  print('idcustomer');
+  print(idcustomer);
+  print(customer);
+  final numbers = List.generate(numero, (index) => index);
+  final CollectionReference Collection =
+      FirebaseFirestore.instance.collection("Dealers");
+
+  if (idcustomer == '') {
+    //newDocumentP.set(datap);
+    // var doccc = Collection.doc().set({
+    //   'name': customer,
+    //   'idcustomer': customer,
+    // });
+    print('ok');
+
+    final collRef = FirebaseFirestore.instance.collection('Dealers');
+    DocumentReference docReference = collRef.doc();
+
+    docReference.set({
+      'name': customer,
+      'idcustomer': docReference.id,
+    }).then((doc) {
+      print('hop ${docReference.id}');
+      for (final number in numbers) {
+        final item = dataDevis[number];
+
+        FirebaseFirestore.instance
+            .collection("Dealers")
+            .doc(docReference.id)
+            .collection("productsList")
+            .doc(item['codebar'])
+            .set(
+          {
+            'createdAt': Timestamp.now().toDate(),
+            'category': item['category'],
+            'model': item['model'],
+            'description': item['description'],
+            'size': item['size'],
+            'prixAchat': item['prixAchat'],
+            'prixVente': item['prixVente'],
+            'stock': item['stock'],
+            'codebar': item['codebar'],
+            'oldStock': item['oldStock'],
+            'origine': item['origine'],
+            'user': item['user'],
+            'state': item['state'],
+            'qty': item['qty'],
+          },
+        ).then((_) {
+          // Document successfully added
+        });
+      }
+    }).catchError((error) {
+      print(error);
+    });
+
+    // final DocumentReference newDocumentP = Collection.doc(doccc.id);
+    // final CollectionReference subCollection = FirebaseFirestore.instance
+    //     .collection("Dealers")
+    //     .doc(newDocumentP.id)
+    //     .collection("productsList");
+    //
+    // for (final number in numbers) {
+    //   final item = dataDevis[number];
+    //
+    //   subCollection.doc(item['codebar']).set(
+    //     {
+    //       'createdAt': Timestamp.now().toDate(),
+    //       'category': item['category'],
+    //       'model': item['model'],
+    //       'description': item['description'],
+    //       'size': item['size'],
+    //       'prixAchat': item['prixAchat'],
+    //       'prixVente': item['prixVente'],
+    //       'stock': item['stock'],
+    //       'codebar': item['codebar'],
+    //       'oldStock': item['oldStock'],
+    //       'origine': item['origine'],
+    //       'user': item['user'],
+    //       'state': item['state'],
+    //       'qty': item['qty'],
+    //     },
+    //   ).then((_) {
+    //     // Document successfully added
+    //   });
+    // }
+  } else {
+    final Map<String, dynamic> datap = {
+      'name': customer,
+      'idcustomer': idcustomer,
+    };
+    //newDocumentP.set(datap);
+    Collection.doc(idcustomer).set(datap);
+    final DocumentReference newDocumentP = Collection.doc(idcustomer);
+    final CollectionReference subCollection = FirebaseFirestore.instance
+        .collection("Dealers")
+        .doc(newDocumentP.id)
+        .collection("productsList");
+
+    for (final number in numbers) {
+      final item = dataDevis[number];
+
+      subCollection.doc(item['codebar']).set(
+        {
+          'createdAt': Timestamp.now().toDate(),
+          'category': item['category'],
+          'model': item['model'],
+          'description': item['description'],
+          'size': item['size'],
+          'prixAchat': item['prixAchat'],
+          'prixVente': item['prixVente'],
+          'stock': item['stock'],
+          'codebar': item['codebar'],
+          'oldStock': item['oldStock'],
+          'origine': item['origine'],
+          'user': item['user'],
+          'state': item['state'],
+          'qty': item['qty'],
+        },
+      ).then((_) {
+        // Document successfully added
+      });
+    }
+  }
+}
