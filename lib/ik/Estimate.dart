@@ -46,17 +46,18 @@ class _estimateikState extends State<estimateik> {
                 try {
                   if (snapshot.data!.docs.length == 0) {
                     return Scaffold(
-                        backgroundColor: Colors.white,
-                        body: Center(
-                          child: Lottie.asset(
-                              'assets/lotties/89832-empty-list.json',
-                              fit: BoxFit.contain),
-                          // child: Text(
-                          //   'GG Adventure \nEstimate Is Empty',
-                          //   textAlign: TextAlign.center,
-                          //   style: TextStyle(fontSize: 20),
-                          // ),
-                        ));
+                      backgroundColor: Colors.white,
+                      body: Center(
+                        child: Lottie.asset(
+                            'assets/lotties/89832-empty-list.json',
+                            fit: BoxFit.contain),
+                        // child: Text(
+                        //   'GG Adventure \nEstimate Is Empty',
+                        //   textAlign: TextAlign.center,
+                        //   style: TextStyle(fontSize: 20),
+                        // ),
+                      ),
+                    );
                   }
                 } catch (exception) {}
 
@@ -210,105 +211,125 @@ class _estimateikState extends State<estimateik> {
                                   ),
                                 ],
                               ),
-                              child: ListTile(
-                                trailing: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      NumberFormat.currency(
-                                              //locale: 'aed',
-                                              symbol: '')
-                                          .format(
-                                              (_documentSnapshot['prixVente'] *
-                                                  _documentSnapshot['qty'])),
-                                      // .toString() +  '0',
-                                      style: TextStyle(fontSize: 15),
-                                    ),
-                                    Text(
-                                      NumberFormat.currency(
-                                              //locale: 'aed',
-                                              symbol: '')
-                                          .format(((_documentSnapshot[
-                                                      'prixVente'] -
-                                                  _documentSnapshot['PUA']) *
-                                              _documentSnapshot['qty'])),
-                                      // .toString() +  '0',
-                                      style: TextStyle(
-                                          fontSize: 15, color: colorGreen),
-                                    ),
-                                  ],
-                                ),
-                                leading: CircleAvatar(
-                                  child: FittedBox(
-                                    child: Text(
-                                        _documentSnapshot['qty'].toString()),
-                                  ),
-                                ),
-                                title: Row(
-                                  children: [
-                                    _documentSnapshot['state'] == true
-                                        ? Icon(
-                                            Icons.verified,
-                                            color: Colors.green,
-                                          )
-                                        : Icon(Icons.cancel, color: Colors.red),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    // Switch(
-                                    //   value: _giveVerse,
-                                    //   onChanged: (bool newValue) {
-                                    //     bool _giveVerse =
-                                    //         _documentSnapshot['state'];
-                                    //     setState(() {
-                                    //       _giveVerse = newValue;
-                                    //     });
-                                    //     () async {
-                                    //       await FirebaseFirestore.instance
-                                    //           .collection('Estimate')
-                                    //           .doc(_documentSnapshot.id)
-                                    //           .update({
-                                    //         'state': false,
-                                    //       });
-                                    //     };
-                                    //   },
-                                    // ),
-                                    Text(
-                                      _documentSnapshot['model'],
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Size : ' + _documentSnapshot['size'],
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    Row(
+                              child: Column(
+                                children: [
+                                  Divider(),
+                                  ListTile(
+                                    trailing: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          NumberFormat.currency(symbol: 'PU ')
-                                              .format(_documentSnapshot[
-                                                  'prixVente']), //.toString() + '0'),
-                                        ),
-                                        SizedBox(
-                                          width: 30,
+                                          NumberFormat.currency(
+                                                  //locale: 'aed',
+                                                  symbol: '')
+                                              .format((_documentSnapshot[
+                                                      'prixVente'] *
+                                                  _documentSnapshot['qty'])),
+                                          // .toString() +  '0',
+                                          style: TextStyle(fontSize: 15),
                                         ),
                                         Text(
-                                          NumberFormat.currency(symbol: 'Earn ')
-                                              .format(_documentSnapshot[
-                                                      'prixVente'] -
-                                                  _documentSnapshot[
-                                                      'PUA']), //.toString() + '0'),
-                                          style: TextStyle(color: colorGreen),
+                                          NumberFormat.currency(
+                                                  //locale: 'aed',
+                                                  symbol: '')
+                                              .format(((_documentSnapshot[
+                                                          'prixVente'] -
+                                                      _documentSnapshot[
+                                                          'PUA']) *
+                                                  _documentSnapshot['qty'])),
+                                          // .toString() +  '0',
+                                          style: TextStyle(
+                                              fontSize: 15, color: colorGreen),
+                                        ),
+                                      ],
+                                    ),
+                                    leading: Column(
+                                      children: [
+                                        CircleAvatar(
+                                          child: FittedBox(
+                                            child: Text(_documentSnapshot['qty']
+                                                .toString()),
+                                          ),
+                                        ),
+                                        Text(_documentSnapshot['codebar']),
+                                      ],
+                                    ),
+                                    title: Row(
+                                      children: [
+                                        _documentSnapshot['state'] == true
+                                            ? Icon(
+                                                Icons.verified,
+                                                color: Colors.green,
+                                              )
+                                            : Icon(Icons.cancel,
+                                                color: Colors.red),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        // Switch(
+                                        //   value: _giveVerse,
+                                        //   onChanged: (bool newValue) {
+                                        //     bool _giveVerse =
+                                        //         _documentSnapshot['state'];
+                                        //     setState(() {
+                                        //       _giveVerse = newValue;
+                                        //     });
+                                        //     () async {
+                                        //       await FirebaseFirestore.instance
+                                        //           .collection('Estimate')
+                                        //           .doc(_documentSnapshot.id)
+                                        //           .update({
+                                        //         'state': false,
+                                        //       });
+                                        //     };
+                                        //   },
+                                        // ),
+                                        Expanded(
+                                          child: Text(
+                                            _documentSnapshot['model'],
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Size : ' + _documentSnapshot['size'],
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              NumberFormat.currency(
+                                                      symbol: 'PU ')
+                                                  .format(_documentSnapshot[
+                                                      'prixVente']), //.toString() + '0'),
+                                            ),
+                                            SizedBox(
+                                              width: 30,
+                                            ),
+                                            Text(
+                                              NumberFormat.currency(
+                                                      symbol: 'Earn ')
+                                                  .format(_documentSnapshot[
+                                                          'prixVente'] -
+                                                      _documentSnapshot[
+                                                          'PUA']), //.toString() + '0'),
+                                              style:
+                                                  TextStyle(color: colorGreen),
+                                            )
+                                          ],
                                         )
                                       ],
-                                    )
-                                  ],
-                                ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             );
                           }),
@@ -680,57 +701,6 @@ showAlertDialog(BuildContext context, data) {
       // user pressed No button
     }
   });
-}
-
-Future<void> addDevisToInvoiceList(
-    List data, sum, benef, customer, date) async {
-  final numero = await data.length;
-  print('data');
-  print(data);
-
-  print('length :${data.length}');
-
-  final numbers = List.generate(numero, (index) => index);
-  final postCollectionItemsSuperette =
-      FirebaseFirestore.instance.collection('Invoice').doc();
-  for (final number in numbers) {
-    final item = data[number];
-    print('**************users[number]*****user.category*************');
-
-    // .collection('invoices')
-    // .doc(item['codebar']);
-    postCollectionItemsSuperette
-        .set({'item CodeBar': ''})
-        .whenComplete(() => postCollectionItemsSuperette.update(
-              //.set(
-
-              {
-                'item CodeBar': FieldValue.arrayUnion([
-                  {
-                    'createdAt': Timestamp.now().toDate(),
-                    'category': item['category'],
-                    'model': item['model'],
-                    'description': item['description'],
-                    'size': item['size'],
-                    'prixAchat': item['prixAchat'],
-                    'prixVente': item['prixVente'],
-                    'stock': item['stock'],
-                    'codebar': item['codebar'],
-                    'oldStock': item['oldStock'],
-                    'origine': item['origine'],
-                    'user': item['user'],
-                    'qty': item['qty'],
-                  }
-                ]),
-                'total': double.parse(sum),
-                'customer': customer,
-                'date': date,
-                'benef': benef,
-              }, //SetOptions(merge: false)
-            ))
-        .then((value) => print("Item Added"))
-        .catchError((error) => print("Failed to Add: $error"));
-  }
 }
 
 Future<void> addItemsToDevis2(dataid, data, qty) async {

@@ -506,22 +506,18 @@ class _buildColumnState extends State<buildColumn> {
                           widget.benef,
                           customerControllerSwitched.text,
                           id,
-                          DateTime.now(),
+                          widget.dateinput,
                         )
-                      // ? addDealer(
-                      //     widget.dataDevis,
-                      //     widget.sum.toString(),
-                      //     widget.benef,
-                      //     customerControllerSwitched.text,
-                      //     DateTime.now(),
-                      //   )
                       : addDevisToInvoiceList(
                           widget.dataDevis,
                           widget.sum.toString(),
                           widget.benef,
                           customerController.text,
-                          DateTime.now(),
+                          widget.dateinput,
                         );
+                  print('sum : ${widget.sum.toString()}'
+                      ' benef : ${widget.benef}'
+                      ' customerController : ${customerController.text}');
                 }
                 ;
                 _deleteAllEstimate();
@@ -548,6 +544,80 @@ Future getposts() async {
   var firestore = FirebaseFirestore.instance;
   QuerySnapshot qn = await firestore.collection('Users').get();
   return qn.docs;
+}
+
+Future<void> addDevisToInvoiceList(
+    List data, sum, benef, customer, date) async {
+  final numero = await data.length;
+  print('data');
+  print(data);
+
+  print('length :${data.length}');
+
+  final numbers = List.generate(numero, (index) => index);
+  final postCollectionItemsSuperette =
+      FirebaseFirestore.instance.collection('Invoice').doc();
+  for (final number in numbers) {
+    final item = data[number];
+    print('**************users[number]*****user.category*************');
+
+    postCollectionItemsSuperette
+        .set({
+          'item CodeBar': FieldValue.arrayUnion([
+            {
+              'category': item['category'],
+              'model': item['model'],
+              'description': item['description'],
+              'size': item['size'],
+              'prixAchat': item['prixAchat'],
+              'prixVente': item['prixVente'],
+              'stock': item['stock'],
+              'codebar': item['codebar'],
+              'oldStock': item['oldStock'],
+              'origine': item['origine'],
+              'user': item['user'],
+              'qty': item['qty'],
+            }
+          ]),
+          'total': double.parse(sum),
+          'customer': customer,
+          'date': date,
+          'benef': benef,
+        })
+        .then((value) => print("Item Added"))
+        .catchError((error) => print("Failed to Add: $error"));
+    // postCollectionItemsSuperette
+    //     .set({'item CodeBar': ''})
+    //     .whenComplete(() => postCollectionItemsSuperette.update(
+    //           //.set(
+    //
+    //           {
+    //             'item CodeBar': FieldValue.arrayUnion([
+    //               {
+    //                 'createdAt': Timestamp.now().toDate(),
+    //                 'category': item['category'],
+    //                 'model': item['model'],
+    //                 'description': item['description'],
+    //                 'size': item['size'],
+    //                 'prixAchat': item['prixAchat'],
+    //                 'prixVente': item['prixVente'],
+    //                 'stock': item['stock'],
+    //                 'codebar': item['codebar'],
+    //                 'oldStock': item['oldStock'],
+    //                 'origine': item['origine'],
+    //                 'user': item['user'],
+    //                 'qty': item['qty'],
+    //               }
+    //             ]),
+    //             'total': double.parse(sum),
+    //             'customer': customer,
+    //             'date': date,
+    //             'benef': benef,
+    //           }, //SetOptions(merge: false)
+    //         ))
+    //     .then((value) => print("Item Added"))
+    //     .catchError((error) => print("Failed to Add: $error"));
+  }
 }
 
 Future<void> testDealerx(
@@ -588,7 +658,7 @@ Future<void> testDealerx(
             .doc(item['codebar'])
             .set(
           {
-            'createdAt': Timestamp.now().toDate(),
+            'createdAt': date, // Timestamp.now().toDate(),
             'category': item['category'],
             'model': item['model'],
             'description': item['description'],
@@ -604,7 +674,22 @@ Future<void> testDealerx(
             'qty': item['qty'],
           },
         ).then((_) {
-          // Document successfully added
+          FirebaseFirestore.instance
+              .collection('Users')
+              .doc(docReference.id)
+              .set({
+            'userID': docReference.id,
+            'userEmail': '',
+            'userAvatar': '',
+            'UcreatedAt': Timestamp.now(), //now.toString(),
+            'userDisplayName': customer,
+            'userAge': '',
+            'userItemsNbr': FieldValue.increment(1),
+            'userRole': 'dealer',
+            'userPhone': '',
+            'userSex': "",
+            'userState': true,
+          }, SetOptions(merge: true));
         });
       }
     }).catchError((error) {
@@ -659,7 +744,7 @@ Future<void> testDealerx(
 
       subCollection.doc(item['codebar']).set(
         {
-          'createdAt': Timestamp.now().toDate(),
+          'createdAt': date, //Timestamp.now().toDate(),
           'category': item['category'],
           'model': item['model'],
           'description': item['description'],
