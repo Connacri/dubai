@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'Estimate.dart';
 
@@ -56,19 +57,31 @@ class _dealerState extends State<dealer> {
                             //   size: 40,
                             // ),
                             title: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 Text(Data['name'].toUpperCase()),
                                 Text(
                                   Data.id.toUpperCase(),
                                   style: TextStyle(fontSize: 12),
                                 ),
-                                Text(Data['idcustomer'].toUpperCase(),
+                                // Text(Data['idcustomer'].toUpperCase(),
+                                //     style: TextStyle(
+                                //         fontSize: 12,
+                                //         fontStyle: FontStyle.italic,
+                                //         color: Colors.blue)),
+                                Text(
+                                    DateFormat(
+                                      "EEEEEE : dd-MM-yyyy",
+                                    ).format(Data['date'].toDate()),
+
+                                    //.toDate()
+                                    // .toString()
+                                    // .toUpperCase(),
+                                    textAlign: TextAlign.end,
                                     style: TextStyle(
-                                        fontSize: 12,
+                                        fontSize: 10,
                                         fontStyle: FontStyle.italic,
-                                        color: Colors.blue)),
+                                        color: Colors.black45)),
                               ],
                             ),
                             subtitle: StreamBuilder(

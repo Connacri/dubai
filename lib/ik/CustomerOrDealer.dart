@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
+import '../main.dart';
+import '../main_in.dart';
 import 'Dealer.dart';
 import 'Estimate.dart';
 import 'invoiceList.dart';
@@ -328,10 +331,6 @@ class _buildColumnState extends State<buildColumn> {
             fontSize: 25,
           ),
           onChanged: (value) {
-            print('value');
-            print(value);
-            print('customerControllerSwitched.text');
-            print(customerControllerSwitched.text);
             setState(() {
               if (value != name) {
                 id = '';
@@ -397,15 +396,25 @@ class _buildColumnState extends State<buildColumn> {
                                               });
                                               Navigator.of(context).pop();
                                             },
-                                            leading: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              child: CachedNetworkImage(
-                                                width: 50,
-                                                fit: BoxFit.cover,
-                                                imageUrl: data['userAvatar'],
-                                              ),
-                                            ),
+                                            leading: data['userAvatar'] != ''
+                                                ? ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                    child: CachedNetworkImage(
+                                                      width: 50,
+                                                      fit: BoxFit.cover,
+                                                      imageUrl:
+                                                          data['userAvatar'],
+                                                    ),
+                                                  )
+                                                : ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                    child: Image.asset(
+                                                        'assets/icon/blankProfile.webp'),
+                                                  ),
                                             title: Text(data['userDisplayName']
                                                 .toString()),
                                             subtitle: Text(
@@ -517,9 +526,13 @@ class _buildColumnState extends State<buildColumn> {
                           customerController.text,
                           widget.datepass,
                         );
-                  print('sum : ${widget.sum.toString()}'
-                      ' benef : ${widget.benef}'
-                      ' customerController : ${customerController.text}');
+                  print(
+                      '888888888888888888888888888888888888888888888888888888888888888888888');
+                  print('dataDevis : ${widget.dataDevis.toString()}');
+                  print('sum : ${widget.sum.toString()}');
+                  print(' benef : ${widget.benef}');
+                  print(' customerController : ${customerController.text}');
+                  print('datepass : ${widget.datepass.toString()}');
                 }
                 ;
                 _deleteAllEstimate();
@@ -533,7 +546,9 @@ class _buildColumnState extends State<buildColumn> {
                 );
               },
               child: Text(
-                'Add To Invoice'.toUpperCase(),
+                widget.isSwitched
+                    ? 'Add To Dealer'.toUpperCase()
+                    : 'Add To Invoice'.toUpperCase(),
                 style: const TextStyle(fontSize: 15, color: Colors.black54),
               )),
         ),
@@ -570,11 +585,8 @@ Future<void> addDevisToInvoiceList(
                     'size': item['size'],
                     'prixAchat': item['prixAchat'],
                     'prixVente': item['prixVente'],
-                    'stock': item['stock'],
                     'codebar': item['codebar'],
-                    'oldStock': item['oldStock'],
                     'origine': item['origine'],
-                    'user': item['user'],
                     'qty': item['qty'],
                   }
                 ]),
@@ -593,24 +605,18 @@ Future<void> testDealerx(
     List dataDevis, sum, benef, customer, idcustomer, dateInvoice) async {
   final numero = await dataDevis.length;
 
-  print('length :${dataDevis.length}');
-  print('idcustomer');
-  print(idcustomer);
-  print(customer);
-  print(dateInvoice);
   final numbers = List.generate(numero, (index) => index);
   final CollectionReference Collection =
       FirebaseFirestore.instance.collection("Dealers");
 
   if (idcustomer == '') {
-    print('ok');
-
     final collRef = FirebaseFirestore.instance.collection('Dealers');
     DocumentReference docReference = collRef.doc();
 
     docReference.set({
       'name': customer,
       'idcustomer': docReference.id,
+      'date': dateInvoice,
     }).then((doc) {
       print('hop ${docReference.id}');
       for (final number in numbers) {
@@ -660,41 +666,11 @@ Future<void> testDealerx(
     }).catchError((error) {
       print(error);
     });
-
-    // final DocumentReference newDocumentP = Collection.doc(doccc.id);
-    // final CollectionReference subCollection = FirebaseFirestore.instance
-    //     .collection("Dealers")
-    //     .doc(newDocumentP.id)
-    //     .collection("productsList");
-    //
-    // for (final number in numbers) {
-    //   final item = dataDevis[number];
-    //
-    //   subCollection.doc(item['codebar']).set(
-    //     {
-    //       'createdAt': Timestamp.now().toDate(),
-    //       'category': item['category'],
-    //       'model': item['model'],
-    //       'description': item['description'],
-    //       'size': item['size'],
-    //       'prixAchat': item['prixAchat'],
-    //       'prixVente': item['prixVente'],
-    //       'stock': item['stock'],
-    //       'codebar': item['codebar'],
-    //       'oldStock': item['oldStock'],
-    //       'origine': item['origine'],
-    //       'user': item['user'],
-    //       'state': item['state'],
-    //       'qty': item['qty'],
-    //     },
-    //   ).then((_) {
-    //     // Document successfully added
-    //   });
-    // }
   } else {
     final Map<String, dynamic> datap = {
       'name': customer,
       'idcustomer': idcustomer,
+      'date': dateInvoice,
     };
     //newDocumentP.set(datap);
     Collection.doc(idcustomer).set(datap);
@@ -707,24 +683,22 @@ Future<void> testDealerx(
     for (final number in numbers) {
       final item = dataDevis[number];
 
-      subCollection.doc(item['codebar']).set(
-        {
-          'createdAt': dateInvoice, //Timestamp.now().toDate(),
-          'category': item['category'],
-          'model': item['model'],
-          'description': item['description'],
-          'size': item['size'],
-          'prixAchat': item['prixAchat'],
-          'prixVente': item['prixVente'],
-          'stock': item['stock'],
-          'codebar': item['codebar'],
-          'oldStock': item['oldStock'],
-          'origine': item['origine'],
-          'user': item['user'],
-          'state': item['state'],
-          'qty': item['qty'],
-        },
-      ).then((_) {
+      subCollection.doc(item['codebar']).set({
+        'createdAt': dateInvoice, //Timestamp.now().toDate(),
+        'category': item['category'],
+        'model': item['model'],
+        'description': item['description'],
+        'size': item['size'],
+        'prixAchat': item['prixAchat'],
+        'prixVente': item['prixVente'],
+        'stock': item['stock'],
+        'codebar': item['codebar'],
+        'oldStock': item['oldStock'],
+        'origine': item['origine'],
+        'user': item['user'],
+        'state': item['state'],
+        'qty': FieldValue.increment(item['qty']),
+      }, SetOptions(merge: true)).then((_) {
         // Document successfully added
       });
     }

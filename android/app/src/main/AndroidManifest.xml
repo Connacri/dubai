@@ -3,6 +3,8 @@
     package="com.adventure.gg.dubai">
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- Provide required visibility configuration for API level 30 and above -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
 <queries>
         <!-- If your app checks for SMS support -->
         <intent>

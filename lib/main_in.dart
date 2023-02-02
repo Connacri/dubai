@@ -2,9 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'ik/Dealer.dart';
+import 'ik/Estimate.dart';
 import 'ik/classes.dart';
+import 'ik/invoiceList.dart';
 import 'ik/testjason2firestoreGet.dart';
 import 'rmz/publicProfil.dart';
 
@@ -27,10 +29,10 @@ class MultiProviderWidget extends StatelessWidget {
           create: (_) => firebaseServices.getItemsList(),
           initialData: [],
         ),
-        StreamProvider<List<Invoice>>(
-          create: (_) => firebaseServices.getInvoiceList(),
-          initialData: [],
-        ),
+        // StreamProvider<List<Invoice>>(
+        //   create: (_) => firebaseServices.getInvoiceList(),
+        //   initialData: [],
+        // ),
       ],
       // child: logIn(),
       child:
@@ -111,11 +113,18 @@ class _NavigationExampleState extends State<NavigationExample> {
         selectedIndex: currentPageIndex,
         destinations: <Widget>[
           NavigationDestination(
-            icon: Icon(Icons.home),
+            icon: Icon(FontAwesomeIcons.home),
             label: 'Home',
           ),
           NavigationDestination(
-              icon: Icon(Icons.accessibility), label: 'Customers'),
+              selectedIcon: Icon(FontAwesomeIcons.peopleLine),
+              icon: Icon(FontAwesomeIcons.peopleGroup),
+              label: 'Customers'),
+
+          NavigationDestination(
+              selectedIcon: Icon(FontAwesomeIcons.moneyCheckDollar),
+              icon: Icon(FontAwesomeIcons.fileInvoiceDollar),
+              label: 'Invoices'),
           NavigationDestination(
             icon: ClipRRect(
                 clipBehavior: Clip.hardEdge,
@@ -185,6 +194,7 @@ class _NavigationExampleState extends State<NavigationExample> {
       body: <Widget>[
         mainPageFirestoreGetik(),
         dealer(),
+        invoiceList(),
         publicProfil(
           userRole: widget.userRole,
         ),

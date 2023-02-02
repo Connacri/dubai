@@ -50,6 +50,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:intl/date_symbol_data_file.dart';
 import 'package:provider/provider.dart';
 
 import 'main_in.dart';
@@ -61,6 +62,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
       //options: DefaultFirebaseOptions.currentPlatform,
       );
+
   FlutterNativeSplash.removeAfter(initialization);
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
       overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
@@ -107,13 +109,7 @@ class Materialclass extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           fontFamily: "Oswald",
-          //fontFamily: lang.languageCode == "ar" ? 'ArbFONTS-khalaad-al-arabeh' : "Oswald",
-          //   fontFamily:
-          //   Localizations.localeOf(context).languageCode == 'ar'?
-          //   'ArbFONTS-khalaad-al-arabeh' : 'Oswald'
         ),
-//          darkTheme: _darkTheme,
-
         home: const verifi_auth(),
       ),
     );

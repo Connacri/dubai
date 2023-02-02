@@ -102,6 +102,9 @@ class _estimateikState extends State<estimateik> {
                                 document.data()! as Map<String, dynamic>;
                             return data;
                           }).toList();
+                          print(
+                              'print(print(print(print(print(print(print(print(print(print(print(');
+                          print(LLIst);
 
                           double summ = 0;
                           var ds = snapshot.data!.docs;

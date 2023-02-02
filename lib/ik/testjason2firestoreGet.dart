@@ -457,16 +457,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
             ));
           },
         ),
-        IconButton(
-          icon: const Icon(Icons.face),
-          onPressed: () {
-            // int itemcount = code.length;
-            // uploadItems(itemcount);
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => invoiceList(),
-            ));
-          },
-        ),
+
         Padding(
           padding: const EdgeInsets.only(right: 15),
           child: IconButton(
@@ -1867,22 +1858,22 @@ class ViewGlobalCompte extends StatelessWidget {
       summItems += (itemsList[i].prixAchat * itemsList[i].oldStock).toDouble();
     }
 
-    List invoiceList = Provider.of<List<Invoice>>(context);
+    // List invoiceList = Provider.of<List<Invoice>>(context);
+    //
+    // double sumInvoice = 0;
+    // double sumTotalInvoice = 0;
+    //
+    // for (int i = 0; i < invoiceList.length; i++) {
+    //   sumInvoice += (invoiceList[i].benef).toDouble();
+    //   List ListItemsInvoice = invoiceList[i].itemCodeBar;
+    //   for (int ii = 0; ii < ListItemsInvoice.length; ii++) {
+    //     sumTotalInvoice +=
+    //         (ListItemsInvoice[ii]['prixVente'] * ListItemsInvoice[ii]['qty'])
+    //             .toDouble();
+    //   }
+    // }
 
-    double sumInvoice = 0;
-    double sumTotalInvoice = 0;
-
-    for (int i = 0; i < invoiceList.length; i++) {
-      sumInvoice += (invoiceList[i].benef).toDouble();
-      List ListItemsInvoice = invoiceList[i].itemCodeBar;
-      for (int ii = 0; ii < ListItemsInvoice.length; ii++) {
-        sumTotalInvoice +=
-            (ListItemsInvoice[ii]['prixVente'] * ListItemsInvoice[ii]['qty'])
-                .toDouble();
-      }
-    }
-
-    print(sumTotalInvoice);
+    // print(sumTotalInvoice);
     Random random = new Random();
 
     int intex = random.nextInt(19);
@@ -1999,14 +1990,14 @@ class ViewGlobalCompte extends StatelessWidget {
                           fontSize: 12,
                           fontWeight: FontWeight.w500),
                     ),
-                    Text(
-                      NumberFormat.currency(symbol: '').format(sumTotalInvoice),
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          color: colorWhite,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500),
-                    ),
+                    // Text(
+                    //   NumberFormat.currency(symbol: '').format(sumTotalInvoice),
+                    //   overflow: TextOverflow.ellipsis,
+                    //   style: TextStyle(
+                    //       color: colorWhite,
+                    //       fontSize: 12,
+                    //       fontWeight: FontWeight.w500),
+                    // ),
                   ],
                 ),
                 Row(
@@ -2020,14 +2011,14 @@ class ViewGlobalCompte extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                           color: Colors.greenAccent),
                     ),
-                    Text(
-                      NumberFormat.currency(symbol: '').format(sumInvoice),
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.greenAccent),
-                    ),
+                    // Text(
+                    //   NumberFormat.currency(symbol: '').format(sumInvoice),
+                    //   overflow: TextOverflow.ellipsis,
+                    //   style: TextStyle(
+                    //       fontSize: 16,
+                    //       fontWeight: FontWeight.w500,
+                    //       color: Colors.greenAccent),
+                    // ),
                   ],
                 ),
               ],
