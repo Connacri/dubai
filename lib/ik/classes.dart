@@ -71,29 +71,29 @@ class ItemsA {
       );
 }
 
-class Invoice {
-  final double benef;
-  final String customer;
-  final Timestamp date;
-  final List itemCodeBar;
-  final double total;
-
-  const Invoice({
-    required this.benef,
-    required this.customer,
-    required this.date,
-    required this.itemCodeBar,
-    required this.total,
-  });
-
-  static Invoice fromJson(json) => Invoice(
-        benef: json['benef'] as double,
-        customer: json['customer']! as String,
-        date: json['date']! as Timestamp,
-        itemCodeBar: json['item CodeBar']! as List,
-        total: json['total'] as double,
-      );
-}
+// class Invoice {
+//   final double benef;
+//   final String customer;
+//   final Timestamp date;
+//   final List itemCodeBar;
+//   final double total;
+//
+//   const Invoice({
+//     required this.benef,
+//     required this.customer,
+//     required this.date,
+//     required this.itemCodeBar,
+//     required this.total,
+//   });
+//
+//   static Invoice fromJson(json) => Invoice(
+//         benef: json['benef'] as double,
+//         customer: json['customer']! as String,
+//         date: json['date']! as Timestamp,
+//         itemCodeBar: json['itemCodeBar']! as List,
+//         total: json['total'] as double,
+//       );
+// }
 
 class UserDetail {
   Timestamp UcreatedAt;
@@ -190,6 +190,45 @@ class UserDetail {
 //         userState = parsedJSON['userState'],
 //         userRole = parsedJSON['userRole'];
 // }
+
+class Invoice {
+  final String id;
+  final double benef;
+  final String customer;
+  final Timestamp date;
+  final List itemCodeBar;
+  final double total;
+
+  const Invoice({
+    required this.id,
+    required this.benef,
+    required this.customer,
+    required this.date,
+    required this.itemCodeBar,
+    required this.total,
+  });
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'benef': benef,
+      'customer': customer,
+      'date': date,
+      'itemCodeBar': itemCodeBar,
+      'total': total,
+    };
+  }
+
+  static Invoice fromMap(Map<String, dynamic> map) {
+    return Invoice(
+      id: map['id'],
+      benef: map['benef'],
+      customer: map['customer'],
+      date: map['date'],
+      itemCodeBar: List.from(map['itemCodeBar']),
+      total: map['total'],
+    );
+  }
+}
 
 class SuperHero {
   final String userDisplayName;

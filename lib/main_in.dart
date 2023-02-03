@@ -29,10 +29,25 @@ class MultiProviderWidget extends StatelessWidget {
           create: (_) => firebaseServices.getItemsList(),
           initialData: [],
         ),
-        // StreamProvider<List<Invoice>>(
-        //   create: (_) => firebaseServices.getInvoiceList(),
-        //   initialData: [],
-        // ),
+        StreamProvider<List<Invoice>>(
+          create: (context) => firebaseServices.getInvoiceListX(),
+          // create: (context) {
+          //   return FirebaseFirestore.instance
+          //       .collection("Invoice")
+          //       .snapshots()
+          //       .map((snapshot) {
+          //     try {
+          //       return snapshot.docs
+          //           .map((document) => Invoice.fromMap(document.data()))
+          //           .toList();
+          //     } catch (e) {
+          //       print(e);
+          //       rethrow;
+          //     }
+          //   });
+          // },
+          initialData: [],
+        ),
       ],
       // child: logIn(),
       child:
@@ -65,11 +80,24 @@ class FirebaseServices {
             .toList());
   }
 
-  Stream<List<Invoice>> getInvoiceList() {
-    return _fireStoreDataBase.collection('Invoice').snapshots().map(
-        (snapShot) => snapShot.docs
-            .map((document) => Invoice.fromJson(document.data()))
-            .toList());
+  // Stream<List<Invoice>> getInvoiceList() {
+  //   return _fireStoreDataBase.collection('Invoice').snapshots().map(
+  //       (snapShot) => snapShot.docs
+  //           .map((document) => Invoice.fromMap(document.data()))
+  //           .toList());
+  // }
+
+  Stream<List<Invoice>> getInvoiceListX() {
+    return _fireStoreDataBase.collection("Invoice").snapshots().map((snapshot) {
+      try {
+        return snapshot.docs
+            .map((document) => Invoice.fromMap(document.data()))
+            .toList();
+      } catch (e) {
+        print(e);
+        rethrow;
+      }
+    });
   }
 
   /// Get a stream of a single document
@@ -193,7 +221,7 @@ class _NavigationExampleState extends State<NavigationExample> {
       ),
       body: <Widget>[
         mainPageFirestoreGetik(),
-        dealer(),
+        dealersCredits(), //dealer(),
         invoiceList(),
         publicProfil(
           userRole: widget.userRole,

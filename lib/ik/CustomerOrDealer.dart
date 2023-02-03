@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +9,7 @@ import '../main.dart';
 import '../main_in.dart';
 import 'Dealer.dart';
 import 'Estimate.dart';
+import 'invoiceDetail.dart';
 import 'invoiceList.dart';
 
 class CustomerOrDealer extends StatefulWidget {
@@ -526,24 +528,17 @@ class _buildColumnState extends State<buildColumn> {
                           customerController.text,
                           widget.datepass,
                         );
-                  print(
-                      '888888888888888888888888888888888888888888888888888888888888888888888');
-                  print('dataDevis : ${widget.dataDevis.toString()}');
-                  print('sum : ${widget.sum.toString()}');
-                  print(' benef : ${widget.benef}');
-                  print(' customerController : ${customerController.text}');
-                  print('datepass : ${widget.datepass.toString()}');
                 }
                 ;
                 _deleteAllEstimate();
-
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        widget.isSwitched ? dealer() : invoiceList(),
-                  ),
-                  (route) => route.isFirst,
-                );
+                widget.isSwitched
+                    ? Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => dealer()
+                            //invoiceList(),
+                            ),
+                        (route) => route.isFirst,
+                      )
+                    : Navigator.of(context).pushNamed("/invoiceList");
               },
               child: Text(
                 widget.isSwitched
@@ -564,7 +559,12 @@ Future getposts() async {
 }
 
 Future<void> addDevisToInvoiceList(
-    List data, sum, benef, customer, dateInvoice) async {
+  List data,
+  sum,
+  benef,
+  customer,
+  dateInvoice,
+) async {
   final numero = await data.length;
 
   final numbers = List.generate(numero, (index) => index);
@@ -573,10 +573,11 @@ Future<void> addDevisToInvoiceList(
   for (final number in numbers) {
     final item = data[number];
     postCollectionItemsSuperette
-        .set({'item CodeBar': ''})
+        .set({'itemCodeBar': ''})
         .whenComplete(() => postCollectionItemsSuperette.update(
               {
-                'item CodeBar': FieldValue.arrayUnion([
+                'id': postCollectionItemsSuperette.id,
+                'itemCodeBar': FieldValue.arrayUnion([
                   {
                     'createdAt': Timestamp.now().toDate(),
                     'category': item['category'],
@@ -596,7 +597,9 @@ Future<void> addDevisToInvoiceList(
                 'benef': benef,
               }, //SetOptions(merge: false)
             ))
-        .then((value) => print("Item Added"))
+        .then((value) {
+          print("Item Added");
+        })
         .catchError((error) => print("Failed to Add: $error"));
   }
 }

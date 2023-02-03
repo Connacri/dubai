@@ -49,98 +49,103 @@ class ListDealers extends StatelessWidget {
                     ));
               }
             } catch (exception) {}
+            if (snapshot.hasData) {
+              return Scaffold(
+                appBar: AppBar(
+                  toolbarHeight: 90.0,
+                  title: Text('Users List'),
+                ),
+                body: ListView(
+                  children: [
+                    ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data == null
+                            ? 0
+                            : snapshot.data!.docs.length,
+                        itemBuilder: (_, index) {
+                          DocumentSnapshot _documentSnapshot =
+                              snapshot.data!.docs[index];
 
-            return Scaffold(
-              appBar: AppBar(
-                toolbarHeight: 90.0,
-                title: Text('Users List'),
-              ),
-              body: ListView(
-                children: [
-                  ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: snapshot.data == null
-                          ? 0
-                          : snapshot.data!.docs.length,
-                      itemBuilder: (_, index) {
-                        DocumentSnapshot _documentSnapshot =
-                            snapshot.data!.docs[index];
-
-                        return ListTile(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => addCustomerToEstimate3(
-                                dataDevis: LLIst,
-                                sum: summ,
-                                benef: countEarn,
-                                userDisplayName:
-                                    _documentSnapshot['userDisplayName'],
-                              ),
-                            ));
-                          },
-                          leading: Container(
-                            width: 50.0,
-                            height: 50.0,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            child: CachedNetworkImage(
-                              imageUrl:
-                                  _documentSnapshot['userAvatar'].toString(),
-                              imageBuilder: (context, imageProvider) =>
-                                  Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                      image: imageProvider, fit: BoxFit.cover),
+                          return ListTile(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => addCustomerToEstimate3(
+                                  dataDevis: LLIst,
+                                  sum: summ,
+                                  benef: countEarn,
+                                  userDisplayName:
+                                      _documentSnapshot['userDisplayName'],
                                 ),
+                              ));
+                            },
+                            leading: Container(
+                              width: 50.0,
+                              height: 50.0,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
                               ),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
+                              child: CachedNetworkImage(
+                                imageUrl:
+                                    _documentSnapshot['userAvatar'].toString(),
+                                imageBuilder: (context, imageProvider) =>
+                                    Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.cover),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                              ),
                             ),
-                          ),
-                          title: Row(
-                            children: [
-                              Text(
-                                _documentSnapshot['userRole']
-                                        .toString()
-                                        .toUpperCase() ??
-                                    'unknow',
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: Colors.red),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                _documentSnapshot['userDisplayName']
-                                    .toString()
-                                    .toUpperCase(),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'ID : ' +
-                                    _documentSnapshot['userID']
-                                        .toString()
-                                        .toUpperCase(),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Text(
-                                'Phone : ' +
-                                    _documentSnapshot['userPhone'].toString(),
-                                overflow: TextOverflow.ellipsis,
-                              )
-                            ],
-                          ),
-                        );
-                      }),
-                ],
-              ),
+                            title: Row(
+                              children: [
+                                Text(
+                                  _documentSnapshot['userRole']
+                                          .toString()
+                                          .toUpperCase() ??
+                                      'unknow',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  _documentSnapshot['userDisplayName']
+                                      .toString()
+                                      .toUpperCase(),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'ID : ' +
+                                      _documentSnapshot['userID']
+                                          .toString()
+                                          .toUpperCase(),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  'Phone : ' +
+                                      _documentSnapshot['userPhone'].toString(),
+                                  overflow: TextOverflow.ellipsis,
+                                )
+                              ],
+                            ),
+                          );
+                        }),
+                  ],
+                ),
+              );
+            }
+            return Center(
+              child: CircularProgressIndicator(),
             );
           }),
     );

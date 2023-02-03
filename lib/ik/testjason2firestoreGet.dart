@@ -463,7 +463,7 @@ class _mainPageFirestoreGetikState extends State<mainPageFirestoreGetik> {
           child: IconButton(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => estimateik(),
+                  builder: (context) => Estimate(),
                 ));
               },
               icon: const Icon(Icons.add_shopping_cart)),
@@ -1872,7 +1872,6 @@ class ViewGlobalCompte extends StatelessWidget {
     //             .toDouble();
     //   }
     // }
-
     // print(sumTotalInvoice);
     Random random = new Random();
 

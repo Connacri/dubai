@@ -8,14 +8,14 @@ import 'package:lottie/lottie.dart';
 import 'CustomerOrDealer.dart';
 import 'testjason2firestoreGet.dart';
 
-class estimateik extends StatefulWidget {
-  const estimateik({Key? key}) : super(key: key);
+class Estimate extends StatefulWidget {
+  const Estimate({Key? key}) : super(key: key);
 
   @override
-  State<estimateik> createState() => _estimateikState();
+  State<Estimate> createState() => _EstimateState();
 }
 
-class _estimateikState extends State<estimateik> {
+class _EstimateState extends State<Estimate> {
   Color colorRed = Color.fromARGB(255, 213, 2, 2); //Colors.deepPurple;
   Color colorOrange =
       Color.fromARGB(255, 255, 95, 0); //Colors.deepOrangeAccent;
@@ -47,298 +47,265 @@ class _estimateikState extends State<estimateik> {
                   if (snapshot.data!.docs.length == 0) {
                     return Scaffold(
                       backgroundColor: Colors.white,
-                      body: Center(
-                        child: Lottie.asset(
-                            'assets/lotties/89832-empty-list.json',
-                            fit: BoxFit.contain),
-                        // child: Text(
-                        //   'GG Adventure \nEstimate Is Empty',
-                        //   textAlign: TextAlign.center,
-                        //   style: TextStyle(fontSize: 20),
-                        // ),
+                      body: Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: [
+                          Center(
+                            child: Lottie.asset(
+                                'assets/lotties/89832-empty-list.json',
+                                fit: BoxFit.contain),
+                            // child: Text(
+                            //   'GG Adventure \nEstimate Is Empty',
+                            //   textAlign: TextAlign.center,
+                            //   style: TextStyle(fontSize: 20),
+                            // ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 150.0),
+                            child: ElevatedButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: Text('Back')),
+                          )
+                        ],
                       ),
                     );
                   }
                 } catch (exception) {}
+                if (snapshot.hasData) {
+                  return Scaffold(
+                    appBar: AppBar(
+                      toolbarHeight: 90.0,
+                      title: Text('Quotation'),
+                      actions: [
+                        IconButton(
+                          icon: const Icon(Icons.account_balance_sharp),
+                          onPressed: () {
+                            List LLIst = snapshot.data!.docs
+                                .map((DocumentSnapshot document) {
+                              Map<String, dynamic> data =
+                                  document.data()! as Map<String, dynamic>;
+                              return data;
+                            }).toList();
+                            print(
+                                'print(print(print(print(print(print(print(print(print(print(print(');
+                            print(LLIst);
 
-                return Scaffold(
-                  appBar: AppBar(
-                    toolbarHeight: 90.0,
-                    title: Text('Quotation'),
-                    actions: [
-                      // IconButton(
-                      //   onPressed: () {
-                      //     print(
-                      //         '******************************************************'); //
-                      //
-                      //     List LLIst = snapshot.data!.docs
-                      //         .map((DocumentSnapshot document) {
-                      //       Map<String, dynamic> data =
-                      //           document.data()! as Map<String, dynamic>;
-                      //       return data;
-                      //     }).toList();
-                      //
-                      //     double summ = 0;
-                      //     var ds = snapshot.data!.docs;
-                      //
-                      //     for (int i = 0; i < ds.length; i++) {
-                      //       summ +=
-                      //           (ds[i]['prixVente']).toInt() * (ds[i]['qty']);
-                      //     }
-                      //
-                      //     addDevisToInvoiceList(
-                      //       LLIst,
-                      //       summ.toString(),
-                      //     ); //**********************************
-                      //   },
-                      //   icon: const Icon(Icons.add),
-                      // ),
-                      IconButton(
-                        icon: const Icon(Icons.account_balance_sharp),
-                        onPressed: () {
-                          List LLIst = snapshot.data!.docs
-                              .map((DocumentSnapshot document) {
-                            Map<String, dynamic> data =
-                                document.data()! as Map<String, dynamic>;
-                            return data;
-                          }).toList();
-                          print(
-                              'print(print(print(print(print(print(print(print(print(print(print(');
-                          print(LLIst);
-
-                          double summ = 0;
-                          var ds = snapshot.data!.docs;
-
-                          for (int i = 0; i < ds.length; i++) {
-                            summ +=
-                                (ds[i]['prixVente']).toInt() * (ds[i]['qty']);
-                          }
-                          //
-                          // double cout = 0;
-                          // for (int i = 0; i < ds.length; i++) {
-                          //   cout += ds[i]['prixAchat'] * (ds[i]['qty']);
-                          // }
-                          double countEarn = 0;
-
-                          for (int i = 0; i < ds.length; i++) {
-                            double ss = ds[i]['prixVente'] - ds[i]['PUA'];
-                            countEarn += ss * (ds[i]['qty']);
-                          }
-
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => CustomerOrDealer(
-                                    dataDevis: LLIst,
-                                    sum: summ,
-                                    benef: countEarn,
-                                    dataDealer: {},
-                                    switched: false,
-                                  )));
-                        },
-                      ),
-                      // IconButton(
-                      //   icon: const Icon(Icons.picture_as_pdf),
-                      //   onPressed: () {
-                      //     // int itemcount = code.length;
-                      //     // uploadItems(itemcount);
-                      //
-                      //     // Navigator.of(context).push(MaterialPageRoute(
-                      //     //   builder: (context) => PdfPageRamzy2(
-                      //     //     dataDevis: snapshot.data!.docs,
-                      //     //     customer: '',
-                      //     //     date: DateTime.now(),
-                      //     //     codeDevis: '',
-                      //     //   ),
-                      //     // ));
-                      //
-                      //     Navigator.of(context).push(MaterialPageRoute(
-                      //       builder: (context) => addCustomerToEstimate(
-                      //         dataDevis: snapshot.data!.docs,
-                      //       ),
-                      //     ));
-                      //   },
-                      // ),
-                      // buildTotal(),
-                    ],
-                  ),
-                  body: ListView(
-                    children: [
-                      buildTotal(colorRed, colorOrange, colorGreen, colorBlue),
-                      ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: snapshot.data == null
-                              ? 0
-                              : snapshot.data!.docs.length,
-                          itemBuilder: (_, index) {
-                            DocumentSnapshot _documentSnapshot =
-                                snapshot.data!.docs[index];
-                            double sum = 0.0;
+                            double summ = 0;
                             var ds = snapshot.data!.docs;
 
-                            return Slidable(
-                              key: const Key('keyslidable'),
-                              closeOnScroll: true,
-                              endActionPane: ActionPane(
-                                extentRatio: 0.25,
-                                motion: const StretchMotion(),
-                                children: [
-                                  SlidableAction(
-                                    // An action can be bigger than the others.
-                                    //flex: 2,
-                                    onPressed: (Context) async {
-                                      await showAlertDialog(
-                                          context, _documentSnapshot);
-                                      print(_documentSnapshot.id);
-                                    },
-                                    backgroundColor: Colors.red,
-                                    foregroundColor: Colors.white,
-                                    icon: Icons.delete,
-                                    label: 'Delete',
-                                  ),
-                                ],
-                              ),
-                              startActionPane: ActionPane(
-                                extentRatio: 0.25,
-                                motion: const StretchMotion(),
-                                children: [
-                                  SlidableAction(
-                                    // An action can be bigger than the others.
-                                    //flex: 2,
-                                    onPressed: (Context) async {
-                                      await _upDateDevis(_documentSnapshot.id,
-                                          _documentSnapshot);
-                                    },
-                                    backgroundColor: colorGreen,
-                                    foregroundColor: Colors.white,
-                                    icon: Icons.edit,
-                                    label: 'Edit',
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  Divider(),
-                                  ListTile(
-                                    trailing: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          NumberFormat.currency(
-                                                  //locale: 'aed',
-                                                  symbol: '')
-                                              .format((_documentSnapshot[
-                                                      'prixVente'] *
-                                                  _documentSnapshot['qty'])),
-                                          // .toString() +  '0',
-                                          style: TextStyle(fontSize: 15),
-                                        ),
-                                        Text(
-                                          NumberFormat.currency(
-                                                  //locale: 'aed',
-                                                  symbol: '')
-                                              .format(((_documentSnapshot[
-                                                          'prixVente'] -
-                                                      _documentSnapshot[
-                                                          'PUA']) *
-                                                  _documentSnapshot['qty'])),
-                                          // .toString() +  '0',
-                                          style: TextStyle(
-                                              fontSize: 15, color: colorGreen),
-                                        ),
-                                      ],
+                            for (int i = 0; i < ds.length; i++) {
+                              summ +=
+                                  (ds[i]['prixVente']).toInt() * (ds[i]['qty']);
+                            }
+                            //
+                            // double cout = 0;
+                            // for (int i = 0; i < ds.length; i++) {
+                            //   cout += ds[i]['prixAchat'] * (ds[i]['qty']);
+                            // }
+                            double countEarn = 0;
+
+                            for (int i = 0; i < ds.length; i++) {
+                              double ss = ds[i]['prixVente'] - ds[i]['PUA'];
+                              countEarn += ss * (ds[i]['qty']);
+                            }
+
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => CustomerOrDealer(
+                                      dataDevis: LLIst,
+                                      sum: summ,
+                                      benef: countEarn,
+                                      dataDealer: {},
+                                      switched: false,
+                                    )));
+                          },
+                        ),
+                      ],
+                    ),
+                    body: ListView(
+                      children: [
+                        buildTotal(
+                            colorRed, colorOrange, colorGreen, colorBlue),
+                        ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: snapshot.data == null
+                                ? 0
+                                : snapshot.data!.docs.length,
+                            itemBuilder: (_, index) {
+                              DocumentSnapshot _documentSnapshot =
+                                  snapshot.data!.docs[index];
+                              double sum = 0.0;
+                              var ds = snapshot.data!.docs;
+
+                              return Slidable(
+                                key: const Key('keyslidable'),
+                                closeOnScroll: true,
+                                endActionPane: ActionPane(
+                                  extentRatio: 0.25,
+                                  motion: const StretchMotion(),
+                                  children: [
+                                    SlidableAction(
+                                      // An action can be bigger than the others.
+                                      //flex: 2,
+                                      onPressed: (Context) async {
+                                        await showAlertDialog(
+                                            context, _documentSnapshot);
+                                        print(_documentSnapshot.id);
+                                      },
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white,
+                                      icon: Icons.delete,
+                                      label: 'Delete',
                                     ),
-                                    leading: Column(
-                                      children: [
-                                        CircleAvatar(
-                                          child: FittedBox(
-                                            child: Text(_documentSnapshot['qty']
-                                                .toString()),
+                                  ],
+                                ),
+                                startActionPane: ActionPane(
+                                  extentRatio: 0.25,
+                                  motion: const StretchMotion(),
+                                  children: [
+                                    SlidableAction(
+                                      // An action can be bigger than the others.
+                                      //flex: 2,
+                                      onPressed: (Context) async {
+                                        await _upDateDevis(_documentSnapshot.id,
+                                            _documentSnapshot);
+                                      },
+                                      backgroundColor: colorGreen,
+                                      foregroundColor: Colors.white,
+                                      icon: Icons.edit,
+                                      label: 'Edit',
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  children: [
+                                    Divider(),
+                                    ListTile(
+                                      trailing: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            NumberFormat.currency(
+                                                    //locale: 'aed',
+                                                    symbol: '')
+                                                .format((_documentSnapshot[
+                                                        'prixVente'] *
+                                                    _documentSnapshot['qty'])),
+                                            // .toString() +  '0',
+                                            style: TextStyle(fontSize: 15),
                                           ),
-                                        ),
-                                        Text(_documentSnapshot['codebar']),
-                                      ],
-                                    ),
-                                    title: Row(
-                                      children: [
-                                        _documentSnapshot['state'] == true
-                                            ? Icon(
-                                                Icons.verified,
-                                                color: Colors.green,
-                                              )
-                                            : Icon(Icons.cancel,
-                                                color: Colors.red),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        // Switch(
-                                        //   value: _giveVerse,
-                                        //   onChanged: (bool newValue) {
-                                        //     bool _giveVerse =
-                                        //         _documentSnapshot['state'];
-                                        //     setState(() {
-                                        //       _giveVerse = newValue;
-                                        //     });
-                                        //     () async {
-                                        //       await FirebaseFirestore.instance
-                                        //           .collection('Estimate')
-                                        //           .doc(_documentSnapshot.id)
-                                        //           .update({
-                                        //         'state': false,
-                                        //       });
-                                        //     };
-                                        //   },
-                                        // ),
-                                        Expanded(
-                                          child: Text(
-                                            _documentSnapshot['model'],
+                                          Text(
+                                            NumberFormat.currency(
+                                                    //locale: 'aed',
+                                                    symbol: '')
+                                                .format(((_documentSnapshot[
+                                                            'prixVente'] -
+                                                        _documentSnapshot[
+                                                            'PUA']) *
+                                                    _documentSnapshot['qty'])),
+                                            // .toString() +  '0',
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: colorGreen),
+                                          ),
+                                        ],
+                                      ),
+                                      leading: Column(
+                                        children: [
+                                          CircleAvatar(
+                                            child: FittedBox(
+                                              child: Text(
+                                                  _documentSnapshot['qty']
+                                                      .toString()),
+                                            ),
+                                          ),
+                                          Text(_documentSnapshot['codebar']),
+                                        ],
+                                      ),
+                                      title: Row(
+                                        children: [
+                                          _documentSnapshot['state'] == true
+                                              ? Icon(
+                                                  Icons.verified,
+                                                  color: Colors.green,
+                                                )
+                                              : Icon(Icons.cancel,
+                                                  color: Colors.red),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          // Switch(
+                                          //   value: _giveVerse,
+                                          //   onChanged: (bool newValue) {
+                                          //     bool _giveVerse =
+                                          //         _documentSnapshot['state'];
+                                          //     setState(() {
+                                          //       _giveVerse = newValue;
+                                          //     });
+                                          //     () async {
+                                          //       await FirebaseFirestore.instance
+                                          //           .collection('Estimate')
+                                          //           .doc(_documentSnapshot.id)
+                                          //           .update({
+                                          //         'state': false,
+                                          //       });
+                                          //     };
+                                          //   },
+                                          // ),
+                                          Expanded(
+                                            child: Text(
+                                              _documentSnapshot['model'],
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Size : ' +
+                                                _documentSnapshot['size'],
                                             overflow: TextOverflow.ellipsis,
                                           ),
-                                        ),
-                                      ],
+                                          Row(
+                                            children: [
+                                              Text(
+                                                NumberFormat.currency(
+                                                        symbol: 'PU ')
+                                                    .format(_documentSnapshot[
+                                                        'prixVente']), //.toString() + '0'),
+                                              ),
+                                              SizedBox(
+                                                width: 30,
+                                              ),
+                                              Text(
+                                                NumberFormat.currency(
+                                                        symbol: 'Earn ')
+                                                    .format(_documentSnapshot[
+                                                            'prixVente'] -
+                                                        _documentSnapshot[
+                                                            'PUA']), //.toString() + '0'),
+                                                style: TextStyle(
+                                                    color: colorGreen),
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                    subtitle: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Size : ' + _documentSnapshot['size'],
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              NumberFormat.currency(
-                                                      symbol: 'PU ')
-                                                  .format(_documentSnapshot[
-                                                      'prixVente']), //.toString() + '0'),
-                                            ),
-                                            SizedBox(
-                                              width: 30,
-                                            ),
-                                            Text(
-                                              NumberFormat.currency(
-                                                      symbol: 'Earn ')
-                                                  .format(_documentSnapshot[
-                                                          'prixVente'] -
-                                                      _documentSnapshot[
-                                                          'PUA']), //.toString() + '0'),
-                                              style:
-                                                  TextStyle(color: colorGreen),
-                                            )
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }),
-                    ],
-                  ),
-                );
+                                  ],
+                                ),
+                              );
+                            }),
+                      ],
+                    ),
+                  );
+                }
+                return Center(child: CircularProgressIndicator());
               }),
         ),
       ],

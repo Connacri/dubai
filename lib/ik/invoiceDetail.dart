@@ -93,9 +93,9 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
             ListView.separated(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
-              itemCount: widget.doc['item CodeBar'].length,
+              itemCount: widget.doc['itemCodeBar'].length,
               itemBuilder: (BuildContext context, int index) {
-                var array = widget.doc['item CodeBar'];
+                var array = widget.doc['itemCodeBar'];
                 return Center(
                   child: Row(
                     children: [
@@ -119,7 +119,7 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                widget.doc['item CodeBar'][index]['codebar']
+                                widget.doc['itemCodeBar'][index]['codebar']
                                     .toString(),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -190,7 +190,7 @@ class _InvoiceDetailState extends State<InvoiceDetail> {
             ),
             TextButton(
                 onPressed: () async {
-                  await Recover(widget.doc['item CodeBar'], widget.doc.id);
+                  await Recover(widget.doc['itemCodeBar'], widget.doc.id);
                   Navigator.of(context).pop();
                 },
                 child: Text(

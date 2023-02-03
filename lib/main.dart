@@ -53,6 +53,8 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:intl/date_symbol_data_file.dart';
 import 'package:provider/provider.dart';
 
+import 'ik/Estimate.dart';
+import 'ik/invoiceList.dart';
 import 'main_in.dart';
 import 'main_out.dart';
 import 'rmz/Oauth/Ogoogle/googleSignInProvider.dart';
@@ -111,6 +113,10 @@ class Materialclass extends StatelessWidget {
           fontFamily: "Oswald",
         ),
         home: const verifi_auth(),
+        routes: {
+          "/Estimate": (context) => Estimate(),
+          "/invoiceList": (context) => invoiceList(),
+        },
       ),
     );
   }
